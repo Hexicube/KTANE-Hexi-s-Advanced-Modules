@@ -25,8 +25,13 @@ public class AdvancedKnob : MonoBehaviour
 
     private static string[] SoundNames = new string[]{
         "hummus1", "hummus2", "hummus3", "hummus4",
-        "tonehello1", "tonehello2", "tonehello3", "tonepronto"
+        "tunehello1", "tunehello2", "tunehello3", "tunepronto"
     };
+
+    private void SetDisplay()
+    {
+        Display.text = (DisplayNumber / 100) + "\n" + ((DisplayNumber / 10) % 10) + "\n" + (DisplayNumber % 10);
+    }
 
     void Awake()
     {
@@ -41,21 +46,27 @@ public class AdvancedKnob : MonoBehaviour
         Button8.OnInteract += Handle8;
         Button9.OnInteract += Handle9;
 
+        GetComponent<KMNeedyModule>().OnActivate += OnActivate;
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
         GetComponent<KMNeedyModule>().OnNeedyDeactivation += OnNeedyDeactivation;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
-        Display.text = (DisplayNumber / 100) + "\n" + ((DisplayNumber / 10) % 10) + "\n" + (DisplayNumber % 10);
+        Display.text = "";
 
         gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+    }
+
+    protected void OnActivate()
+    {
+        SetDisplay();
     }
 
     protected void OnNeedyActivation()
     {
         DisplayNumber = Random.Range(0, 1000);
         CurAnswer = (CurAnswer + DisplayNumber) % 1000;
-        Display.text = (DisplayNumber / 100) + "\n" + ((DisplayNumber / 10) % 10) + "\n" + (DisplayNumber % 10);
+        SetDisplay();
         Active = true;
         Response = 0;
         ResponsePos = 0;
@@ -71,7 +82,7 @@ public class AdvancedKnob : MonoBehaviour
         GetComponent<KMNeedyModule>().HandleStrike();
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
-        Display.text = (DisplayNumber / 100) + "\n" + ((DisplayNumber / 10) % 10) + "\n" + (DisplayNumber % 100);
+        SetDisplay();
         Active = false;
     }
 
@@ -123,7 +134,12 @@ public class AdvancedKnob : MonoBehaviour
             if (PhoneDelay == 0)
             {
                 if (Random.Range(0, 10) > 0) Sound.PlaySoundAtTransform("NoNumber", gameObject.transform);
-                else Sound.PlaySoundAtTransform(SoundNames[Random.Range(0, SoundNames.Length)], gameObject.transform);
+                else
+                {
+                    string name = SoundNames[Random.Range(0, SoundNames.Length)];
+                    //Debug.Log(name);
+                    Sound.PlaySoundAtTransform(name, gameObject.transform);
+                }
             }
         }
     }

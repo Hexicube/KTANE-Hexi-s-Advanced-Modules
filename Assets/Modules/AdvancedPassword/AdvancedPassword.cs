@@ -137,9 +137,14 @@ public class AdvancedPassword : MonoBehaviour
                     break;
                 }
             }
-            if (match) GetComponent<KMBombModule>().HandleStrike();
+            if (match)
+            {
+                GetComponent<KMBombModule>().HandleStrike();
+                Reset();
+            }
             else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, gameObject.transform);
-            Reset();
+            //Reset();
+            ButtonStates[pos] = false;
         }
     }
 

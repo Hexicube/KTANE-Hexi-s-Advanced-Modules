@@ -5,21 +5,12 @@
 
 Respond to the computer prompts by pressing "Y" for "Yes" or "N" for "No".
 
-What was your previous answer? (previous)
-What was not your previous answer? (not previous)
-Are you experiencing increased levels of soduim chloride? (yes)
-If a tree falls in the forest with nobody around, does it matter? (no)
-Does is time fast? (yes is strikes, no otherwise)
-Does is time super fast? (yes if 2 strikes, no otherwise)
-Does it take two to tango? (yes)
-Abort? (no)
-Is that the way the news goes? (yes)
-Is "sweet freedom" a wonderful phrase? (no)
-
 */
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class AdvancedVentingGas : MonoBehaviour
 {
@@ -32,10 +23,26 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected bool LastReply;
     protected bool HasReply;
-    protected int CurQ = -1;
+    protected System.Func<AdvancedVentingGas, bool, bool> CurQ;
+
+    private List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>> QuestionList = new List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>>(){
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == Module.LastReply;return true;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was\nnot your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == !Module.LastReply;return true;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n3 lines?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n6 lines?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 0) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Many strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 1) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Module.SerialDuplicate();})}
+    };
 
     void Awake()
     {
+        gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        Display.text = "";
+
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
         GetComponent<KMNeedyModule>().OnNeedyDeactivation += OnNeedyDeactivation;
         YesButton.OnInteract += HandleYes;
@@ -58,19 +65,18 @@ public class AdvancedVentingGas : MonoBehaviour
     protected void OnNeedyActivation()
     {
         NewQuestion();
-        Display.text = GetText();
     }
 
     protected void OnNeedyDeactivation()
     {
-        CurQ = -1;
+        CurQ = null;
         Display.text = "";
     }
 
     protected void HandleResponse(bool R)
     {
-        if (CurQ == -1) return;
-        if (GetCorrect(R))
+        if (CurQ == null) return;
+        if (CurQ(this, R))
         {
             GetComponent<KMNeedyModule>().HandlePass();
             Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
@@ -81,75 +87,47 @@ public class AdvancedVentingGas : MonoBehaviour
         }
         HasReply = true;
         LastReply = R;
-        CurQ = -1;
+        CurQ = null;
         Display.text = "";
     }
 
     protected void OnTimerExpired()
     {
-        if (CurQ == -1) return;
+        if (CurQ == null) return;
         GetComponent<KMNeedyModule>().HandleStrike();
     }
 
-    protected bool GetCorrect(bool Response)
-    {
-        switch(CurQ)
-        {
-            case(0):
-                if (HasReply) return Response == LastReply;
-                return true;
-            case(1):
-                if (HasReply) return Response != LastReply;
-                return true;
-            case(2):
-                return Response;
-            case(3):
-                return !Response;
-            case(4):
-                return (BombInfo.GetStrikes() > 0) == Response;
-            case (5):
-                return (BombInfo.GetStrikes() > 1) == Response;
-            case(6):
-                return !Response;
-            case(7):
-                return Response;
-            case(8):
-                return !Response;
-            default:
-                return true;
-        }
-    }
+    private char[] Serial = null;
 
-    protected string GetText()
+    private bool SerialDuplicate()
     {
-        switch(CurQ)
+        if (Serial == null)
         {
-            case(0):
-                return "What was\nyour previous answer?";
-            case(1):
-                return "What was not\nyour previous answer?";
-            case(2):
-                return "Does this\nquestion\ncontain\n4 lines?";
-            case(3):
-                return "Does this\nquestion contain\n6 lines?";
-            case(4):
-                return "Strikes?";
-            case(5):
-                return "Many strikes?";
-            case(6):
-                return "Abort?";
-            case(7):
-                return "Is \"Hakuna Matata\"\na wonderful phrase?";
-            case(8):
-                return "Are you a\ndirty cheater?";
-            default:
-                return "";
+            List<string> data = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
+            foreach (string response in data)
+            {
+                Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+                Serial = responseDict["serial"].ToCharArray();
+                break;
+            }
         }
+
+        List<char> list = new List<char>();
+        foreach (char c in Serial)
+        {
+            if (list.Contains(c)) return true;
+            list.Add(c);
+        }
+
+        return false;
     }
 
     protected void NewQuestion()
     {
-        if(HasReply) CurQ = Random.Range(0, 9);
-        else CurQ = Random.Range(2, 9);
+        int val;
+        if(HasReply) val = Random.Range(0, 10);
+        else val = Random.Range(2, 10);
+        CurQ = QuestionList[val].Value;
+        Display.text = QuestionList[val].Key;
     }
 }

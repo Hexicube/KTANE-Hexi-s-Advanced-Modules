@@ -75,7 +75,7 @@ public class AdvancedMorse : MonoBehaviour
                     if(type == -1)
                     {
                         DisplayProgress++;
-                        ticker = -30;
+                        ticker = -45;
                     }
                     else LED.material.color = GREEN;
                 }
@@ -101,16 +101,19 @@ public class AdvancedMorse : MonoBehaviour
         ReplyCorrect = true;
         DisplayProgress = 0;
         ticker = -50;
+        LED.material.color = BLACK;
 
-        if (Random.Range(0, 100) > 0) GenerateMath();
-        else
+        if (ReplySequence == null)
         {
-            KeyValuePair<int[], bool> q = QuestionAnswerList[Random.Range(0, QuestionAnswerList.Count)];
-            DisplaySequence = q.Key;
-            if (q.Value) ReplySequence = YesResponse;
-            else ReplySequence = NoResponse;
+            if (Random.Range(0, 100) > 0) GenerateMath();
+            else
+            {
+                KeyValuePair<int[], bool> q = QuestionAnswerList[Random.Range(0, QuestionAnswerList.Count)];
+                DisplaySequence = q.Key;
+                if (q.Value) ReplySequence = YesResponse;
+                else ReplySequence = NoResponse;
+            }
         }
-
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         return false;
     }
@@ -214,9 +217,9 @@ public class AdvancedMorse : MonoBehaviour
             char c = values[a];
             switch(c)
             {
-                case ' ':
+                /*case ' ':
                     data.Add(-1);
-                    break;
+                    break;*/
                 case 'A':
                     data.Add(0);
                     data.Add(1);
@@ -231,6 +234,7 @@ public class AdvancedMorse : MonoBehaviour
                     data.Add(1);
                     data.Add(0);
                     data.Add(1);
+                    data.Add(0);
                     break;
                 case 'D':
                     data.Add(1);

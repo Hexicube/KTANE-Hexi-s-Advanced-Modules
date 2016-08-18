@@ -715,7 +715,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: bd5ef1ef02cd1ca4f8311c2e3a15d279, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -1276,9 +1276,9 @@ MonoBehaviour:
   Parent: {fileID: 0}
   Children:
   - {fileID: 11473966}
-  - {fileID: 11473966}
-  - {fileID: 11473966}
-  - {fileID: 11473966}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11422910}
   - {fileID: 11404008}
   - {fileID: 11411312}
