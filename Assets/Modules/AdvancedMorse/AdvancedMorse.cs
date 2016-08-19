@@ -48,6 +48,8 @@ public class AdvancedMorse : MonoBehaviour
 
     void Awake()
     {
+        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
         LED = gameObject.transform.Find("LED").GetComponent<MeshRenderer>();
         LED.material.color = BLACK;
 

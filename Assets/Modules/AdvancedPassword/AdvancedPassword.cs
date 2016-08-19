@@ -61,6 +61,8 @@ public class AdvancedPassword : MonoBehaviour
 
     void Awake()
     {
+        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
         Buttons = new KMSelectable[] { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11 };
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;

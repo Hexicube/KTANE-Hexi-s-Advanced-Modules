@@ -35,7 +35,7 @@ public class AdvancedVentingGas : MonoBehaviour
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Module.SerialDuplicate();})}
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Response == Module.SerialDuplicate();})}
     };
 
     void Awake()

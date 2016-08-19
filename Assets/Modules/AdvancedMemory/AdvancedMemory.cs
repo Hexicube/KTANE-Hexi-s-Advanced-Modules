@@ -21,7 +21,7 @@ public class AdvancedMemory : MonoBehaviour
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
-    public TextMesh DisplayMesh;
+    public TextMesh DisplayMesh, StageMesh;
 
     private int[] Display;
     private int[] Solution;
@@ -29,6 +29,8 @@ public class AdvancedMemory : MonoBehaviour
 
     void Awake()
     {
+        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;
@@ -43,6 +45,7 @@ public class AdvancedMemory : MonoBehaviour
         GetComponent<KMBombModule>().OnActivate += ActivateModule;
 
         gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        gameObject.transform.Find("Plane (1)").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
     }
 
     private void ActivateModule()
@@ -184,19 +187,28 @@ public class AdvancedMemory : MonoBehaviour
         if (ticker == 5)
         {
             ticker = 0;
-            if (Display == null) DisplayMesh.text = "";
+            if (Display == null)
+            {
+                DisplayMesh.text = "";
+                StageMesh.text = "";
+            }
             else
             {
                 int progress = BombInfo.GetSolvedModuleNames().Count;
                 if (progress >= Display.Length)
                 {
+                    StageMesh.text = "-";
                     if (!done)
                     {
                         DisplayMesh.text = "-";
                         done = true;
                     }
                 }
-                else DisplayMesh.text = "" + Display[progress];
+                else
+                {
+                    DisplayMesh.text = "" + Display[progress];
+                    StageMesh.text = "" + (progress + 1);
+                }
             }
         }
     }
