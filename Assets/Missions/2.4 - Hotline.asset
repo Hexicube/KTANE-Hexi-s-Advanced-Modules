@@ -19,7 +19,7 @@ MonoBehaviour:
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
     ComponentPools:
-    - Count: 3
+    - Count: 2
       AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 0
@@ -35,10 +35,21 @@ MonoBehaviour:
       ComponentTypes: 09000000
       SpecialComponentType: 0
       ModTypes: []
-    - Count: 2
+    - Count: 1
       AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 0
       ModTypes:
-      - PasswordV2
+      - MemoryV2
+    - Count: 1
+      AllowedSources: 2
+      ComponentTypes: 0f000000
+      SpecialComponentType: 0
+      ModTypes: []
+    - Count: 1
+      AllowedSources: 2
+      ComponentTypes: 
+      SpecialComponentType: 0
+      ModTypes:
+      - MorseV2
   PacingEventsEnabled: 1

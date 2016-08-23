@@ -10,8 +10,6 @@ Maths questions will have a whole number response.
 Statements will have either a "YES" or "NO" response.
 Note: Do not agitate the bomb, it will beat you in a fight.
 
-The question is changed every time "Play" is pressed, and your answer is reset.
-
 Warning: The signal will only play once, and will contain spaces.
 
 */
@@ -22,21 +20,27 @@ using System.Collections.Generic;
 
 public class AdvancedMorse : MonoBehaviour
 {
-    public KMSelectable ButtonPlay, ButtonDot, ButtonDash, ButtonSpace, ButtonDone;
+    public KMSelectable ButtonPlay, ButtonDot, ButtonDash, ButtonSpace, ButtonClear, ButtonDone;
     public KMAudio Sound;
+    public TextMesh DisplayArea;
+    public KMBombInfo Info;
 
     protected int[] DisplaySequence;
     protected int DisplayProgress;
     protected bool Generated = false;
 
+    protected int ReplyAnswer;
+
     protected int[] ReplySequence;
     protected int ReplyProgress;
     protected bool ReplyCorrect;
 
+    private List<int> EnteredCharacters;
+
     private static Color BLACK = new Color(0, 0, 0), GREEN = new Color(0, 1, 0);
     private MeshRenderer LED;
 
-    private static List<KeyValuePair<int[], bool>> QuestionAnswerList = new List<KeyValuePair<int[], bool>>()
+    /*private static List<KeyValuePair<int[], bool>> QuestionAnswerList = new List<KeyValuePair<int[], bool>>()
     {
         {new KeyValuePair<int[], bool>(Morsify("ON BOMB"), true)},
         {new KeyValuePair<int[], bool>(Morsify("MODULE GREEN"), false)},
@@ -44,11 +48,12 @@ public class AdvancedMorse : MonoBehaviour
         {new KeyValuePair<int[], bool>(Morsify("2 IS TWO"), true)}
     };
     private static int[] YesResponse = Morsify("YES");
-    private static int[] NoResponse = Morsify("NO");
+    private static int[] NoResponse = Morsify("NO");*/
 
     void Awake()
     {
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+        transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
 
         LED = gameObject.transform.Find("LED").GetComponent<MeshRenderer>();
         LED.material.color = BLACK;
@@ -57,9 +62,12 @@ public class AdvancedMorse : MonoBehaviour
         ButtonDot.OnInteract += HandleDot;
         ButtonDash.OnInteract += HandleDash;
         ButtonSpace.OnInteract += HandleSpace;
+        ButtonClear.OnInteract += HandleClear;
         ButtonDone.OnInteract += HandleDone;
 
         DisplaySequence = new int[0];
+        EnteredCharacters = new List<int>();
+        DisplayArea.text = "";
     }
 
     private int ticker = 0;
@@ -83,8 +91,8 @@ public class AdvancedMorse : MonoBehaviour
                 }
                 else
                 {
-                    int target = 15;
-                    if (type == 1) target = 45;
+                    int target = 12;
+                    if (type == 1) target = 30;
                     if (ticker >= target)
                     {
                         LED.material.color = BLACK;
@@ -104,18 +112,17 @@ public class AdvancedMorse : MonoBehaviour
         DisplayProgress = 0;
         ticker = -50;
         LED.material.color = BLACK;
+        EnteredCharacters = new List<int>();
+        DisplayArea.text = "";
 
-        if (ReplySequence == null)
-        {
-            if (Random.Range(0, 100) > 0) GenerateMath();
-            else
+        if (ReplySequence == null) GenerateMath();
+            /*else
             {
                 KeyValuePair<int[], bool> q = QuestionAnswerList[Random.Range(0, QuestionAnswerList.Count)];
                 DisplaySequence = q.Key;
                 if (q.Value) ReplySequence = YesResponse;
                 else ReplySequence = NoResponse;
-            }
-        }
+            }*/
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         return false;
     }
@@ -149,7 +156,44 @@ public class AdvancedMorse : MonoBehaviour
                 if (ReplySequence[ReplyProgress] == val) ReplyProgress++;
                 else ReplyCorrect = false;
             }
+
+            EnteredCharacters.Add(val);
+            DisplayArea.text = DeMorsify();
         }
+    }
+
+    protected bool HandleClear()
+    {
+        if (!Generated) return false;
+
+        if (Info.GetTime() >= 30f)
+        {
+            char[] ans = ("" + ReplyAnswer).ToCharArray();
+            char[] time = Info.GetFormattedTime().ToCharArray();
+            bool match = false;
+            foreach (char c1 in ans)
+            {
+                foreach (char c2 in time)
+                {
+                    if (c1 == c2)
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) break;
+            }
+
+            if (!match) GetComponent<KMBombModule>().HandleStrike();
+            else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+        }
+        else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+
+        ReplyProgress = 0;
+        ReplyCorrect = true;
+        EnteredCharacters = new List<int>();
+        DisplayArea.text = "";
+        return false;
     }
 
     protected bool HandleDone()
@@ -161,7 +205,14 @@ public class AdvancedMorse : MonoBehaviour
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
                 GetComponent<KMBombModule>().HandlePass();
             }
-            else GetComponent<KMBombModule>().HandleStrike();
+            else
+            {
+                GetComponent<KMBombModule>().HandleStrike();
+                ReplyProgress = 0;
+                ReplyCorrect = true;
+                EnteredCharacters = new List<int>();
+                DisplayArea.text = "";
+            }
         }
         return false;
     }
@@ -169,44 +220,63 @@ public class AdvancedMorse : MonoBehaviour
     private void GenerateMath()
     {
         int a, b, answer;
-        int type = Random.Range(0, 4);
+        int type = Random.Range(0, 5);
         if (type == 0)
         {
             //Multiplication
-            a = Random.Range(3, 8);
+            a = Random.Range(3, 10);
             b = Random.Range(7, 14);
             answer = a * b;
         }
         else if (type == 1)
         {
             //Division
-            b = Random.Range(3, 8);
+            b = Random.Range(3, 14);
             answer = Random.Range(13, 18);
             a = b * answer;
         }
         else if (type == 2)
         {
             //Modulo
-            a = Random.Range(100, 201);
-            b = Random.Range(7, 12);
+            a = Random.Range(50, 151);
+            b = Random.Range(7, 18);
             answer = a % b;
         }
-        else
+        else if (type == 3)
         {
             //Power
-            a = Random.Range(3, 8);
-            b = Random.Range(3, 6);
+            a = Random.Range(2, 6);
+            b = Random.Range(2, 5);
             answer = a;
             for (int i = 1; i < b; i++) answer *= a;
         }
+        else if (type == 4)
+        {
+            //XOR
+            a = Random.Range(1, 16);
+            b = Random.Range(1, 16);
+            answer = a ^ b;
+        }
+        else
+        {
+            //Error
+            a = 0;
+            b = 0;
+            answer = 0;
+        }
         string display = "" + a;
-        if (type == 0) display += " TIMES ";
-        else if (type == 1) display += " OVER ";
-        else if (type == 2) display += " MOD ";
-        else display += " POWER ";
+        string[] words;
+        if (type == 0) words = new string[] { " TIMES ", " MULT " };
+        else if (type == 1) words = new string[] { " OVER ", " DIV " };
+        else if (type == 2) words = new string[] { " MOD ", " REM " };
+        else if (type == 3) words = new string[] { " POW ", " EXP " };
+        else if (type == 4) words = new string[] { " XOR " };
+        else words = new string[] { " ERROR " };
+        display += words[Random.Range(0, words.Length)];
         display += b;
         DisplaySequence = Morsify(display);
         ReplySequence = Morsify("" + answer);
+        ReplyAnswer = answer;
     }
 
     private static int[] Morsify(string text)
@@ -429,5 +499,245 @@ public class AdvancedMorse : MonoBehaviour
             }
         }
         return data.ToArray();
+    }
+
+    private string DeMorsify()
+    {
+        int[] data = EnteredCharacters.ToArray();
+        List<int> values = new List<int>();
+        string result = "";
+        foreach (int i in data)
+        {
+            if (i == -1)
+            {
+                result += GetLetter(values.ToArray());
+                values.Clear();
+            }
+            else values.Add(i);
+        }
+        result += GetLetter(values.ToArray());
+        return result;
+    }
+
+    private string GetLetter(int[] val)
+    {
+        if (val.Length == 0) return "?";
+        else if (val.Length > 5) return "?";
+        else if (val[0] == 0)
+        {
+            //.
+            if (val.Length == 1) return "E";
+            else if(val[1] == 0)
+            {
+                //..
+                if (val.Length == 2) return "I";
+                else if(val[2] == 0)
+                {
+                    //...
+                    if (val.Length == 3) return "S";
+                    else if(val[3] == 0)
+                    {
+                        //....
+                        if (val.Length == 4) return "H";
+                        else if(val[4] == 0)
+                        {
+                            //.....
+                            if (val.Length == 5) return "5";
+                            else return "?";
+                        }
+                        else
+                        {
+                            //....-
+                            if (val.Length == 5) return "4";
+                            else return "?";
+                        }
+                    }
+                    else
+                    {
+                        //...-
+                        if (val.Length == 4) return "V";
+                        else if (val[4] == 0) return "?";
+                        else
+                        {
+                            //...--
+                            if (val.Length == 5) return "3";
+                            else return "?";
+                        }
+                    }
+                }
+                else
+                {
+                    //..-
+                    if (val.Length == 3) return "U";
+                    else if(val[3] == 0)
+                    {
+                        //..-.
+                        if (val.Length == 4) return "F";
+                        else return "?";
+                    }
+                    else
+                    {
+                        //..--
+                        if (val.Length == 4 || val[4] == 0) return "?";
+                        else
+                        {
+                            //..---
+                            if (val.Length == 5) return "2";
+                            else return "?";
+                        }
+                    }
+                }
+            }
+            else
+            {
+                //.-
+                if (val.Length == 2) return "A";
+                else if(val[2] == 0)
+                {
+                    //.-.
+                    if (val.Length == 3) return "R";
+                    else if (val[3] == 0)
+                    {
+                        //.-..
+                        if (val.Length == 4) return "L";
+                        else return "?";
+                    }
+                    else return "?";
+                }
+                else
+                {
+                    //.--
+                    if (val.Length == 3) return "W";
+                    else if(val[3] == 0)
+                    {
+                        //.--.
+                        if (val.Length == 4) return "P";
+                        else return "?";
+                    }
+                    else
+                    {
+                        //.---
+                        if (val.Length == 4) return "J";
+                        else if (val[4] == 0) return "?";
+                        else
+                        {
+                            //.----
+                            if (val.Length == 5) return "1";
+                            else return "?";
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            //-
+            if (val.Length == 1) return "T";
+            else if(val[1] == 0)
+            {
+                //-.
+                if (val.Length == 2) return "N";
+                else if(val[2] == 0)
+                {
+                    //-..
+                    if (val.Length == 3) return "D";
+                    else if(val[3] == 0)
+                    {
+                        //-...
+                        if (val.Length == 4) return "B";
+                        else if (val[4] == 0)
+                        {
+                            if (val.Length == 5) return "6";
+                            else return "?";
+                        }
+                        else return "?";
+                    }
+                    else
+                    {
+                        //-..-
+                        if (val.Length == 4) return "X";
+                        else return "?";
+                    }
+                }
+                else
+                {
+                    //-.-
+                    if (val.Length == 3) return "K";
+                    else if(val[3] == 0)
+                    {
+                        //-.-.
+                        if (val.Length == 4) return "C";
+                        else return "?";
+                    }
+                    else
+                    {
+                        //-.--
+                        if (val.Length == 4) return "Y";
+                        else return "?";
+                    }
+                }
+            }
+            else
+            {
+                //--
+                //O890
+                if (val.Length == 2) return "M";
+                else if(val[2] == 0)
+                {
+                    //--.
+                    if (val.Length == 3) return "G";
+                    else if(val[3] == 0)
+                    {
+                        //--..
+                        if (val.Length == 4) return "Z";
+                        else if (val[4] == 0)
+                        {
+                            if (val.Length == 5) return "7";
+                            else return "?";
+                        }
+                        else return "?";
+                    }
+                    else
+                    {
+                        //--.-
+                        if (val.Length == 4) return "Q";
+                        else return "?";
+                    }
+                }
+                else
+                {
+                    //---
+                    if (val.Length == 3) return "O";
+                    else if(val[3] == 0)
+                    {
+                        //---.
+                        if (val.Length == 4 || val[4] == 1) return "?";
+                        else
+                        {
+                            //---..
+                            if (val.Length == 5) return "8";
+                            else return "?";
+                        }
+                    }
+                    else
+                    {
+                        //----
+                        if (val.Length == 4) return "?";
+                        else if(val[4] == 0)
+                        {
+                            //----.
+                            if (val.Length == 5) return "9";
+                            else return "?";
+                        }
+                        else
+                        {
+                            //-----
+                            if (val.Length == 5) return "0";
+                            else return "?";
+                        }
+                    }
+                }
+            }
+        }
     }
 }

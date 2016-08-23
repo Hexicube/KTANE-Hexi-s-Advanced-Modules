@@ -9,26 +9,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -548183353, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: 4.2 - Needy Rotary Phone
+  m_Name: 3.5 - Plumbing
   m_EditorClassIdentifier: 
-  DisplayName: Needy Rotary Phone
-  Description: A mission featuring 2 Needy Rotary Phone modules, and any 6 solvable
-    modules.
+  DisplayName: Plumbing
+  Description: A mission featuring only Plumbing, and plenty of time to learn the
+    module.
   GeneratorSetting:
-    TimeLimit: 600
+    TimeLimit: 900
     NumStrikes: 3
-    TimeBeforeNeedyActivation: 30
+    TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
     ComponentPools:
-    - Count: 2
+    - Count: 11
       AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 0
       ModTypes:
-      - NeedyKnobV2
-    - Count: 6
-      AllowedSources: 3
-      ComponentTypes: 
-      SpecialComponentType: 1
-      ModTypes: []
+      - MazeV2
   PacingEventsEnabled: 0

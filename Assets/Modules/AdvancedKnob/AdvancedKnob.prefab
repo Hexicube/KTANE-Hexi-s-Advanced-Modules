@@ -460,22 +460,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &149604
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 418474}
-  - 114: {fileID: 11437088}
-  m_Layer: 0
-  m_Name: StatusLight
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &149636
 GameObject:
   m_ObjectHideFlags: 1
@@ -1099,20 +1083,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 25
---- !u!4 &418474
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149604}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.075167, y: 0.01986, z: 0.076057}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_Children: []
-  m_Father: {fileID: 441516}
-  m_RootOrder: 5
+  m_RootOrder: 24
 --- !u!4 &419434
 Transform:
   m_ObjectHideFlags: 1
@@ -1164,7 +1135,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 19
+  m_RootOrder: 18
 --- !u!4 &423242
 Transform:
   m_ObjectHideFlags: 1
@@ -1193,7 +1164,7 @@ Transform:
   - {fileID: 419434}
   - {fileID: 494166}
   m_Father: {fileID: 441516}
-  m_RootOrder: 11
+  m_RootOrder: 10
 --- !u!4 &426346
 Transform:
   m_ObjectHideFlags: 1
@@ -1232,7 +1203,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 26
+  m_RootOrder: 25
 --- !u!4 &429448
 Transform:
   m_ObjectHideFlags: 1
@@ -1271,7 +1242,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 16
+  m_RootOrder: 15
 --- !u!4 &430974
 Transform:
   m_ObjectHideFlags: 1
@@ -1287,7 +1258,7 @@ Transform:
   - {fileID: 432188}
   - {fileID: 455042}
   m_Father: {fileID: 441516}
-  m_RootOrder: 13
+  m_RootOrder: 12
 --- !u!4 &431016
 Transform:
   m_ObjectHideFlags: 1
@@ -1352,7 +1323,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 89.980194, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 14
+  m_RootOrder: 13
 --- !u!4 &435866
 Transform:
   m_ObjectHideFlags: 1
@@ -1368,7 +1339,7 @@ Transform:
   - {fileID: 460824}
   - {fileID: 426420}
   m_Father: {fileID: 441516}
-  m_RootOrder: 17
+  m_RootOrder: 16
 --- !u!4 &438546
 Transform:
   m_ObjectHideFlags: 1
@@ -1384,7 +1355,7 @@ Transform:
   - {fileID: 488602}
   - {fileID: 423242}
   m_Father: {fileID: 441516}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!4 &438566
 Transform:
   m_ObjectHideFlags: 1
@@ -1414,7 +1385,6 @@ Transform:
   - {fileID: 432468}
   - {fileID: 497578}
   - {fileID: 476396}
-  - {fileID: 418474}
   - {fileID: 438546}
   - {fileID: 471470}
   - {fileID: 481296}
@@ -1489,7 +1459,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 23
+  m_RootOrder: 22
 --- !u!4 &450480
 Transform:
   m_ObjectHideFlags: 1
@@ -1531,7 +1501,7 @@ Transform:
   - {fileID: 480860}
   - {fileID: 455186}
   m_Father: {fileID: 441516}
-  m_RootOrder: 9
+  m_RootOrder: 8
 --- !u!4 &455042
 Transform:
   m_ObjectHideFlags: 1
@@ -1583,7 +1553,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 20
+  m_RootOrder: 19
 --- !u!4 &467148
 Transform:
   m_ObjectHideFlags: 1
@@ -1609,7 +1579,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 7
+  m_RootOrder: 6
 --- !u!4 &474620
 Transform:
   m_ObjectHideFlags: 1
@@ -1622,7 +1592,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 22
+  m_RootOrder: 21
 --- !u!4 &475724
 Transform:
   m_ObjectHideFlags: 1
@@ -1680,7 +1650,7 @@ Transform:
   - {fileID: 422204}
   - {fileID: 445944}
   m_Father: {fileID: 441516}
-  m_RootOrder: 8
+  m_RootOrder: 7
 --- !u!4 &481366
 Transform:
   m_ObjectHideFlags: 1
@@ -1693,7 +1663,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 18
+  m_RootOrder: 17
 --- !u!4 &482004
 Transform:
   m_ObjectHideFlags: 1
@@ -1709,7 +1679,7 @@ Transform:
   - {fileID: 467148}
   - {fileID: 403102}
   m_Father: {fileID: 441516}
-  m_RootOrder: 10
+  m_RootOrder: 9
 --- !u!4 &483742
 Transform:
   m_ObjectHideFlags: 1
@@ -1748,7 +1718,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 24
+  m_RootOrder: 23
 --- !u!4 &488602
 Transform:
   m_ObjectHideFlags: 1
@@ -1777,7 +1747,7 @@ Transform:
   - {fileID: 475724}
   - {fileID: 447322}
   m_Father: {fileID: 441516}
-  m_RootOrder: 15
+  m_RootOrder: 14
 --- !u!4 &491874
 Transform:
   m_ObjectHideFlags: 1
@@ -1793,7 +1763,7 @@ Transform:
   - {fileID: 431016}
   - {fileID: 429780}
   m_Father: {fileID: 441516}
-  m_RootOrder: 12
+  m_RootOrder: 11
 --- !u!4 &494166
 Transform:
   m_ObjectHideFlags: 1
@@ -1819,7 +1789,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 441516}
-  m_RootOrder: 21
+  m_RootOrder: 20
 --- !u!4 &496936
 Transform:
   m_ObjectHideFlags: 1
@@ -3513,7 +3483,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: 1ebe1d96973a920409b439b3a0e2bb63, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4278255360
 --- !u!102 &10208594
 TextMesh:
   serializedVersion: 3
@@ -3907,17 +3877,6 @@ MonoBehaviour:
   Highlight: {fileID: 11417390}
   SelectableArea: {fileID: 13663000}
   DefaultSelectableIndex: 0
---- !u!114 &11437088
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 149604}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -381104716, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11442526
 MonoBehaviour:
   m_ObjectHideFlags: 1

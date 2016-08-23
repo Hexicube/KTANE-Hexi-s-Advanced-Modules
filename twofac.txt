@@ -1,0 +1,8 @@
+using (List<string>.Enumerator enumerator = bombInfo.QueryWidgets("twofactor", null).GetEnumerator())
+{
+	while (enumerator.MoveNext())
+	{
+		Dictionary<string, int> dictionary = JsonConvert.DeserializeObject<Dictionary<string, int>>(enumerator.Current);
+		list.Add(dictionary["twofactor_key"]);
+	}
+}

@@ -76,9 +76,9 @@ public class AdvancedVentingGas : MonoBehaviour
     protected void HandleResponse(bool R)
     {
         if (CurQ == null) return;
+        GetComponent<KMNeedyModule>().HandlePass();
         if (CurQ(this, R))
         {
-            GetComponent<KMNeedyModule>().HandlePass();
             Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         }
         else

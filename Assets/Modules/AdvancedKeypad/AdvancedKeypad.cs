@@ -52,16 +52,13 @@ public class AdvancedKeypad : MonoBehaviour
         List<char> values = new List<char>();
         foreach (char a in CharList) values.Add(a);
         char[] labels = new char[8];
-        string chars = "";
         int pos = 0;
         while (pos < 8)
         {
             int val = Random.Range(0, values.Count);
             labels[pos++] = values[val];
             values.RemoveAt(val);
-            chars += labels[pos - 1];
         }
-        Debug.Log(chars);
         pos = 0;
         while (pos < 8)
         {

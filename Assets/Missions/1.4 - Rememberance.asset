@@ -30,12 +30,11 @@ MonoBehaviour:
       SpecialComponentType: 0
       ModTypes:
       - MemoryV2
-    - Count: 9
+    - Count: 8
       AllowedSources: 1
       ComponentTypes: 0c0000000b0000000a00000009000000080000000700000006000000050000000400000003000000
       SpecialComponentType: 0
       ModTypes:
-      - PasswordV2
-      - MorseV2
       - KeypadV2
+      - MorseV2
   PacingEventsEnabled: 1

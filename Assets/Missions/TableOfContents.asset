@@ -17,8 +17,9 @@ MonoBehaviour:
     MissionIDs:
     - 3.1 - Round Keypad
     - 3.2 - Morsematics
-    - 3.3 - Password Seqences
+    - 3.3 - Safety Safe
     - 3.4 - Forget Me Not
+    - 3.5 - Plumbing
   - Title: A Change of Pace
     MissionIDs:
     - 1.1 - Strangely Familiar

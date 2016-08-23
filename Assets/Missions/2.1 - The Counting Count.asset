@@ -35,6 +35,5 @@ MonoBehaviour:
       ComponentTypes: 
       SpecialComponentType: 0
       ModTypes:
-      - PasswordV2
       - MorseV2
   PacingEventsEnabled: 1

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Name: 4.1 - Needy Quiz
   m_EditorClassIdentifier: 
   DisplayName: Needy Quiz
-  Description: A mission featuring 2 Needy Quiz modules, and any 3 solvable modules.
+  Description: A mission featuring 2 Needy Quiz modules, and any 6 solvable modules.
   GeneratorSetting:
     TimeLimit: 600
     NumStrikes: 3
     TimeBeforeNeedyActivation: 30
-    FrontFaceOnly: 1
+    FrontFaceOnly: 0
     ComponentPools:
     - Count: 2
       AllowedSources: 2
@@ -25,7 +25,7 @@ MonoBehaviour:
       SpecialComponentType: 0
       ModTypes:
       - NeedyVentV2
-    - Count: 3
+    - Count: 6
       AllowedSources: 3
       ComponentTypes: 
       SpecialComponentType: 1

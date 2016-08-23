@@ -78,8 +78,6 @@ public class AdvancedMemory : MonoBehaviour
                         Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
                         string label = responseDict["label"];
                         bool active = responseDict["on"].Equals("True");
-                        Debug.Log(response);
-                        Debug.Log(label + ":" + active);
                         if (label.Equals("CAR") && !active) unlitCAR = true;
                         if (active) lit++;
                         else unlit++;
@@ -124,7 +122,6 @@ public class AdvancedMemory : MonoBehaviour
                         List<string> data = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
                         foreach (string response in data)
                         {
-                            Debug.Log(response);
                             Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
                             foreach (string s in responseDict["presentPorts"])
                             {
@@ -219,12 +216,14 @@ public class AdvancedMemory : MonoBehaviour
         if (Position < Solution.Length)
         {
             int progress = BombInfo.GetSolvedModuleNames().Count;
-            Debug.Log(progress);
             if (progress < Solution.Length) GetComponent<KMBombModule>().HandleStrike();
             else if (val == Solution[Position])
             {
                 if (DisplayMesh.text.Equals("-")) DisplayMesh.text = "";
-                if (Position == 10) DisplayMesh.text += "\n"; //Support for double-decker bomb, will not happen normally.
+                if (Solution.Length > 10) //Double-decker bomb, vanilla caps at 10 slots (one is timer, one is this module)
+                {
+                    if (Position == (Solution.Length + 1) / 2) DisplayMesh.text += "\n";
+                }
                 DisplayMesh.text += val;
                 Position++;
                 if (Position == Solution.Length) GetComponent<KMBombModule>().HandlePass();

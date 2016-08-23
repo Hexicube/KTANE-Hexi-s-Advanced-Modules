@@ -9,11 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -548183353, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
-  m_Name: 3.3 - Password Seqences
+  m_Name: 3.3 - Safety Safe
   m_EditorClassIdentifier: 
-  DisplayName: Password Sequences
-  Description: A mission featuring only Password Sequences, and plenty of time to
-    learn the module.
+  DisplayName: Safety Safe
+  Description: A mission featuring only the Safety Safe, and plenty of time to learn
+    the module.
   GeneratorSetting:
     TimeLimit: 600
     NumStrikes: 3

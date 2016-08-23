@@ -24,12 +24,12 @@ MonoBehaviour:
       ComponentTypes: 0200000004000000
       SpecialComponentType: 0
       ModTypes: []
-    - Count: 2
+    - Count: 4
       AllowedSources: 2
       ComponentTypes: 
       SpecialComponentType: 0
       ModTypes:
-      - PasswordV2
+      - KeypadV2
     - Count: 2
       AllowedSources: 2
       ComponentTypes: 0c000000

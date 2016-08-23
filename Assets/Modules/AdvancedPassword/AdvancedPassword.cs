@@ -1,164 +1,221 @@
 ﻿/*
 
--- On the Subject of Password Sequences --
-- The latest and greatest in security from the old days; 11 buttons, and no limit on retries. -
+-- On the Subject of Answering Questions --
+- I hope you studied, it's quiz night! -
 
-The 11-button lock must be solved by trying random combinations.
-If the button is correct, it will light up.
-Pressing an incorrect button *will not* cause a strike.
-Creating a combination below *will* cause a strike, *unless* it's part of the solution.
+Respond to the computer prompts by pressing "Y" for "Yes" or "N" for "No".
 
- */
+*/
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class AdvancedPassword : MonoBehaviour
 {
-    public KMSelectable Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11;
+    public KMSelectable Dial1, Dial2, Dial3, Dial4, Dial5, Dial6, Lever;
+    private KMSelectable[] Dials;
+
+    private int[] DialPos = new int[6];
+
+    public KMBombInfo Info;
     public KMAudio Sound;
 
-    protected KMSelectable[] Buttons;
-    protected int[] Sequence;
+    bool Pass = false;
 
-    protected bool[] ButtonStates;
-    protected int Progress;
+    private int[] ClickPos = new int[6], AnswerPos = new int[6];
 
-    private static int[] BadStates = new int[]{
-        //One button
-        1024, //100 0000 0000
-        //Two buttons
-        768,  //011 0000 0000
-        80,   //000 0101 0000
-        6,    //000 0000 0110
-        //Three buttons
-        1344, //101 0100 0000
-        25,   //000 0001 1001
-        112,  //000 0111 0000
-        1058, //100 0010 0010
-        //Four buttons
-        526,  //010 0000 1110
-        562,  //010 0011 0010
-        139,  //000 1000 1011
-        1297, //101 0001 0001
-        402,  //001 1001 0010
-        //Eight buttons
-        1278, //100 1111 1110
-        958,  //011 1011 1110
-        479,  //001 1101 1111
-        1907, //111 0111 0011
-        1885, //111 0101 1101
-        //Nine buttons
-        1775, //110 1110 1111
-        1975, //111 1011 0111
-        1503, //101 1101 1111
-        2041, //111 1111 1001
-        895,  //011 0111 1111
-        //Ten buttons
-        2015, //111 1101 1111
+    private static int[][] DialChart = new int[][]{
+        new int[]{8, 10, 2, 11, 0, 4, 7, 8, 0, 2, 5, 1, 1, 9, 5, 3, 4, 8, 9, 7, 11, 11, 6, 4, 10, 3, 7, 9, 2, 10, 6, 6, 1, 0, 5, 3},
+        new int[]{3, 1, 1, 6, 5, 2, 4, 3, 11, 11, 2, 9, 7, 5, 9, 10, 10, 0, 4, 6, 9, 11, 0, 2, 7, 7, 0, 10, 5, 8, 8, 3, 1, 6, 4, 8},
+        new int[]{4, 3, 1, 11, 5, 7, 4, 6, 0, 8, 5, 8, 9, 1, 8, 9, 6, 4, 0, 7, 6, 2, 11, 7, 10, 1, 3, 10, 11, 10, 0, 3, 5, 2, 9, 2},
+        new int[]{8, 7, 5, 11, 8, 7, 2, 6, 0, 0, 1, 11, 5, 4, 10, 1, 1, 0, 6, 11, 3, 8, 6, 2, 10, 10, 5, 9, 7, 4, 3, 3, 2, 4, 9, 9},
+        new int[]{9, 3, 3, 7, 2, 1, 10, 6, 9, 5, 0, 11, 6, 4, 2, 9, 4, 6, 3, 5, 11, 1, 11, 8, 8, 0, 8, 1, 7, 10, 5, 0, 7, 2, 10, 4},
+        new int[]{0, 8, 6, 7, 1, 5, 5, 5, 10, 6, 4, 11, 2, 9, 8, 7, 8, 11, 10, 3, 1, 0, 2, 10, 9, 4, 6, 2, 3, 4, 0, 11, 3, 1, 7, 9}
     };
+
+    private int GetDialChartVal(int dial, char c)
+    {
+        int charVal = -1;
+        if (c == 'A') charVal = 0;
+        else if (c == 'B') charVal = 1;
+        else if (c == 'C') charVal = 2;
+        else if (c == 'D') charVal = 3;
+        else if (c == 'E') charVal = 4;
+        else if (c == 'F') charVal = 5;
+        else if (c == 'G') charVal = 6;
+        else if (c == 'H') charVal = 7;
+        else if (c == 'I') charVal = 8;
+        else if (c == 'J') charVal = 9;
+        else if (c == 'K') charVal = 10;
+        else if (c == 'L') charVal = 11;
+        else if (c == 'M') charVal = 12;
+        else if (c == 'N') charVal = 13;
+        else if (c == 'O') charVal = 14;
+        else if (c == 'P') charVal = 15;
+        else if (c == 'Q') charVal = 16;
+        else if (c == 'R') charVal = 17;
+        else if (c == 'S') charVal = 18;
+        else if (c == 'T') charVal = 19;
+        else if (c == 'U') charVal = 20;
+        else if (c == 'V') charVal = 21;
+        else if (c == 'W') charVal = 22;
+        else if (c == 'X') charVal = 23;
+        else if (c == 'Y') charVal = 24;
+        else if (c == 'Z') charVal = 25;
+        else if (c == '0') charVal = 26;
+        else if (c == '1') charVal = 27;
+        else if (c == '2') charVal = 28;
+        else if (c == '3') charVal = 29;
+        else if (c == '4') charVal = 30;
+        else if (c == '5') charVal = 31;
+        else if (c == '6') charVal = 32;
+        else if (c == '7') charVal = 33;
+        else if (c == '8') charVal = 34;
+        else if (c == '9') charVal = 35;
+        else charVal = 0; //Shouldn't happen.
+
+        return DialChart[dial][charVal];
+    }
 
     void Awake()
     {
-        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+        GetComponent<KMBombModule>().OnActivate += Init;
 
-        Buttons = new KMSelectable[] { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9, Button10, Button11 };
-        Button1.OnInteract += Handle1;
-        Button2.OnInteract += Handle2;
-        Button3.OnInteract += Handle3;
-        Button4.OnInteract += Handle4;
-        Button5.OnInteract += Handle5;
-        Button6.OnInteract += Handle6;
-        Button7.OnInteract += Handle7;
-        Button8.OnInteract += Handle8;
-        Button9.OnInteract += Handle9;
-        Button10.OnInteract += Handle10;
-        Button11.OnInteract += Handle11;
-        foreach(KMSelectable b in Buttons)
+        Dials = new KMSelectable[] { Dial1, Dial2, Dial3, Dial4, Dial5, Dial6 };
+
+        for (int a = 0; a < 6; a++)
         {
-            b.gameObject.transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+            Dials[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         }
-
-        List<int> values = new List<int>();
-        for (int a = 0; a < 11; a++) values.Add(a);
-        Sequence = new int[11];
-        int pos = 0;
-        while(pos < 11)
-        {
-            int val = Random.Range(0, values.Count);
-            Sequence[pos++] = values[val];
-            values.RemoveAt(val);
-        }
-
-        ButtonStates = new bool[11];
     }
 
-    void Reset()
+    void Init()
     {
-        for (int a = 0; a < 11; a++)
-        {
-            ButtonStates[a] = false;
-            Buttons[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
-        }
-        Progress = 0;
-    }
+        //transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
-    private int GetStateVal()
-    {
-        int val = 0;
-        for (int a = 0; a < 11; a++)
+        for(int a = 0; a < 6; a++)
         {
-           if (ButtonStates[a]) val += 1 << (10 - a);
+            Dials[a].transform.Find("Bar").GetComponent<MeshRenderer>().material.color = new Color(0.4f, 0.4f, 0.4f);
+            DialPos[a] = Random.Range(0, 12);
+            Dials[a].transform.Find("Bar").transform.localEulerAngles = new Vector3(0, DialPos[a] * 30f, 0);
+            ClickPos[a] = Random.Range(0, 12);
+            int a2 = a;
+            Dials[a].OnInteract += delegate() { HandleInteract(a2); return false; };
         }
-        return val;
-    }
 
-    void Guess(int pos)
-    {
-        if (Progress == 11 || ButtonStates[pos]) return;
-        int oldval = GetStateVal();
-        ButtonStates[pos] = true;
-        if(Sequence[Progress] == pos)
+        Lever.OnInteract += HandleLever;
+
+        int dialOffset = 0;
+
+        List<string> ports = new List<string>();
+        List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
+        foreach (string response in data)
         {
-            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-            Progress++;
-            Buttons[pos].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0);
-            if (Progress == 11) GetComponent<KMBombModule>().HandlePass();
-        }
-        else
-        {
-            int val = GetStateVal();
-            bool match = false;
-            foreach(int target in BadStates)
+            Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
+            foreach (string s in responseDict["presentPorts"])
             {
-                //if (((target & val) == target) && ((target & oldval) < target)) match = true;
-                if (target == val && target != oldval)
+                if (!ports.Contains(s))
                 {
-                    match = true;
-                    break;
+                    ports.Add(s);
+                    dialOffset += 7;
                 }
             }
+        }
+
+        char[] serial = "AB12C3".ToCharArray();
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+            serial = responseDict["serial"].ToCharArray();
+            break;
+        }
+        
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+            char[] label = responseDict["label"].ToCharArray();
+
+            bool match = false;
+            foreach (char c in label)
+            {
+                foreach (char c2 in serial)
+                {
+                    if (c == c2)
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) break;
+            }
+
             if (match)
             {
-                GetComponent<KMBombModule>().HandleStrike();
-                Reset();
+                if (responseDict["on"].Equals("True")) dialOffset += 5;
+                else dialOffset++;
             }
-            else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, gameObject.transform);
-            //Reset();
-            ButtonStates[pos] = false;
+        }
+
+        for (int a = 0; a < 6; a++)
+        {
+            int serialVal = 0;
+            serialVal = GetDialChartVal(a, serial[a]);
+            if (a == 5)
+            {
+                serialVal += GetDialChartVal(5, serial[0]);
+                serialVal += GetDialChartVal(5, serial[1]);
+                serialVal += GetDialChartVal(5, serial[2]);
+                serialVal += GetDialChartVal(5, serial[3]);
+                serialVal += GetDialChartVal(5, serial[4]);
+            }
+            AnswerPos[a] = (ClickPos[a] + serialVal + dialOffset) % 12;
         }
     }
 
-    protected bool Handle1() { Guess(0); return false; }
-    protected bool Handle2() { Guess(1); return false; }
-    protected bool Handle3() { Guess(2); return false; }
-    protected bool Handle4() { Guess(3); return false; }
-    protected bool Handle5() { Guess(4); return false; }
-    protected bool Handle6() { Guess(5); return false; }
-    protected bool Handle7() { Guess(6); return false; }
-    protected bool Handle8() { Guess(7); return false; }
-    protected bool Handle9() { Guess(8); return false; }
-    protected bool Handle10() { Guess(9); return false; }
-    protected bool Handle11() { Guess(10); return false; }
+    void HandleInteract(int dial)
+    {
+        if (Pass) return;
+
+        DialPos[dial] = (DialPos[dial] + 1) % 12;
+        Dials[dial].transform.Find("Bar").transform.localEulerAngles = new Vector3(0, DialPos[dial] * 30f, 0);
+
+        if (DialPos[dial] == ClickPos[dial]) Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+        else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, transform);
+
+        Dials[dial].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+    }
+
+    bool HandleLever()
+    {
+        if (Pass) return false;
+
+        bool ans = true;
+        for (int a = 0; a < 6; a++)
+        {
+            if (DialPos[a] != AnswerPos[a])
+            {
+                ans = false;
+                break;
+            }
+        }
+
+        if (ans)
+        {
+            Lever.transform.localEulerAngles = new Vector3(0, 210, 0);
+            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+            GetComponent<KMBombModule>().HandlePass();
+            Pass = true;
+        }
+        else GetComponent<KMBombModule>().HandleStrike();
+        for (int a = 0; a < 6; a++)
+        {
+            Dials[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = (DialPos[a] == AnswerPos[a]) ? new Color(0, 1, 0) : new Color(1, 0, 0);
+        }
+
+        return false;
+    }
 }

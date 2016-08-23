@@ -15,7 +15,7 @@ MonoBehaviour:
   Description: A mission featuring only the Round Keypad, and plenty of time to learn
     the module.
   GeneratorSetting:
-    TimeLimit: 600
+    TimeLimit: 750
     NumStrikes: 3
     TimeBeforeNeedyActivation: 90
     FrontFaceOnly: 0
