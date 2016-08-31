@@ -49,6 +49,11 @@ public class AdvancedKeypad : MonoBehaviour
         Button7.OnInteract += Handle7;
         Button8.OnInteract += Handle8;
 
+        foreach (KMSelectable b in Buttons)
+        {
+            b.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        }
+
         List<char> values = new List<char>();
         foreach (char a in CharList) values.Add(a);
         char[] labels = new char[8];

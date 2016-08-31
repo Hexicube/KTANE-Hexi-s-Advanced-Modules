@@ -25,12 +25,12 @@ MonoBehaviour:
       SpecialComponentType: 0
       ModTypes:
       - NeedyKnobV2
-    - Count: 3
+    - Count: 2
       AllowedSources: 2
       ComponentTypes: 0a000000
       SpecialComponentType: 0
       ModTypes: []
-    - Count: 3
+    - Count: 2
       AllowedSources: 2
       ComponentTypes: 09000000
       SpecialComponentType: 0
@@ -52,4 +52,10 @@ MonoBehaviour:
       SpecialComponentType: 0
       ModTypes:
       - MorseV2
+    - Count: 2
+      AllowedSources: 2
+      ComponentTypes: 
+      SpecialComponentType: 0
+      ModTypes:
+      - PasswordV2
   PacingEventsEnabled: 1

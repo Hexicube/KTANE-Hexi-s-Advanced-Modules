@@ -40,7 +40,6 @@ public class AdvancedVentingGas : MonoBehaviour
 
     void Awake()
     {
-        gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         Display.text = "";
 
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
@@ -48,6 +47,9 @@ public class AdvancedVentingGas : MonoBehaviour
         YesButton.OnInteract += HandleYes;
         NoButton.OnInteract += HandleNo;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
+
+        YesButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        NoButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
     }
 
     protected bool HandleYes()

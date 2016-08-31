@@ -12,6 +12,8 @@ using System.Collections;
 
 public class AdvancedKnob : MonoBehaviour
 {
+    public static bool HasFailed; //Prevent voice-line from playing the very first time.
+
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
@@ -46,6 +48,8 @@ public class AdvancedKnob : MonoBehaviour
         Button8.OnInteract += Handle8;
         Button9.OnInteract += Handle9;
 
+        PhoneRing.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+
         GetComponent<KMNeedyModule>().OnActivate += OnActivate;
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
         GetComponent<KMNeedyModule>().OnNeedyDeactivation += OnNeedyDeactivation;
@@ -53,8 +57,6 @@ public class AdvancedKnob : MonoBehaviour
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
         Display.text = "";
-
-        gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
     }
 
     protected void OnActivate()
@@ -133,13 +135,19 @@ public class AdvancedKnob : MonoBehaviour
             PhoneDelay--;
             if (PhoneDelay == 0)
             {
-                if (Random.Range(0, 10) > 0) Sound.PlaySoundAtTransform("NoNumber", gameObject.transform);
-                else
+                bool voice = false;
+                if (HasFailed)
+                {
+                    if (Random.Range(0, 7) == 0) voice = true;
+                }
+                HasFailed = true;
+                if (voice)
                 {
                     string name = SoundNames[Random.Range(0, SoundNames.Length)];
                     //Debug.Log(name);
                     Sound.PlaySoundAtTransform(name, gameObject.transform);
                 }
+                else Sound.PlaySoundAtTransform("NoNumber", gameObject.transform);
             }
         }
     }

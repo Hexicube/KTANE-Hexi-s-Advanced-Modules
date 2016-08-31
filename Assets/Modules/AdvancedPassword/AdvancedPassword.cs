@@ -88,14 +88,10 @@ public class AdvancedPassword : MonoBehaviour
         for (int a = 0; a < 6; a++)
         {
             Dials[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+            Dials[a].transform.Find("default").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         }
-    }
 
-    void Init()
-    {
-        //transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
-
-        for(int a = 0; a < 6; a++)
+        for (int a = 0; a < 6; a++)
         {
             Dials[a].transform.Find("Bar").GetComponent<MeshRenderer>().material.color = new Color(0.4f, 0.4f, 0.4f);
             DialPos[a] = Random.Range(0, 12);
@@ -104,6 +100,14 @@ public class AdvancedPassword : MonoBehaviour
             int a2 = a;
             Dials[a].OnInteract += delegate() { HandleInteract(a2); return false; };
         }
+
+        Lever.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Lever.transform.Find("default").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+    }
+
+    void Init()
+    {
+        //transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
         Lever.OnInteract += HandleLever;
 

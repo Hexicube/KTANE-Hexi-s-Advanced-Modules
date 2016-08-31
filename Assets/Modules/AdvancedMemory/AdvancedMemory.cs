@@ -42,10 +42,18 @@ public class AdvancedMemory : MonoBehaviour
         Button8.OnInteract += Handle8;
         Button9.OnInteract += Handle9;
 
-        GetComponent<KMBombModule>().OnActivate += ActivateModule;
+        Button0.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button1.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button2.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button3.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button4.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button5.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button6.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button7.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button8.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Button9.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
-        gameObject.transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
-        gameObject.transform.Find("Plane (1)").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        GetComponent<KMBombModule>().OnActivate += ActivateModule;
     }
 
     private void ActivateModule()

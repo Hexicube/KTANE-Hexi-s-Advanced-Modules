@@ -29,7 +29,7 @@ MonoBehaviour:
       ComponentTypes: 07000000
       SpecialComponentType: 0
       ModTypes: []
-    - Count: 4
+    - Count: 2
       AllowedSources: 2
       ComponentTypes: 0c000000
       SpecialComponentType: 0
@@ -40,4 +40,10 @@ MonoBehaviour:
       SpecialComponentType: 0
       ModTypes:
       - MemoryV2
+    - Count: 2
+      AllowedSources: 2
+      ComponentTypes: 
+      SpecialComponentType: 0
+      ModTypes:
+      - PasswordV2
   PacingEventsEnabled: 1

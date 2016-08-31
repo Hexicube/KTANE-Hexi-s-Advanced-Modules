@@ -53,7 +53,6 @@ public class AdvancedMorse : MonoBehaviour
     void Awake()
     {
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
-        transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
 
         LED = gameObject.transform.Find("LED").GetComponent<MeshRenderer>();
         LED.material.color = BLACK;
@@ -64,6 +63,13 @@ public class AdvancedMorse : MonoBehaviour
         ButtonSpace.OnInteract += HandleSpace;
         ButtonClear.OnInteract += HandleClear;
         ButtonDone.OnInteract += HandleDone;
+
+        ButtonPlay.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        ButtonDot.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        ButtonDash.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        ButtonSpace.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        ButtonClear.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        ButtonDone.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
         DisplaySequence = new int[0];
         EnteredCharacters = new List<int>();

@@ -5,11 +5,11 @@
 
 Follow these rules in the order they are listed. Perform the first action that applies:
 1. If the button is blue and the number of AA batteries is larger than the number of D batteries, hold the button and refer to "Releasing a Held Button".
-2. If the button is blue or yellow and has as many letters on the label as the highest number in the serial, press and immediately release.
+2. If the button is blue or yellow and has as at least as many letters on the label as the highest number in the serial, press and immediately release.
 3. If the button is black or white and has no label, press and immediately release when the two seconds digits on the timer match.
-4. If there are at least 2 unlit indicators and the serial contains a vowel, press and immediately release.
-5. If the button is red and the label states a different colour, hold the button and refer to "Releasing a Held Button".
-6. If no other rule applies, press and immediately release.
+4. If the button is red and the label states a different colour, hold the button and refer to "Releasing a Held Button".
+5. If there are at least 2 unlit indicators and the serial contains a vowel, press and immediately release.
+6. If no other rule applies, hold the button and refer to "Releasing a Held Button".
 
 - Releasing a Held Button -
 
@@ -71,7 +71,7 @@ public class AdvancedButton : MonoBehaviour
 
     private static string[] buttonLabels = new string[]{
         "purple", "jade", "maroon", "indigo",
-        "escort", "india", "red", "delta"
+        "escort", "red", "delta", ""
     };
 
     private static Color BLACK = new Color(0, 0, 0);
@@ -110,6 +110,8 @@ public class AdvancedButton : MonoBehaviour
             return false;
         }
 
+        Button.transform.localPosition = new Vector3(-0.0125f, -0.01f, -0.0125f);
+
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         flashing = Random.Range(0, 2) == 1;
         holdColour = Random.Range(0, colours.Length);
@@ -119,6 +121,8 @@ public class AdvancedButton : MonoBehaviour
 
     protected bool Release()
     {
+        Button.transform.localPosition = new Vector3(-0.0125f, 0.01f, -0.0125f);
+
         if (batAA == -1)
         {
             batAA = 0;
@@ -158,15 +162,15 @@ public class AdvancedButton : MonoBehaviour
             }
 
             if (buttonCol == 3 && batAA > batD) hold = true;
-            else if ((buttonCol == 3 || buttonCol == 1) && buttonLabels[buttonText].Length == highSerial) hold = false;
+            else if ((buttonCol == 3 || buttonCol == 1) && buttonLabels[buttonText].Length >= highSerial) hold = false;
             else if ((buttonCol == 5 || buttonCol == 4) && buttonLabels[buttonText].Length == 0)
             {
                 hold = false;
                 catch22 = true;
             }
-            else if (unlitInd >= 2 && serialVowel) hold = false;
             else if (buttonCol == 0 && buttonText < 4) hold = true;
-            else hold = false;
+            else if (unlitInd >= 2 && serialVowel) hold = false;
+            else hold = true;
         }
 
         if (hold)

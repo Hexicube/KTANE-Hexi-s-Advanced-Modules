@@ -136,7 +136,28 @@ public class AdvancedMaze : MonoBehaviour
             new KMSelectable[]{ButtonA6, ButtonB6, ButtonC6, ButtonD6, ButtonE6, ButtonF6}
         };
 
-        ButtonCheck.OnInteract += HandleCheck;
+        foreach (KMSelectable[] list in Buttons)
+        {
+            foreach (KMSelectable b in list)
+            {
+                b.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+            }
+        }
+
+        EntryLeft1.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryLeft2.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryLeft3.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryLeft4.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryLeft5.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryLeft6.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight1.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight2.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight3.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight4.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight5.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        EntryRight6.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+
+        ButtonCheck.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
         GetComponent<KMBombModule>().OnActivate += Init;
     }
@@ -159,6 +180,8 @@ public class AdvancedMaze : MonoBehaviour
 
     void Init()
     {
+        ButtonCheck.OnInteract += HandleCheck;
+
         EntryLocations = new int[4];
         List<int> posList = new List<int>() { 1, 2, 3, 4, 5, 6 };
         for (int a = 0; a < 4; a++)
@@ -235,13 +258,41 @@ public class AdvancedMaze : MonoBehaviour
                 portSum++;
             }
         }
-        string serial = "AB12C3";
+
+        int batteries = 0;
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
+            batteries += responseDict["numbatteries"];
+        }
+
+        string serial = null;
         data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
         foreach (string response in data)
         {
             Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
             serial = responseDict["serial"];
             break;
+        }
+        if (serial == null) //We're in the test harness, randomly pick a serial and add some edgework.
+        {
+            char[] chars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F',
+                                        'G', 'H', 'I', 'J', 'K', 'L',
+                                        'M', 'N', 'O', 'P', 'Q', 'R',
+                                        'S', 'T', 'U', 'V', 'W', 'X',
+                                        'Y', 'Z', '0', '1', '2', '3',
+                                        '4', '5', '6', '7', '8', '9'};
+            serial = "";
+            for (int a = 0; a < 5; a++)
+            {
+                serial += chars[Random.Range(0, 36)];
+            }
+            serial += chars[Random.Range(0, 10) + 26];
+            Debug.Log("Serial: " + serial);
+
+            batteries = Random.Range(0, 6);
+            Debug.Log("Batteries: " + batteries);
         }
         char[] serialChar = serial.ToCharArray();
         int serialNumbers = 0;
@@ -252,13 +303,6 @@ public class AdvancedMaze : MonoBehaviour
             if (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9') serialNumbers++;
             if (serialChars.Contains(c)) serialDupe = true;
             else serialChars.Add(c);
-        }
-        int batteries = 0;
-        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
-        foreach (string response in data)
-        {
-            Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
-            batteries += responseDict["numbatteries"];
         }
 
         ActiveIn = new bool[4];
@@ -499,72 +543,91 @@ public class AdvancedMaze : MonoBehaviour
         {
             for (int y = 0; y < 6; y++)
             {
-                if (grid[x*2+1][y*2+1])
+                if (grid[x * 2 + 1][y * 2 + 1])
                 {
                     int num = 0;
-                    if (x > 0 && grid[x * 2][y * 2 + 1]) num++;
-                    if (x < 5 && grid[x * 2 + 2][y * 2 + 1]) num++;
-                    if (y > 0 && grid[x * 2 + 1][y * 2]) num++;
-                    if (y < 5 && grid[x * 2 + 1][y * 2 + 2]) num++;
+                    if (grid[x * 2][y * 2 + 1]) num++;
+                    if (grid[x * 2 + 2][y * 2 + 1]) num++;
+                    if (grid[x * 2 + 1][y * 2]) num++;
+                    if (grid[x * 2 + 1][y * 2 + 2]) num++;
 
-                    if (num == 1 && Random.Range(0, 3) > 0)
+                    if (num == 1)
                     {
-                        bool added = false;
-                        List<int> order = new List<int>() { 0, 1, 2, 3 };
-                        while (order.Count > 0)
+                        if (Random.Range(0, 4) > 0)
                         {
-                            int pos = Random.Range(0, order.Count);
-                            int dir = order[pos];
-                            order.RemoveAt(pos);
+                            bool added = false;
+                            List<int> order = new List<int>() { 0, 1, 2, 3 };
+                            while (order.Count > 0)
+                            {
+                                int pos = Random.Range(0, order.Count);
+                                int dir = order[pos];
+                                order.RemoveAt(pos);
 
-                            if (dir == 0 && x > 0)
-                            {
-                                if (grid[x * 2 - 1][y * 2 + 1] && !grid[x * 2][y * 2 + 1])
+                                if (dir == 0 && x > 0)
                                 {
-                                    if (!added || Random.Range(0, 4) == 0)
+                                    if (grid[x * 2 - 1][y * 2 + 1] && !grid[x * 2][y * 2 + 1])
                                     {
-                                        added = true;
-                                        grid[x * 2 - 1][y * 2 + 1] = true;
-                                        grid[x * 2][y * 2 + 1] = true;
+                                        if (!added || Random.Range(0, 4) == 0)
+                                        {
+                                            added = true;
+                                            grid[x * 2 - 1][y * 2 + 1] = true;
+                                            grid[x * 2][y * 2 + 1] = true;
+                                        }
+                                    }
+                                }
+                                if (dir == 1 && x < 5)
+                                {
+                                    if (grid[x * 2 + 3][y * 2 + 1] && !grid[x * 2 + 2][y * 2 + 1])
+                                    {
+                                        if (!added || Random.Range(0, 4) == 0)
+                                        {
+                                            added = true;
+                                            grid[x * 2 + 2][y * 2 + 1] = true;
+                                            grid[x * 2 + 3][y * 2 + 1] = true;
+                                        }
+                                    }
+                                }
+                                if (dir == 2 && y > 0)
+                                {
+                                    if (grid[x * 2 + 1][y * 2 - 1] && !grid[x * 2 + 1][y * 2])
+                                    {
+                                        if (!added || Random.Range(0, 4) == 0)
+                                        {
+                                            added = true;
+                                            grid[x * 2 + 1][y * 2 - 1] = true;
+                                            grid[x * 2 + 1][y * 2] = true;
+                                        }
+                                    }
+                                }
+                                if (dir == 3 && y < 5)
+                                {
+                                    if (grid[x * 2 + 1][y * 2 + 3] && !grid[x * 2 + 1][y * 2 + 2])
+                                    {
+                                        if (!added || Random.Range(0, 4) == 0)
+                                        {
+                                            added = true;
+                                            grid[x * 2 + 1][y * 2 + 2] = true;
+                                            grid[x * 2 + 1][y * 2 + 3] = true;
+                                        }
                                     }
                                 }
                             }
-                            if (dir == 1 && x < 5)
+                            if (!added && Random.Range(0, 3) > 0)
                             {
-                                if (grid[x * 2 + 3][y * 2 + 1] && !grid[x * 2 + 2][y * 2 + 1])
-                                {
-                                    if (!added || Random.Range(0, 4) == 0)
-                                    {
-                                        added = true;
-                                        grid[x * 2 + 2][y * 2 + 1] = true;
-                                        grid[x * 2 + 3][y * 2 + 1] = true;
-                                    }
-                                }
+                                grid[x * 2][y * 2 + 1] = false;
+                                grid[x * 2 + 2][y * 2 + 1] = false;
+                                grid[x * 2 + 1][y * 2] = false;
+                                grid[x * 2 + 1][y * 2 + 2] = false;
+                                grid[x * 2 + 1][y * 2 + 1] = false;
                             }
-                            if (dir == 2 && y > 0)
-                            {
-                                if (grid[x * 2 + 1][y * 2 - 1] && !grid[x * 2 + 1][y * 2])
-                                {
-                                    if (!added || Random.Range(0, 4) == 0)
-                                    {
-                                        added = true;
-                                        grid[x * 2 + 1][y * 2 - 1] = true;
-                                        grid[x * 2 + 1][y * 2] = true;
-                                    }
-                                }
-                            }
-                            if (dir == 3 && y < 5)
-                            {
-                                if (grid[x * 2 + 1][y * 2 + 3] && !grid[x * 2 + 1][y * 2 + 2])
-                                {
-                                    if (!added || Random.Range(0, 4) == 0)
-                                    {
-                                        added = true;
-                                        grid[x * 2 + 1][y * 2 + 2] = true;
-                                        grid[x * 2 + 1][y * 2 + 3] = true;
-                                    }
-                                }
-                            }
+                        }
+                        else
+                        {
+                            grid[x * 2][y * 2 + 1] = false;
+                            grid[x * 2 + 2][y * 2 + 1] = false;
+                            grid[x * 2 + 1][y * 2] = false;
+                            grid[x * 2 + 1][y * 2 + 2] = false;
+                            grid[x * 2 + 1][y * 2 + 1] = false;
                         }
                     }
                 }
@@ -763,7 +826,6 @@ public class AdvancedMaze : MonoBehaviour
                                         if (PlayFieldType[x][y] == -1) PlayFieldType[x][y] = Random.Range(0, 5);
                                     }
                                 }
-                                PlayFieldState[x][y] = Random.Range(0, 4);
                             }
                         }
                     }
@@ -927,6 +989,49 @@ public class AdvancedMaze : MonoBehaviour
                     }
                     if (pos[0] > 0) positions.Add(new int[] { pos[0] - 1, pos[1] });
                     done[pos[0]][pos[1]] = true;
+                }
+            }
+        }
+
+        //Precaution: Prevent a solution that doesn't physically connect in/out pipes but has valid piping next to them.
+        for (int a = 0; a < 4; a++)
+        {
+            if (ActiveIn[a])
+            {
+                int pos = EntryLocations[a] - 1;
+                int[] conn = GetConnections(0, pos);
+                bool found = false;
+                foreach (int val in conn)
+                {
+                    if (val == 3)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    GetComponent<KMBombModule>().HandleStrike();
+                    return false;
+                }
+            }
+            if (ActiveOut[a])
+            {
+                int pos = ExitLocations[a] - 1;
+                int[] conn = GetConnections(5, pos);
+                bool found = false;
+                foreach (int val in conn)
+                {
+                    if (val == 1)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    GetComponent<KMBombModule>().HandleStrike();
+                    return false;
                 }
             }
         }
