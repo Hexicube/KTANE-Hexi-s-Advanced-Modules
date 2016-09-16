@@ -17,6 +17,8 @@ public class AdvancedVentingGas : MonoBehaviour
     public KMBombInfo BombInfo;
     public KMAudio Sound;
 
+    public KMGameCommands Service;
+
     public KMSelectable YesButton;
     public KMSelectable NoButton;
     public TextMesh Display;
@@ -24,6 +26,9 @@ public class AdvancedVentingGas : MonoBehaviour
     protected bool LastReply;
     protected bool HasReply;
     protected System.Func<AdvancedVentingGas, bool, bool> CurQ;
+
+    protected bool DidHakuna = false;
+    protected bool Exploded = false;
 
     private List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>> QuestionList = new List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>>(){
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == Module.LastReply;return true;})},
@@ -33,7 +38,7 @@ public class AdvancedVentingGas : MonoBehaviour
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 0) == Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Many strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 1) == Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){Module.DidHakuna = true;return Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Response == Module.SerialDuplicate();})}
     };
@@ -47,6 +52,7 @@ public class AdvancedVentingGas : MonoBehaviour
         YesButton.OnInteract += HandleYes;
         NoButton.OnInteract += HandleNo;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
+        BombInfo.OnBombExploded += delegate() { Exploded = true; };
 
         YesButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         NoButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
@@ -66,7 +72,8 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void OnNeedyActivation()
     {
-        NewQuestion();
+        if (DidHakuna) Display.text = "Is \"Hakuna Matata\"\na passing craze?";
+        else NewQuestion();
     }
 
     protected void OnNeedyDeactivation()
@@ -77,15 +84,29 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void HandleResponse(bool R)
     {
-        if (CurQ == null) return;
-        GetComponent<KMNeedyModule>().HandlePass();
-        if (CurQ(this, R))
+        if (DidHakuna)
         {
-            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            DidHakuna = false;
+            if (R) GetComponent<KMNeedyModule>().HandleStrike();
+            else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            GetComponent<KMNeedyModule>().HandlePass();
         }
         else
         {
-            GetComponent<KMNeedyModule>().HandleStrike();
+            if (CurQ == null) return;
+            GetComponent<KMNeedyModule>().HandlePass();
+            if (CurQ(this, R))
+            {
+                Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            }
+            else
+            {
+                if (Display.text.Equals("Abort?"))
+                {
+                    while (!Exploded) Service.CauseStrike("ABORT!");
+                }
+                else GetComponent<KMNeedyModule>().HandleStrike();
+            }
         }
         HasReply = true;
         LastReply = R;

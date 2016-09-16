@@ -89,7 +89,8 @@ public class AdvancedSimon : MonoBehaviour
 
     void Awake()
     {
-        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+        //transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
         ButtonTL.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonTR.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonBL.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
@@ -320,13 +321,13 @@ public class AdvancedSimon : MonoBehaviour
                     {
                         for (int z = 0; z < 4; z++)
                         {
-                            if (!PuzzleDisplay[2][PRIORITY[TLtype][z]])
+                            if (PuzzleDisplay[2][PRIORITY[TLtype][z]])
                             {
                                 Answer[2] = PRIORITY[TLtype][z];
                                 break;
                             }
                         }
-                        Debug.Log("Stage 3: Three flashed and weren't pressed, press other (" + Answer[2] + ")");
+                        Debug.Log("Stage 3: Three flashed and weren't pressed, press highest that flashes (" + Answer[2] + ")");
                     }
                 }
                 else if (numFlashed == 2)

@@ -119,26 +119,38 @@ public class AdvancedMemory : MonoBehaviour
                             break;
                         }
                     }
+                    Debug.Log("- FMN RULE 2 START -");
                     int numSerialDigits = 0;
                     foreach (char c in serial)
                     {
-                        if (GetDigit(c) >= 0) numSerialDigits++;
+                        int val = GetDigit(c);
+                        Debug.Log(c + ": " + val);
+                        if (val >= 0) numSerialDigits++;
                     }
+                    Debug.Log("[" + numSerialDigits + "] " + serial[0] + serial[1] + serial[2] + serial[3] + serial[4] + serial[5]);
                     bool serialPort = false;
                     if (numSerialDigits >= 3)
                     {
+                        Debug.Log("Serial has enough digits, looking for serial port...");
                         List<string> data = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
                         foreach (string response in data)
                         {
                             Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
                             foreach (string s in responseDict["presentPorts"])
                             {
-                                if (s.Equals("Serial")) serialPort = true;
+                                Debug.Log("Port: " + s);
+                                if (s.Equals("Serial"))
+                                {
+                                    Debug.Log("Found a serial, time to use first rule!");
+                                    serialPort = true;
+                                }
                                 break;
                             }
                             if (serialPort) break;
                         }
+                        if (!serialPort) Debug.Log("No serial port found.");
                     }
+                    Debug.Log("- FMN RULE 2 END -");
                     if (serialPort) Solution[a] = 3;
                     else if (prev1 % 2 == 0) Solution[a] = prev1 + 1;
                     else Solution[a] = prev1 - 1;

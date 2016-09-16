@@ -25,7 +25,7 @@ Cyan: Release when the number of seconds remaining is a multiple of 7.
 Orange: Release when the number of seconds displayed is either prime or 0.
 Other: Release one second after the two seconds digits add up to a multiple of 4.
 
- */
+*/
 
 using UnityEngine;
 using System.Collections;
@@ -197,9 +197,10 @@ public class AdvancedButton : MonoBehaviour
                     }
                     else
                     {
+                        time++;
                         time %= 60;
                         time = (time / 10) + (time % 10);
-                        if (time % 4 == 3) GetComponent<KMBombModule>().HandlePass();
+                        if (time % 4 == 0) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
                     }
                 }
