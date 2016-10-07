@@ -60,7 +60,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AdvancedSimon : MonoBehaviour
+public class AdvancedSimon : FixedTicker
 {
     public KMSelectable ButtonTL, ButtonTR, ButtonBL, ButtonBR;
     public KMAudio Sound;
@@ -433,7 +433,7 @@ public class AdvancedSimon : MonoBehaviour
 
     private int ticker = 0;
     private int pressTicker = 0;
-    void FixedUpdate()
+    public override void RealFixedTick()
     {
         if (pressTicker > 0)
         {

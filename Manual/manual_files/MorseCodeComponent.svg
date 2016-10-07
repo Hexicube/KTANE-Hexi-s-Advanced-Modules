@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="348" height="348" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+
+ <g>
+  <title>Layer 1</title>
+  <rect fill-opacity="0.3" id="svg_1" height="340" width="340" y="5" x="4" stroke-width="2" stroke="#000000" fill="#ff0000"/>
+  <rect height="43.3125" width="43.3125" y="292.843742" x="12.343742" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff" id="svg_5"/>
+  <circle id="svg_2" r="15" cy="38.666666" cx="296.666667" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+  <rect id="svg_54" height="51.749999" width="113.062502" y="16.499992" x="14.249992" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+  <text transform="matrix(1.53885, 0, 0, 1.34545, -24.2542, -8.80884)" xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" id="svg_55" y="44.510972" x="59.564257" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">PLAY</text>
+  <rect id="svg_56" height="52.3125" width="123.499997" y="15.374992" x="134.625013" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#000000"/>
+  <rect id="svg_58" height="43.3125" width="43.3125" y="292.687492" x="64.312492" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+  <rect id="svg_59" height="40.499999" width="77.625004" y="293.250002" x="256.968745" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+  <text id="svg_60" transform="matrix(1.53885, 0, 0, 1.34545, -24.2542, -8.80884)" xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" y="246.441554" x="208.153314" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">OK</text>
+  <line id="svg_61" y2="314.765617" x2="35.484367" y1="314.765617" x1="31.546867" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="none"/>
+  <line id="svg_62" y2="315.187492" x2="98.906242" y1="315.187492" x1="72.468742" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="none"/>
+  <rect height="43.3125" width="43.3125" y="292.843742" x="116.343742" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff" id="svg_3"/>
+  <line y2="328.343742" x2="151.781242" y1="328.343742" x1="125.343742" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="none" id="svg_4"/>
+  <rect id="svg_6" height="40.499999" width="77.625004" y="293.531252" x="171.749995" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+  <text id="svg_7" transform="matrix(1.53885, 0, 0, 1.34545, -24.2542, -8.80884)" xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" y="246.650592" x="152.775105" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">NO</text>
+  <rect id="svg_8" height="79.000003" width="323" y="201.999995" x="12" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#000000"/>
+  <text transform="matrix(3.12334, 0, 0, 2.52201, -282.116, -323.579)" xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" id="svg_10" y="232.2" x="144.433735" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#ffffff">62</text>
+ </g>
+</svg>

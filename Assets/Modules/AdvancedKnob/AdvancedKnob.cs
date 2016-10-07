@@ -10,7 +10,7 @@ Three numbers are displayed at all times. Whenever the numbers change, add them 
 using UnityEngine;
 using System.Collections;
 
-public class AdvancedKnob : MonoBehaviour
+public class AdvancedKnob : FixedTicker
 {
     public static bool HasFailed; //Prevent voice-line from playing the very first time.
 
@@ -92,7 +92,7 @@ public class AdvancedKnob : MonoBehaviour
     private int Target = -1;
     private int Progress = -1;
 
-    void FixedUpdate()
+    public override void RealFixedTick()
     {
         if (InSpin)
         {

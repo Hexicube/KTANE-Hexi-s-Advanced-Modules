@@ -5,19 +5,20 @@
 
 Follow these rules in the order they are listed. Perform the first action that applies:
 1. If the button is blue and the number of AA batteries is larger than the number of D batteries, hold the button and refer to "Releasing a Held Button".
-2. If the button is blue or yellow and has as at least as many letters on the label as the highest number in the serial, press and immediately release.
-3. If the button is black or white and has no label, press and immediately release when the two seconds digits on the timer match.
-4. If the button is red and the label states a different colour, hold the button and refer to "Releasing a Held Button".
-5. If there are at least 2 unlit indicators and the serial contains a vowel, press and immediately release.
-6. If no other rule applies, hold the button and refer to "Releasing a Held Button".
+2. If the button is yellow or blue and has as at least as many letters on the label as the highest number in the serial, press and immediately release.
+3. If the button is yellow or blue and the label states a colour, hold the button and refer to "Releasing a Held Button".
+4. If the button has no label, press and immediately release when the two seconds digits on the timer match.
+5. If the button is not black and the number of letters on the label is larger than the number of lit indicators, press and immediately release.
+6. If there are at least 2 unlit indicators and the serial contains a vowel, press and immediately release.
+7. If no other rule applies, hold the button and refer to "Releasing a Held Button".
 
 - Releasing a Held Button -
 
 If you start holding the button down, a coloured strip will light up on the right side of the module. Based on its colour, follow the rules below:
 
-Cyan: Release when the two seconds digits add up to 7 or 17.
+Cyan: Release when the two seconds digits add up to 7.
 Orange: Release when the two seconds digits add up to 3 or 13.
-Other: Release when the two seconds digits add up to 5 or 15.
+Other: Release when the two seconds digits add up to 5.
 
 If the strip is flashing, follow these rules instead:
 
@@ -32,14 +33,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-public class AdvancedButton : MonoBehaviour
+public class AdvancedButton : FixedTicker
 {
     public KMSelectable Button;
     public KMAudio Sound;
     public KMBombInfo Info;
     public MeshRenderer Light;
 
-    private int batAA = -1, batD = 0, highSerial = 0, unlitInd = 0;
+    private int batAA = -1, batD = 0, highSerial = 0, litInd = 0, unlitInd = 0;
     private bool serialVowel = false, hold = false, catch22 = false;
 
     private int ticker;
@@ -61,23 +62,23 @@ public class AdvancedButton : MonoBehaviour
     };
 
     private static Color[] buttonColours = new Color[]{
-        new Color(1, 0, 0),         //Red
         new Color(1, 1, 0),         //Yellow
-        new Color(0, 1, 0),         //Green
-        new Color(0, 0, 1),         //Blue
+        new Color(0, 0.4f, 1),      //Blue
         new Color(1, 1, 1),         //White
         new Color(0.2f, 0.2f, 0.2f) //Black
     };
 
     private static string[] buttonLabels = new string[]{
         "purple", "jade", "maroon", "indigo",
-        "escort", "red", "delta", ""
+        "elevate", "run", "detonate", ""
     };
 
     private static Color BLACK = new Color(0, 0, 0);
 
     void Awake()
     {
+        transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
         ticker = -1;
         Light.material.color = BLACK;
         Button.OnInteract += Press;
@@ -85,12 +86,11 @@ public class AdvancedButton : MonoBehaviour
         Button.GetComponent<MeshRenderer>().material.color = buttonColours[buttonCol];
         buttonText = Random.Range(0, buttonLabels.Length);
         Button.gameObject.transform.Find("Label").GetComponent<TextMesh>().text = buttonLabels[buttonText];
-        //Button.OnInteractEnded += Release;
+        Button.OnInteractEnded += Release;
     }
 
-    void FixedUpdate()
+    public override void RealFixedTick()
     {
-        //Debug.Log(Time.deltaTime);
         if (buttonDown)
         {
             ticker++;
@@ -102,13 +102,7 @@ public class AdvancedButton : MonoBehaviour
 
     protected bool Press()
     {
-        //TODO: remove this bit once OnInteractEnded is added
-        buttonDown = !buttonDown;
-        if (!buttonDown)
-        {
-            Release();
-            return false;
-        }
+        buttonDown = true;
 
         Button.transform.localPosition = new Vector3(-0.0125f, -0.01f, -0.0125f);
 
@@ -119,8 +113,12 @@ public class AdvancedButton : MonoBehaviour
         return false;
     }
 
-    protected bool Release()
+    protected void Release()
     {
+        if (!buttonDown) return;
+
+        buttonDown = false;
+
         Button.transform.localPosition = new Vector3(-0.0125f, 0.01f, -0.0125f);
 
         if (batAA == -1)
@@ -141,7 +139,8 @@ public class AdvancedButton : MonoBehaviour
                 {
                     Error = HandleError
                 });
-                if (responseDict["on"]) unlitInd++;
+                if (responseDict["on"]) litInd++;
+                else unlitInd++;
             }
             data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
             foreach (string response in data)
@@ -161,21 +160,22 @@ public class AdvancedButton : MonoBehaviour
                 else if (serial.Contains("1")) highSerial = 1;
             }
 
-            if (buttonCol == 3 && batAA > batD) hold = true;
-            else if ((buttonCol == 3 || buttonCol == 1) && buttonLabels[buttonText].Length >= highSerial) hold = false;
-            else if ((buttonCol == 5 || buttonCol == 4) && buttonLabels[buttonText].Length == 0)
+            if (buttonCol == 1 && batAA > batD) hold = true;
+            else if ((buttonCol < 2) && buttonLabels[buttonText].Length >= highSerial) hold = false;
+            else if (buttonCol < 2 && buttonText < 4) hold = true;
+            else if (buttonCol > 1 && buttonLabels[buttonText].Length == 0)
             {
                 hold = false;
                 catch22 = true;
             }
-            else if (buttonCol == 0 && buttonText < 4) hold = true;
+            else if (buttonCol != 3 && buttonLabels[buttonText].Length > litInd) hold = false;
             else if (unlitInd >= 2 && serialVowel) hold = false;
             else hold = true;
         }
 
         if (hold)
         {
-            if (ticker > 0)
+            if (ticker >= 0)
             {
                 int time = (int)Info.GetTime();
                 if (flashing)
@@ -230,7 +230,7 @@ public class AdvancedButton : MonoBehaviour
         }
         else if (catch22)
         {
-            if (ticker > 0) GetComponent<KMBombModule>().HandleStrike();
+            if (ticker >= 0) GetComponent<KMBombModule>().HandleStrike();
             else
             {
                 int time = (int)Info.GetTime() % 60;
@@ -240,11 +240,11 @@ public class AdvancedButton : MonoBehaviour
         }
         else
         {
-            if (ticker > 0) GetComponent<KMBombModule>().HandleStrike();
+            if (ticker >= 0) GetComponent<KMBombModule>().HandleStrike();
             else GetComponent<KMBombModule>().HandlePass();
         }
         Light.material.color = BLACK;
-        //Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, gameObject.transform);
-        return false;
+        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, gameObject.transform);
+        return;
     }
 }

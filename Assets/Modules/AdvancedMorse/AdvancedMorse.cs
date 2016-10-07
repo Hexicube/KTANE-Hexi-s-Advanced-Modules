@@ -18,7 +18,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AdvancedMorse : MonoBehaviour
+public class AdvancedMorse : FixedTicker
 {
     public KMSelectable ButtonPlay, ButtonDot, ButtonDash, ButtonSpace, ButtonClear, ButtonDone;
     public KMAudio Sound;
@@ -77,9 +77,8 @@ public class AdvancedMorse : MonoBehaviour
     }
 
     private int ticker = 0;
-    void FixedUpdate()
+    override public void RealFixedTick()
     {
-        //Debug.Log(Time.deltaTime);
         if (DisplayProgress < DisplaySequence.Length)
         {
             ticker++;
@@ -164,7 +163,9 @@ public class AdvancedMorse : MonoBehaviour
             }
 
             EnteredCharacters.Add(val);
-            DisplayArea.text = DeMorsify();
+            string text = DeMorsify();
+            if (text.Length > 3) text = "!?!?!";
+            DisplayArea.text = text;
         }
     }
 
