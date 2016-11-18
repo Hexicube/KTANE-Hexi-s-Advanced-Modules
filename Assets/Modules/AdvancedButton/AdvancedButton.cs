@@ -62,10 +62,10 @@ public class AdvancedButton : FixedTicker
     };
 
     private static Color[] buttonColours = new Color[]{
-        new Color(1, 1, 0),         //Yellow
-        new Color(0, 0.4f, 1),      //Blue
-        new Color(1, 1, 1),         //White
-        new Color(0.2f, 0.2f, 0.2f) //Black
+        new Color(1, 1, 0),             //Yellow
+        new Color(0, 0.4f, 1),          //Blue
+        new Color(0.91f, 0.88f, 0.86f), //White
+        new Color(0.2f, 0.2f, 0.2f)     //Black
     };
 
     private static string[] buttonLabels = new string[]{
