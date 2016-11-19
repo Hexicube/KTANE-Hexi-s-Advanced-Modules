@@ -163,7 +163,7 @@ public class AdvancedButton : FixedTicker
             if (buttonCol == 1 && batAA > batD) hold = true;
             else if ((buttonCol < 2) && buttonLabels[buttonText].Length >= highSerial) hold = false;
             else if (buttonCol < 2 && buttonText < 4) hold = true;
-            else if (buttonCol > 1 && buttonLabels[buttonText].Length == 0)
+            else if (buttonLabels[buttonText].Length == 0)
             {
                 hold = false;
                 catch22 = true;
