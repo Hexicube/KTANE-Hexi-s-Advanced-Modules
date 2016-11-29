@@ -119,6 +119,7 @@ public class AdvancedKeypad : MonoBehaviour
     void Guess(int pos)
     {
         if (ButtonStates[pos]) return;
+        Buttons[pos].AddInteractionPunch(0.5f);
         ButtonStates[pos] = true;
         if(Solution[pos])
         {

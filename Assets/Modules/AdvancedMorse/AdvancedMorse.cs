@@ -111,6 +111,8 @@ public class AdvancedMorse : FixedTicker
 
     protected bool HandlePlay()
     {
+        ButtonPlay.AddInteractionPunch();
+
         Generated = true;
         ReplyProgress = 0;
         ReplyCorrect = true;
@@ -134,44 +136,54 @@ public class AdvancedMorse : FixedTicker
 
     protected bool HandleDot()
     {
-        AddSeq(0);
+        if (Generated)
+        {
+            ButtonDot.AddInteractionPunch(0.2f);
+            AddSeq(0);
+        }
         return false;
     }
 
     protected bool HandleDash()
     {
-        AddSeq(1);
+        if (Generated)
+        {
+            ButtonDash.AddInteractionPunch(0.2f);
+            AddSeq(1);
+        }
         return false;
     }
 
     protected bool HandleSpace()
     {
-        AddSeq(-1);
+        if (Generated)
+        {
+            ButtonSpace.AddInteractionPunch(0.2f);
+            AddSeq(-1);
+        }
         return false;
     }
 
     private void AddSeq(int val)
     {
-        if (Generated)
+        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+        if (ReplyProgress >= ReplySequence.Length) ReplyCorrect = false;
+        if (ReplyCorrect)
         {
-            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-            if (ReplyProgress >= ReplySequence.Length) ReplyCorrect = false;
-            if (ReplyCorrect)
-            {
-                if (ReplySequence[ReplyProgress] == val) ReplyProgress++;
-                else ReplyCorrect = false;
-            }
-
-            EnteredCharacters.Add(val);
-            string text = DeMorsify();
-            if (text.Length > 3) text = "!?!?!";
-            DisplayArea.text = text;
+            if (ReplySequence[ReplyProgress] == val) ReplyProgress++;
+            else ReplyCorrect = false;
         }
+
+        EnteredCharacters.Add(val);
+        string text = DeMorsify();
+        if (text.Length > 3) text = "!?!?!";
+        DisplayArea.text = text;
     }
 
     protected bool HandleClear()
     {
         if (!Generated) return false;
+        ButtonClear.AddInteractionPunch();
 
         if (Info.GetTime() >= 30f)
         {
@@ -207,6 +219,7 @@ public class AdvancedMorse : FixedTicker
     {
         if (Generated)
         {
+            ButtonDone.AddInteractionPunch();
             if (ReplyCorrect && ReplyProgress == ReplySequence.Length)
             {
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);

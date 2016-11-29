@@ -252,60 +252,80 @@ public class AdvancedMemory : MonoBehaviour
 
     private bool Handle0()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button0.AddInteractionPunch();
         Handle(0);
         return false;
     }
 
     private bool Handle1()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button1.AddInteractionPunch();
         Handle(1);
         return false;
     }
 
     private bool Handle2()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button2.AddInteractionPunch();
         Handle(2);
         return false;
     }
 
     private bool Handle3()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button3.AddInteractionPunch();
         Handle(3);
         return false;
     }
 
     private bool Handle4()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button4.AddInteractionPunch();
         Handle(4);
         return false;
     }
 
     private bool Handle5()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button5.AddInteractionPunch();
         Handle(5);
         return false;
     }
 
     private bool Handle6()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button6.AddInteractionPunch();
         Handle(6);
         return false;
     }
 
     private bool Handle7()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button7.AddInteractionPunch();
         Handle(7);
         return false;
     }
 
     private bool Handle8()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button8.AddInteractionPunch();
         Handle(8);
         return false;
     }
 
     private bool Handle9()
     {
+        if (Solution == null || Position == Solution.Length) return false;
+        Button9.AddInteractionPunch();
         Handle(9);
         return false;
     }

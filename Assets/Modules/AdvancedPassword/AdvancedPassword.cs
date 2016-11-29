@@ -183,6 +183,7 @@ public class AdvancedPassword : MonoBehaviour
     void HandleInteract(int dial)
     {
         if (Pass) return;
+        Dials[dial].AddInteractionPunch(0.1f);
 
         DialPos[dial] = (DialPos[dial] + 1) % 12;
         Dials[dial].transform.Find("Bar").transform.localEulerAngles = new Vector3(0, DialPos[dial] * 30f, 0);
@@ -196,6 +197,7 @@ public class AdvancedPassword : MonoBehaviour
     bool HandleLever()
     {
         if (Pass) return false;
+        Lever.AddInteractionPunch(1.5f);
 
         bool ans = true;
         for (int a = 0; a < 6; a++)

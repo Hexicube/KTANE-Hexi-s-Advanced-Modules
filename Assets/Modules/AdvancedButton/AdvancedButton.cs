@@ -102,6 +102,10 @@ public class AdvancedButton : FixedTicker
 
     protected bool Press()
     {
+        if (buttonDown) return false;
+
+        Button.AddInteractionPunch(0.2f);
+
         buttonDown = true;
 
         Button.transform.localPosition = new Vector3(-0.0125f, -0.01f, -0.0125f);
@@ -116,6 +120,8 @@ public class AdvancedButton : FixedTicker
     protected void Release()
     {
         if (!buttonDown) return;
+
+        Button.AddInteractionPunch();
 
         buttonDown = false;
 

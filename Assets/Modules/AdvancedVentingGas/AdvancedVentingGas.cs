@@ -60,12 +60,14 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected bool HandleYes()
     {
+        if (DidHakuna || CurQ != null) YesButton.AddInteractionPunch();
         HandleResponse(true);
         return false;
     }
 
     protected bool HandleNo()
     {
+        if (DidHakuna || CurQ != null) NoButton.AddInteractionPunch();
         HandleResponse(false);
         return false;
     }

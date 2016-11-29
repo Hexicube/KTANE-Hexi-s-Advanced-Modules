@@ -66,8 +66,8 @@ public class AdvancedSimon : FixedTicker
     public KMAudio Sound;
     public KMBombInfo Info;
 
-    private static Color     RED = new Color(0.8f, 0, 0),     YELLOW = new Color(0.9f,   0.9f,   0),     GREEN = new Color(0, 0.9f,  0),      BLUE = new Color(0.25f,   0.25f,   1f),
-                         DARKRED = new Color(0.2f, 0, 0), DARKYELLOW = new Color(0.225f, 0.225f, 0), DARKGREEN = new Color(0, 0.225f, 0), DARKBLUE = new Color(0.0625f, 0.0625f, 0.25f);
+    private static Color     RED = new Color(0.8f, 0, 0, 0.4f),  YELLOW = new Color(0.9f,   0.9f,   0, 0.4f),  GREEN = new Color(0, 0.9f,   0, 0.4f),  BLUE = new Color(0.25f,   0.25f,   1f,    0.4f),
+                         DARKRED = new Color(0.2f, 0, 0, 0), DARKYELLOW = new Color(0.225f, 0.225f, 0, 0), DARKGREEN = new Color(0, 0.225f, 0, 0), DARKBLUE = new Color(0.0625f, 0.0625f, 0.25f, 0);
     private KMSelectable ButtonRed, ButtonYellow, ButtonGreen, ButtonBlue;
 
     private static int[][] PRIORITY = new int[][]{
@@ -101,6 +101,11 @@ public class AdvancedSimon : FixedTicker
 
     void Init()
     {
+        ButtonTL.OnInteract += delegate() { ButtonTL.AddInteractionPunch(); return false; };
+        ButtonTR.OnInteract += delegate() { ButtonTR.AddInteractionPunch(); return false; };
+        ButtonBL.OnInteract += delegate() { ButtonBL.AddInteractionPunch(); return false; };
+        ButtonBR.OnInteract += delegate() { ButtonBR.AddInteractionPunch(); return false; };
+
         List<KMSelectable> buttons = new List<KMSelectable>() { ButtonTL, ButtonTR, ButtonBL, ButtonBR };
         int i = 0;
         int TLtype = -1;

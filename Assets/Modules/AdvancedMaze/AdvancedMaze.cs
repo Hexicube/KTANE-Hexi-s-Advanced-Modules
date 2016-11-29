@@ -165,6 +165,7 @@ public class AdvancedMaze : MonoBehaviour
     void HandleInteract(int x, int y)
     {
         if (Solved) return;
+        Buttons[x][y].AddInteractionPunch(0.1f);
 
         int rot = (PlayFieldState[x][y] + 1) % 4;
         PlayFieldState[x][y] = rot;
@@ -881,6 +882,7 @@ public class AdvancedMaze : MonoBehaviour
     public bool HandleCheck()
     {
         if (Solved) return false;
+        ButtonCheck.AddInteractionPunch();
 
         List<int[]> positions = new List<int[]>();
         for (int a = 0; a < 4; a++)
