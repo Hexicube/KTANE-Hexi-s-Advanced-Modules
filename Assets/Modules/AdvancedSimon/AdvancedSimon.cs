@@ -66,8 +66,8 @@ public class AdvancedSimon : FixedTicker
     public KMAudio Sound;
     public KMBombInfo Info;
 
-    private static Color     RED = new Color(0.8f, 0, 0, 0.4f),  YELLOW = new Color(0.9f,   0.9f,   0, 0.4f),  GREEN = new Color(0, 0.9f,   0, 0.4f),  BLUE = new Color(0.25f,   0.25f,   1f,    0.4f),
-                         DARKRED = new Color(0.2f, 0, 0, 0), DARKYELLOW = new Color(0.225f, 0.225f, 0, 0), DARKGREEN = new Color(0, 0.225f, 0, 0), DARKBLUE = new Color(0.0625f, 0.0625f, 0.25f, 0);
+    private static Color     RED = new Color(1f,    0, 0, 0.4f),  YELLOW = new Color(0.8f,  0.8f,  0, 0.4f),  GREEN = new Color(0, 0.7f,  0, 0.4f),  BLUE = new Color(0, 0.3f, 1f,    0.4f),
+                         DARKRED = new Color(0.25f, 0, 0, 0), DARKYELLOW = new Color(0.27f, 0.27f, 0, 0), DARKGREEN = new Color(0, 0.23f, 0, 0), DARKBLUE = new Color(0, 0.1f, 0.33f, 0);
     private KMSelectable ButtonRed, ButtonYellow, ButtonGreen, ButtonBlue;
 
     private static int[][] PRIORITY = new int[][]{
