@@ -243,7 +243,7 @@
 									</td><td>Blue Input
 										<ul>
 											<li>Note: Always active if all other inputs are inactive</li>
-											<li>For: At least 4 unique ports</li>
+											<li>For: At least 4 port types</li>
 											<li>For: At least 4 batteries</li>
 											<li>Against: No ports</li>
 											<li>Against: No batteries</li>
@@ -303,10 +303,11 @@
 							<li>Turn the lever to check the solution. Any correct dials are indicated with a green light, and any incorrect dials are indicated with a red light.</li>
 						</ul>
 						<ul>
-							<li>Starting at 0, add the number of unique ports on the bomb, multiplied by 7.</li>
+							<li>Starting at 0, add the number of port types on the bomb, multiplied by 7.</li>
 							<li>Add the number of lit indicators with a matching letter in the serial, multiplied by 5.</li>
 							<li>Add the number of unlit indicators with a matching letter in the serial.</li>
-							<li>Add the number(s) obtained from the table on the next page, using both the position of the dial and the serial number as reference.</li>
+							<li>For the first five dials, add the number obtained from the table on the next page, using both the location of the dial and the serial number as reference.</li>
+                            <li>For the last dial, add the sum of the numbers in the last column using all characters in the serial number as a reference.</li>
 							<li>Note: A full rotation takes 12 turns.</li>
 						</ul>
 					</div>
@@ -319,8 +320,11 @@
 					<div class="page-content">
 						<table class="densetable">
 							<tbody>
+                                <tr>
+									<td rowspan="6"></td>
+                                    <td colspan="6">Dial</td>
+                                </tr>
 								<tr>
-									<td rowspan="2">Dial</td>
 									<td colspan="3">Top</td>
 									<td colspan="3">Bottom</td>
 								</tr>
@@ -332,8 +336,11 @@
 									<td>Middle</td>
 									<td>Right</td>
 								</tr>
+                                <tr><td colspan="6"></td></tr>
+                                <tr>
+                                    <td colspan="6">Serial</td>
+                                </tr>
 								<tr>
-									<td>Serial</td>
 									<td>First</td>
 									<td>Second</td>
 									<td>Third</td>
@@ -341,6 +348,7 @@
 									<td>Fifth</td>
 									<td>All</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>A</td>
 									<td>8</td>
@@ -395,6 +403,7 @@
 									<td>1</td>
 									<td>5</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>G</td>
 									<td>7</td>
@@ -449,6 +458,7 @@
 									<td>11</td>
 									<td>11</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>M</td>
 									<td>1</td>
@@ -503,6 +513,7 @@
 									<td>6</td>
 									<td>11</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>S</td>
 									<td>9</td>
@@ -557,6 +568,7 @@
 									<td>8</td>
 									<td>10</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>Y</td>
 									<td>10</td>
@@ -611,6 +623,7 @@
 									<td>10</td>
 									<td>4</td>
 								</tr>
+                                <tr><td colspan="7"></td></tr>
 								<tr>
 									<td>4</td>
 									<td>6</td>
