@@ -160,7 +160,7 @@ public class AdvancedMorse : FixedTicker
             Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
             foreach (string s in responseDict["presentPorts"])
             {
-                if (!ports.Contains(s)) ports.Add(s);
+                if (!ports.Contains(s.ToUpper())) ports.Add(s.ToUpper());
             }
         }
 
