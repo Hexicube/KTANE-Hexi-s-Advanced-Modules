@@ -1,313 +1,528 @@
 ﻿/*
 
--- On the Subject of Morsematics --
-- Get it? Because it uses morse and maths! I'll see myself out... -
+-- On the subject of Morse Messages --
+- This was the cutting-edge of communication at one point... -
 
-Press "Play" to receive a question.
-Interpret the signal from the flashing light using the Morse Code chart.
-The signal will usually be a maths question, but could also be a statement.
-Maths questions will have a whole number response.
-Statements will have either a "YES" or "NO" response.
-Note: Do not agitate the bomb, it will beat you in a fight.
+For this module, every letter of the alphabet is considered to have numeric value equal to its position (A=1, B=2 ... Z=26)
+For this module, numeric values outside the 1-26 range wrap around (Z+1=A, A-1=Z)
+Three unique letters are being received on a loop, shown by the flashing LED in the top-left
+To solve the module, a correct response letter must be sent in morse using the transmit button in the bottom-right
+To assist with timings, a scrolling display with marks shows how long to hold the button for one unit of time
 
-Warning: The signal will only play once, and will contain spaces.
+Perform each step below in sequence:
+- Take the 4th and 5th character of the serial number, this is your character pair
+- For each indicator that has a matching letter in the received letters, add one to the first character of your pair if the indicator is on or the second character if it is off
+- If the sum of your character pair is a square number, add 4 to the first character; otherwise, subtract 4 from the second
+- If either character from your character pair matches a letter in the name of any port on the bomb, swap the characters
+- Add the largest received character to the first character in your pair
+- Add the two smaller received characters to the second character in your pair
+- If any received characters are in the fibbonachi sequence, add them to both characters in your pair
+- If any received characters are prime, subtract them from the first character in your pair
+- If any received characters are square, subtract them from the second character in your pair
+- If batteries are present and any received characters are divisible by the number of batteries present, subtract them from both characters in your pair
+
+Once complete, transmit the sum of your character pair.
 
 */
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class AdvancedMorse : FixedTicker
 {
-    public KMSelectable ButtonPlay, ButtonDot, ButtonDash, ButtonSpace, ButtonClear, ButtonDone;
+    private static char[] FIBB = new char[]{
+        (char)1,
+        (char)2,
+        (char)3,
+        (char)5,
+        (char)8,
+        (char)13,
+        (char)21
+    };
+
+    private static char[] PRIME = new char[]{
+        (char)2,
+        (char)3,
+        (char)5,
+        (char)7,
+        (char)11,
+        (char)13,
+        (char)17,
+        (char)19,
+        (char)23
+    };
+
+    private static char[] SQUARE = new char[]{
+        (char)1,
+        (char)4,
+        (char)9,
+        (char)16,
+        (char)25
+    };
+
+    public KMSelectable ButtonTransmit, ButtonSwitch;
     public KMAudio Sound;
-    public TextMesh DisplayArea;
     public KMBombInfo Info;
 
-    protected int[] DisplaySequence;
-    protected int DisplayProgress;
-    protected bool Generated = false;
+    public PolyDraw Draw;
 
-    protected int ReplyAnswer;
+    private static Color LED_OFF = new Color(0, 0, 0, 0), LED_ON = new Color(0.7f, 0.6f, 0.2f, 0.4f), LED_BLUE = new Color(0.1f, 0.4f, 1f, 0.4f);
+    private MeshRenderer LED, LED2;
 
-    protected int[] ReplySequence;
-    protected int ReplyProgress;
-    protected bool ReplyCorrect;
+    private string[] DisplayCharsRaw = new string[3];
+    private int[][] DisplayChars;
 
-    private List<int> EnteredCharacters;
-
-    private static Color BLACK = new Color(0, 0, 0), GREEN = new Color(0, 1, 0);
-    private MeshRenderer LED;
-
-    /*private static List<KeyValuePair<int[], bool>> QuestionAnswerList = new List<KeyValuePair<int[], bool>>()
-    {
-        {new KeyValuePair<int[], bool>(Morsify("ON BOMB"), true)},
-        {new KeyValuePair<int[], bool>(Morsify("MODULE GREEN"), false)},
-        {new KeyValuePair<int[], bool>(Morsify("FIGHT ME"), false)},
-        {new KeyValuePair<int[], bool>(Morsify("2 IS TWO"), true)}
-    };
-    private static int[] YesResponse = Morsify("YES");
-    private static int[] NoResponse = Morsify("NO");*/
+    private string Answer;
 
     void Awake()
     {
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
-        LED = gameObject.transform.Find("LED").GetComponent<MeshRenderer>();
-        LED.material.color = BLACK;
+        ButtonTransmit.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
-        ButtonPlay.OnInteract += HandlePlay;
-        ButtonDot.OnInteract += HandleDot;
-        ButtonDash.OnInteract += HandleDash;
-        ButtonSpace.OnInteract += HandleSpace;
-        ButtonClear.OnInteract += HandleClear;
-        ButtonDone.OnInteract += HandleDone;
+        ButtonTransmit.OnInteract += HandleTransDown;
+        ButtonTransmit.OnInteractEnded += HandleTransUp;
+        ButtonSwitch.OnInteract += HandleSwitch;
 
-        ButtonPlay.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        ButtonDot.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        ButtonDash.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        ButtonSpace.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        ButtonClear.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        ButtonDone.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        LED = transform.Find("Lights").GetComponent<MeshRenderer>();
+        LED.materials[0].color = new Color(0.3f, 0.3f, 0.3f);
+        LED.materials[1].color = LED_OFF;
+        LED.materials[2].color = LED_OFF;
+        LED.materials[3].color = LED_OFF;
 
-        DisplaySequence = new int[0];
-        EnteredCharacters = new List<int>();
-        DisplayArea.text = "";
+        transform.Find("Pacer").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+        LED2 = gameObject.transform.Find("Pacer").Find("LED").GetComponent<MeshRenderer>();
+        LED2.material.color = LED_OFF;
+
+        transform.Find("ReceiveBox").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+        transform.Find("ReceiveSwitch").GetComponent<MeshRenderer>().material.color = new Color(0.6f, 0.6f, 0.6f);
+
+        ButtonTransmit.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+
+        List<string> charList = new List<string>(){
+            "A", "B", "C", "D", "E", "F",
+            "G", "H", "I", "J", "K", "L",
+            "M", "N", "O", "P", "Q", "R",
+            "S", "T", "U", "V", "W", "X",
+            "Y", "Z"
+        };
+
+        DisplayChars = new int[3][];
+        for (int a = 0; a < 3; a++)
+        {
+            int pos = Random.Range(0, charList.Count);
+            DisplayCharsRaw[a] = charList[pos];
+            DisplayChars[a] = Morsify(charList[pos]);
+            charList.RemoveAt(pos);
+        }
+
+        GetComponent<KMBombModule>().OnActivate += GenSolution;
+
+        HandleSwitch();
     }
 
-    private int ticker = 0;
-    override public void RealFixedTick()
+    public void GenSolution()
     {
-        if (DisplayProgress < DisplaySequence.Length)
+        Debug.Log("Morsematics display characters: " + DisplayCharsRaw[0] + DisplayCharsRaw[1] + DisplayCharsRaw[2]);
+
+        int disp1base = DisplayCharsRaw[0][0] - 'A' + 1;
+        int disp2base = DisplayCharsRaw[1][0] - 'A' + 1;
+        int disp3base = DisplayCharsRaw[2][0] - 'A' + 1;
+
+        string serial = "AB1CD2";
+        List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
+        foreach (string response in data)
         {
-            ticker++;
-            if (ticker >= 0)
+            Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+            serial = responseDict["serial"];
+            break;
+        }
+
+        List<string> indOn = new List<string>();
+        List<string> indOff = new List<string>();
+
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+
+            if (responseDict["on"].Equals("True")) indOn.Add(responseDict["label"]);
+            else indOff.Add(responseDict["label"]);
+        }
+
+        List<string> ports = new List<string>();
+        
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
+            foreach (string s in responseDict["presentPorts"])
             {
-                int type = DisplaySequence[DisplayProgress];
-                if (ticker == 0)
-                {
-                    if(type == -1)
-                    {
-                        DisplayProgress++;
-                        ticker = -45;
-                    }
-                    else LED.material.color = GREEN;
-                }
-                else
-                {
-                    int target = 12;
-                    if (type == 1) target = 30;
-                    if (ticker >= target)
-                    {
-                        LED.material.color = BLACK;
-                        ticker = -15;
-                        DisplayProgress++;
-                    }
-                }
+                if (!ports.Contains(s)) ports.Add(s);
             }
         }
-    }
 
-    protected bool HandlePlay()
-    {
-        ButtonPlay.AddInteractionPunch();
+        int batteries = 0;
 
-        Generated = true;
-        ReplyProgress = 0;
-        ReplyCorrect = true;
-        DisplayProgress = 0;
-        ticker = -50;
-        LED.material.color = BLACK;
-        EnteredCharacters = new List<int>();
-        DisplayArea.text = "";
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
+            batteries += responseDict["numbatteries"];
+        }
 
-        if (ReplySequence == null) GenerateMath();
-            /*else
+        char firstChar = serial[3];
+        char secondChar = serial[4];
+
+        Debug.Log("Initial character pair: " + firstChar + secondChar);
+
+        foreach (string ind in indOn)
+        {
+            if (ind.Contains(DisplayCharsRaw[0]) ||
+                ind.Contains(DisplayCharsRaw[1]) ||
+                ind.Contains(DisplayCharsRaw[2]))
             {
-                KeyValuePair<int[], bool> q = QuestionAnswerList[Random.Range(0, QuestionAnswerList.Count)];
-                DisplaySequence = q.Key;
-                if (q.Value) ReplySequence = YesResponse;
-                else ReplySequence = NoResponse;
-            }*/
-        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-        return false;
-    }
-
-    protected bool HandleDot()
-    {
-        if (Generated)
-        {
-            ButtonDot.AddInteractionPunch(0.2f);
-            AddSeq(0);
-        }
-        return false;
-    }
-
-    protected bool HandleDash()
-    {
-        if (Generated)
-        {
-            ButtonDash.AddInteractionPunch(0.2f);
-            AddSeq(1);
-        }
-        return false;
-    }
-
-    protected bool HandleSpace()
-    {
-        if (Generated)
-        {
-            ButtonSpace.AddInteractionPunch(0.2f);
-            AddSeq(-1);
-        }
-        return false;
-    }
-
-    private void AddSeq(int val)
-    {
-        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-        if (ReplyProgress >= ReplySequence.Length) ReplyCorrect = false;
-        if (ReplyCorrect)
-        {
-            if (ReplySequence[ReplyProgress] == val) ReplyProgress++;
-            else ReplyCorrect = false;
-        }
-
-        EnteredCharacters.Add(val);
-        string text = DeMorsify();
-        if (text.Length > 3) text = "!?!?!";
-        DisplayArea.text = text;
-    }
-
-    protected bool HandleClear()
-    {
-        if (!Generated) return false;
-        ButtonClear.AddInteractionPunch();
-
-        if (Info.GetTime() >= 30f)
-        {
-            char[] ans = ("" + ReplyAnswer).ToCharArray();
-            char[] time = Info.GetFormattedTime().ToCharArray();
-            bool match = false;
-            foreach (char c1 in ans)
-            {
-                foreach (char c2 in time)
-                {
-                    if (c1 == c2)
-                    {
-                        match = true;
-                        break;
-                    }
-                }
-                if (match) break;
-            }
-
-            if (!match) GetComponent<KMBombModule>().HandleStrike();
-            else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-        }
-        else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-
-        ReplyProgress = 0;
-        ReplyCorrect = true;
-        EnteredCharacters = new List<int>();
-        DisplayArea.text = "";
-        return false;
-    }
-
-    protected bool HandleDone()
-    {
-        if (Generated)
-        {
-            ButtonDone.AddInteractionPunch();
-            if (ReplyCorrect && ReplyProgress == ReplySequence.Length)
-            {
-                Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-                GetComponent<KMBombModule>().HandlePass();
-            }
-            else
-            {
-                GetComponent<KMBombModule>().HandleStrike();
-                ReplyProgress = 0;
-                ReplyCorrect = true;
-                EnteredCharacters = new List<int>();
-                DisplayArea.text = "";
+                Debug.Log("Matching indicator: " + ind + " (ON)");
+                firstChar++;
             }
         }
-        return false;
-    }
+        foreach (string ind in indOff)
+        {
+            if (ind.Contains(DisplayCharsRaw[0]) ||
+                ind.Contains(DisplayCharsRaw[1]) ||
+                ind.Contains(DisplayCharsRaw[2]))
+            {
+                Debug.Log("Matching indicator: " + ind + " (OFF)");
+                secondChar++;
+            }
+        }
+        if (firstChar > 'Z') firstChar -= (char)26;
+        if (secondChar > 'Z') secondChar -= (char)26;
 
-    private void GenerateMath()
-    {
-        int a, b, answer;
-        int type = Random.Range(0, 5);
-        if (type == 0)
+        Debug.Log("After indicators: " + firstChar + secondChar);
+
+        int sum = ((firstChar - 'A') + (secondChar - 'A') + 1) % 26 + 1;
+        int root = (int)Mathf.Sqrt(sum);
+        if (root * root == sum)
         {
-            //Multiplication
-            a = Random.Range(3, 10);
-            b = Random.Range(7, 14);
-            answer = a * b;
-        }
-        else if (type == 1)
-        {
-            //Division
-            b = Random.Range(3, 14);
-            answer = Random.Range(13, 18);
-            a = b * answer;
-        }
-        else if (type == 2)
-        {
-            //Modulo
-            a = Random.Range(50, 151);
-            b = Random.Range(7, 18);
-            answer = a % b;
-        }
-        else if (type == 3)
-        {
-            //Power
-            a = Random.Range(2, 6);
-            b = Random.Range(2, 5);
-            answer = a;
-            for (int i = 1; i < b; i++) answer *= a;
-        }
-        else if (type == 4)
-        {
-            //XOR
-            a = Random.Range(1, 16);
-            b = Random.Range(1, 16);
-            answer = a ^ b;
+            Debug.Log("Character sum is square");
+            firstChar += (char)4;
+            if (firstChar > 'Z') firstChar -= (char)26;
         }
         else
         {
-            //Error
-            a = 0;
-            b = 0;
-            answer = 0;
+            Debug.Log("Character sum is not square");
+            secondChar -= (char)4;
+            if (secondChar < 'A') secondChar += (char)26;
         }
-        string display = "" + a;
-        string[] words;
-        if (type == 0) words = new string[] { " TIMES ", " MULT " };
-        else if (type == 1) words = new string[] { " OVER ", " DIV " };
-        else if (type == 2) words = new string[] { " MOD ", " REM " };
-        else if (type == 3) words = new string[] { " POW ", " EXP " };
-        else if (type == 4) words = new string[] { " XOR " };
-        else words = new string[] { " ERROR " };
-        display += words[Random.Range(0, words.Length)];
-        display += b;
-        DisplaySequence = Morsify(display);
-        ReplySequence = Morsify("" + answer);
-        ReplyAnswer = answer;
+
+        Debug.Log("After square check: " + firstChar + secondChar);
+
+        bool match = false;
+
+        foreach (string port in ports)
+        {
+            if (port.Contains(""+firstChar) || port.Contains(""+secondChar))
+            {
+                Debug.Log("Matching port: " + port);
+                match = true;
+                break;
+            }
+        }
+
+        if (match)
+        {
+            char temp = firstChar;
+            firstChar = secondChar;
+            secondChar = temp;
+        }
+        else Debug.Log("No matching ports");
+
+        Debug.Log("After port flip: " + firstChar + secondChar);
+
+        int largest;
+        int sumSmaller;
+        if (disp1base > disp2base && disp1base > disp3base)
+        {
+            Debug.Log(DisplayCharsRaw[0] + " is largest");
+            largest = disp1base;
+            sumSmaller = disp2base + disp3base;
+        }
+        else if (disp2base > disp3base)
+        {
+            Debug.Log(DisplayCharsRaw[1] + " is largest");
+            largest = disp2base;
+            sumSmaller = disp1base + disp3base;
+        }
+        else
+        {
+            Debug.Log(DisplayCharsRaw[2] + " is largest");
+            largest = disp3base;
+            sumSmaller = disp1base + disp2base;
+        }
+        firstChar += (char)largest;
+        secondChar += (char)sumSmaller;
+
+        if (firstChar > 'Z') firstChar -= (char)26;
+        while (secondChar > 'Z') secondChar -= (char)26;
+
+        Debug.Log("After big/small add: " + firstChar + secondChar);
+
+        foreach (char f in FIBB)
+        {
+            if (disp1base == f)
+            {
+                Debug.Log(DisplayCharsRaw[0] + " is Fibb");
+                firstChar += f;
+                secondChar += f;
+            }
+            if (disp2base == f)
+            {
+                Debug.Log(DisplayCharsRaw[1] + " is Fibb");
+                firstChar += f;
+                secondChar += f;
+            }
+            if (disp3base == f)
+            {
+                Debug.Log(DisplayCharsRaw[2] + " is Fibb");
+                firstChar += f;
+                secondChar += f;
+            }
+        }
+
+        while (firstChar > 'Z') firstChar -= (char)26;
+        while (secondChar > 'Z') secondChar -= (char)26;
+
+        Debug.Log("After Fibonacci: " + firstChar + secondChar);
+
+        foreach (char p in PRIME)
+        {
+            if (disp1base == p)
+            {
+                Debug.Log(DisplayCharsRaw[0] + " is prime");
+                firstChar -= p;
+            }
+            if (disp2base == p)
+            {
+                Debug.Log(DisplayCharsRaw[1] + " is prime");
+                firstChar -= p;
+            }
+            if (disp3base == p)
+            {
+                Debug.Log(DisplayCharsRaw[2] + " is prime");
+                firstChar -= p;
+            }
+        }
+
+        while (firstChar < 'A') firstChar += (char)26;
+        while (secondChar < 'A') secondChar += (char)26;
+
+        Debug.Log("After prime: " + firstChar + secondChar);
+
+        foreach (char s in SQUARE)
+        {
+            if (disp1base == s)
+            {
+                Debug.Log(DisplayCharsRaw[0] + " is square");
+                secondChar -= s;
+            }
+            if (disp2base == s)
+            {
+                Debug.Log(DisplayCharsRaw[1] + " is square");
+                secondChar -= s;
+            }
+            if (disp3base == s)
+            {
+                Debug.Log(DisplayCharsRaw[2] + " is square");
+                secondChar -= s;
+            }
+        }
+
+        while (firstChar < 'A') firstChar += (char)26;
+        while (secondChar < 'A') secondChar += (char)26;
+
+        Debug.Log("After square: " + firstChar + secondChar);
+
+        if (batteries > 0)
+        {
+            if (disp1base % batteries == 0)
+            {
+                Debug.Log(DisplayCharsRaw[0] + " is divisible");
+                firstChar -= (char)disp1base;
+                secondChar -= (char)disp1base;
+            }
+            if (disp2base % batteries == 0)
+            {
+                Debug.Log(DisplayCharsRaw[1] + " is divisible");
+                firstChar -= (char)disp2base;
+                secondChar -= (char)disp2base;
+            }
+            if (disp3base % batteries == 0)
+            {
+                Debug.Log(DisplayCharsRaw[2] + " is divisible");
+                firstChar -= (char)disp3base;
+                secondChar -= (char)disp3base;
+            }
+        }
+
+        while (firstChar < 'A') firstChar += (char)26;
+        while (secondChar < 'A') secondChar += (char)26;
+
+        Debug.Log("After batteries: " + firstChar + secondChar);
+
+        char finalVal = (char)(firstChar + secondChar - 'A' + 1);
+        if (finalVal > 'Z') finalVal -= (char)26;
+        Debug.Log("Answer: " + finalVal);
+        Answer = "" + finalVal;
+    }
+
+    public bool HandleTransDown()
+    {
+        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
+        transDown = true;
+        return false;
+    }
+
+    public void HandleTransUp()
+    {
+        transDown = false;
+    }
+
+    private bool switchState;
+    public bool HandleSwitch()
+    {
+        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
+        
+        switchState = !switchState;
+        if (switchState) transform.Find("ReceiveSwitch").localPosition = new Vector3(0.0075f, 0.01925f, 0.086f);
+        else
+        {
+            LED.materials[1].color = LED_OFF;
+            LED.materials[2].color = LED_OFF;
+            LED.materials[3].color = LED_OFF;
+            transform.Find("ReceiveSwitch").localPosition = new Vector3(-0.0075f, 0.01925f, 0.086f);
+        }
+        return false;
+    }
+
+    private bool solved = false;
+
+    private int ticker = 0;
+    private int ticksDown = 0;
+    private bool transDown = false;
+    private List<int> transLog = new List<int>();
+
+    private int[] displayPosition = new int[3];
+    private int[] displayTicker = new int[]{-1, -1, -1};
+
+    private int LED2ticker = -1;
+
+    private const int TIME_UNIT = 12;
+    override public void RealFixedTick()
+    {
+        if (solved || Answer == null) return;
+
+        //will be replaced with scrolling display
+        LED2ticker++;
+        if (LED2ticker == TIME_UNIT*2) LED2ticker = 0;
+        if (LED2ticker == 0) LED2.material.color = LED_BLUE;
+        else LED2.material.color = LED_OFF;
+
+        if (transDown) ticksDown++;
+        ticker++;
+        Draw.AddState(transDown);
+        if (ticker == TIME_UNIT*2)
+        {
+            Draw.AddBeat();
+            ticker = 0;
+            if (ticksDown > (TIME_UNIT))
+            {
+                transLog.Add(1);
+            }
+            else
+            {
+                if (transLog.Count > 0) transLog.Add(0);
+            }
+            ticksDown = 0;
+
+            int c = transLog.Count;
+            if (c > 2)
+            {
+                if (transLog[c-3] == 0 && transLog[c-2] == 0 && transLog[c-1] == 0)
+                {
+                    c -= 2;
+
+                    List<int> data = new List<int>();
+                    int curHold = 0;
+                    for (int p = 0; p < c; p++)
+                    {
+                        if (transLog[p] == 1) curHold++;
+                        else
+                        {
+                            if (curHold == 1) data.Add(0);
+                            else if (curHold == 3) data.Add(1);
+                            else data.Add(-1);
+                            curHold = 0;
+                        }
+                    }
+
+                    string response = DeMorsify(data.ToArray());
+
+                    Debug.Log("Provided response: " + response);
+                    Debug.Log("Expected response: " + Answer);
+
+                    if (response.Equals(Answer))
+                    {
+                        solved = true;
+                        Draw.Clear();
+                        LED.materials[1].color = LED_OFF;
+                        LED.materials[2].color = LED_OFF;
+                        LED.materials[3].color = LED_OFF;
+                        LED2.material.color = LED_OFF;
+                        GetComponent<KMBombModule>().HandlePass();
+                    }
+                    else
+                    {
+                        GetComponent<KMBombModule>().HandleStrike();
+                    }
+                    transLog.Clear();
+                }
+            }
+        }
+
+        for (int a = 0; a < 3; a++)
+        {
+            //Note: 3-a is used instead of a+1 because the lights are up-side-down. This ensures the letters displayed are in the same order on the bomb as they are internally.
+
+            int curDisplay = DisplayChars[a][displayPosition[a]];
+            if (displayTicker[a] == 0 && switchState) LED.materials[3 - a].color = LED_ON;
+
+            displayTicker[a]++;
+            if ((curDisplay == 0 && displayTicker[a] == TIME_UNIT) || (curDisplay == 1 && displayTicker[a] == (TIME_UNIT * 3)))
+            {
+                LED.materials[3 - a].color = LED_OFF;
+                displayTicker[a] = -TIME_UNIT;
+                displayPosition[a]++;
+                if (displayPosition[a] == DisplayChars[a].Length)
+                {
+                    displayTicker[a] = -(TIME_UNIT * 7);
+                    displayPosition[a] = 0;
+                }
+            }
+        }
     }
 
     private static int[] Morsify(string text)
     {
         char[] values = text.ToCharArray();
         List<int> data = new List<int>();
-        for(int a = 0; a < values.Length; a++)
+        for (int a = 0; a < values.Length; a++)
         {
             if (a > 0) data.Add(-1);
             char c = values[a];
-            switch(c)
+            switch (c)
             {
                 /*case ' ':
                     data.Add(-1);
@@ -521,9 +736,8 @@ public class AdvancedMorse : FixedTicker
         return data.ToArray();
     }
 
-    private string DeMorsify()
+    private string DeMorsify(int[] data)
     {
-        int[] data = EnteredCharacters.ToArray();
         List<int> values = new List<int>();
         string result = "";
         foreach (int i in data)
@@ -547,19 +761,19 @@ public class AdvancedMorse : FixedTicker
         {
             //.
             if (val.Length == 1) return "E";
-            else if(val[1] == 0)
+            else if (val[1] == 0)
             {
                 //..
                 if (val.Length == 2) return "I";
-                else if(val[2] == 0)
+                else if (val[2] == 0)
                 {
                     //...
                     if (val.Length == 3) return "S";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //....
                         if (val.Length == 4) return "H";
-                        else if(val[4] == 0)
+                        else if (val[4] == 0)
                         {
                             //.....
                             if (val.Length == 5) return "5";
@@ -589,7 +803,7 @@ public class AdvancedMorse : FixedTicker
                 {
                     //..-
                     if (val.Length == 3) return "U";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //..-.
                         if (val.Length == 4) return "F";
@@ -612,7 +826,7 @@ public class AdvancedMorse : FixedTicker
             {
                 //.-
                 if (val.Length == 2) return "A";
-                else if(val[2] == 0)
+                else if (val[2] == 0)
                 {
                     //.-.
                     if (val.Length == 3) return "R";
@@ -628,7 +842,7 @@ public class AdvancedMorse : FixedTicker
                 {
                     //.--
                     if (val.Length == 3) return "W";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //.--.
                         if (val.Length == 4) return "P";
@@ -653,15 +867,15 @@ public class AdvancedMorse : FixedTicker
         {
             //-
             if (val.Length == 1) return "T";
-            else if(val[1] == 0)
+            else if (val[1] == 0)
             {
                 //-.
                 if (val.Length == 2) return "N";
-                else if(val[2] == 0)
+                else if (val[2] == 0)
                 {
                     //-..
                     if (val.Length == 3) return "D";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //-...
                         if (val.Length == 4) return "B";
@@ -683,7 +897,7 @@ public class AdvancedMorse : FixedTicker
                 {
                     //-.-
                     if (val.Length == 3) return "K";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //-.-.
                         if (val.Length == 4) return "C";
@@ -702,11 +916,11 @@ public class AdvancedMorse : FixedTicker
                 //--
                 //O890
                 if (val.Length == 2) return "M";
-                else if(val[2] == 0)
+                else if (val[2] == 0)
                 {
                     //--.
                     if (val.Length == 3) return "G";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //--..
                         if (val.Length == 4) return "Z";
@@ -728,7 +942,7 @@ public class AdvancedMorse : FixedTicker
                 {
                     //---
                     if (val.Length == 3) return "O";
-                    else if(val[3] == 0)
+                    else if (val[3] == 0)
                     {
                         //---.
                         if (val.Length == 4 || val[4] == 1) return "?";
@@ -743,7 +957,7 @@ public class AdvancedMorse : FixedTicker
                     {
                         //----
                         if (val.Length == 4) return "?";
-                        else if(val[4] == 0)
+                        else if (val[4] == 0)
                         {
                             //----.
                             if (val.Length == 5) return "9";

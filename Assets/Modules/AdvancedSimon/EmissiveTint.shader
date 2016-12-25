@@ -16,9 +16,10 @@ Shader "Hexi/EmissiveTint" {
 		};
 
 		void surf (Input IN, inout SurfaceOutput o) {
-			o.Albedo = _Color.rgb;
 			half rim = saturate(dot (normalize(IN.viewDir), o.Normal));
-			o.Emission = _Color.rgb * (0.1 + pow (rim, 2)) * _Color.a;
+			half rim2 = pow(rim, 2);
+			o.Albedo = _Color.rgb * (0.8 + rim2 * 0.2);
+			o.Emission = _Color.rgb * (0.1 + rim2) * _Color.a;
 		}
 
 		ENDCG

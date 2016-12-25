@@ -74,6 +74,21 @@ using Newtonsoft.Json;
 
 public class AdvancedMaze : MonoBehaviour
 {
+    private static char[][] PIPE_SEGMENTS = new char[][]
+    {
+        new char[]{'║','═','║','═'},
+        new char[]{'╗','╝','╚','╔'},
+        new char[]{'╠','╦','╣','╩'},
+        new char[]{'╬','╬','╬','╬'},
+        new char[]{'╥','╡','╨','╞'},
+        
+    };
+
+    private char GetPipeAscii(int type, int rot)
+    {
+        return PIPE_SEGMENTS[type][rot];
+    }
+
     public KMAudio Sound;
     public KMBombInfo Info;
     public KMSelectable ButtonCheck,
@@ -276,6 +291,7 @@ public class AdvancedMaze : MonoBehaviour
             serial = responseDict["serial"];
             break;
         }
+
         if (serial == null) //We're in the test harness, randomly pick a serial and add some edgework.
         {
             char[] chars = new char[] { 'A', 'B', 'C', 'D', 'E', 'F',
@@ -295,6 +311,9 @@ public class AdvancedMaze : MonoBehaviour
             batteries = Random.Range(0, 6);
             Debug.Log("Batteries: " + batteries);
         }
+
+        Debug.Log("Starting rule checks for Plumbing");
+
         char[] serialChar = serial.ToCharArray();
         int serialNumbers = 0;
         bool serialDupe = false;
@@ -310,35 +329,139 @@ public class AdvancedMaze : MonoBehaviour
         ActiveOut = new bool[4];
 
         int val = 0;
-        if (serial.Contains("1")) val++;
-        if (portCount.ContainsKey("RJ45") && portCount["RJ45"] == 1) val++;
-        if (duplicatePort) val--;
-        if (serialDupe) val--;
-        if (val > 0) ActiveIn[0] = true;
+        if (serial.Contains("1"))
+        {
+            Debug.Log("[FOR+] Serial contains a 1");
+            val++;
+        }
+        else Debug.Log("[FOR-] Serial doesn't contain a 1");
+        if (portCount.ContainsKey("RJ45") && portCount["RJ45"] == 1)
+        {
+            Debug.Log("[FOR+] Bomb has exactly 1 RJ-45 port");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb does not have exactly 1 RJ-45 port");
+        if (duplicatePort)
+        {
+            Debug.Log("[AGA+] Bomb has duplicate ports");
+            val--;
+        }
+        else Debug.Log("[AGA-] Bomb doesn't have duplicate ports");
+        if (serialDupe)
+        {
+            Debug.Log("[AGA+] Serial contains a duplicate");
+            val--;
+        }
+        else Debug.Log("[AGA-] Serial doesn't contain a duplicate");
+        if (val > 0)
+        {
+            Debug.Log("RED IN is active");
+            ActiveIn[0] = true;
+        }
+        else Debug.Log("RED IN is inactive");
 
         val = 0;
-        if (serial.Contains("2")) val++;
-        if (portCount.ContainsKey("StereoRCA")) val++;
-        if (!duplicatePort) val--;
-        if (serial.Contains("1") || serial.Contains("L")) val--;
-        if (val > 0) ActiveIn[1] = true;
+        if (serial.Contains("2"))
+        {
+            Debug.Log("[FOR+] Serial contains a 2");
+            val++;
+        }
+        else Debug.Log("[FOR-] Serial doesn't contain a 2");
+        if (portCount.ContainsKey("StereoRCA"))
+        {
+            Debug.Log("[FOR+] Bomb has a Stereo RCA port");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have a Stereo RCA port");
+        if (!duplicatePort)
+        {
+            Debug.Log("[AGA+] Bomb doesn't have duplicate ports");
+            val--;
+        }
+        else Debug.Log("[AGA-] Bomb has duplicate ports");
+        if (serial.Contains("1") || serial.Contains("L"))
+        {
+            Debug.Log("[AGA+] Serial contains a 1 or an L");
+            val--;
+        }
+        else Debug.Log("[AGA-] Serial doesn't contain a 1 or an L");
+        if (val > 0)
+        {
+            Debug.Log("YELLOW IN is active");
+            ActiveIn[1] = true;
+        }
+        else Debug.Log("YELLOW IN is inactive");
 
         val = 0;
-        if (serialNumbers > 2) val++;
-        if (portCount.ContainsKey("DVI")) val++;
-        if (!ActiveIn[0]) val--;
-        if (!ActiveIn[1]) val--;
-        if (val > 0) ActiveIn[2] = true;
+        if (serialNumbers > 2)
+        {
+            Debug.Log("[FOR+] Serial contains at least 3 numbers");
+            val++;
+        }
+        else Debug.Log("[FOR-] Serial doesn't contain at least 3 numbers");
+        if (portCount.ContainsKey("DVI"))
+        {
+            Debug.Log("[FOR+] Bomb has a DVI-D port");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have a DVI-D port");
+        if (!ActiveIn[0])
+        {
+            Debug.Log("[AGA+] RED IN is inactive");
+            val--;
+        }
+        else Debug.Log("[AGA-] RED IN is active");
+        if (!ActiveIn[1])
+        {
+            Debug.Log("[AGA+] YELLOW IN is inactive");
+            val--;
+        }
+        else Debug.Log("[AGA-] YELLOW IN is active");
+        if (val > 0)
+        {
+            Debug.Log("GREEN IN is active");
+            ActiveIn[2] = true;
+        }
+        else Debug.Log("GREEN IN is inactive");
 
-        if (!ActiveIn[0] && !ActiveIn[1] && !ActiveIn[2]) ActiveIn[3] = true;
+        if (!ActiveIn[0] && !ActiveIn[1] && !ActiveIn[2])
+        {
+            Debug.Log("BLUE IN is active by default");
+            ActiveIn[3] = true;
+        }
         else
         {
             val = 0;
-            if (portCount.Count >= 4) val++;
-            if (batteries >= 4) val++;
-            if (portCount.Count == 0) val--;
-            if (batteries == 0) val--;
-            if (val > 0) ActiveIn[3] = true;
+            if (portCount.Count >= 4)
+            {
+                Debug.Log("[FOR+] Bomb has at least 4 port types");
+                val++;
+            }
+            else Debug.Log("[FOR-] Bomb doesn't have at least 4 port types");
+            if (batteries >= 4)
+            {
+                Debug.Log("[FOR+] Bomb has at least 4 batteries");
+                val++;
+            }
+            else Debug.Log("[FOR-] Bomb doesn't have at least 4 batteries");
+            if (portCount.Count == 0)
+            {
+                Debug.Log("[AGA+] Bomb has no ports");
+                val--;
+            }
+            else Debug.Log("[AGA-] Bomb has ports");
+            if (batteries == 0)
+            {
+                Debug.Log("[AGA+] Bomb has no batteries");
+                val--;
+            }
+            else Debug.Log("[AGA-] Bomb has batteries");
+            if (val > 0)
+            {
+                Debug.Log("BLUE IN is active");
+                ActiveIn[3] = true;
+            }
+            else Debug.Log("BLUE IN is inactive");
         }
 
         int sum = 0;
@@ -348,35 +471,139 @@ public class AdvancedMaze : MonoBehaviour
         if (ActiveIn[3]) sum++;
 
         val = 0;
-        if (portCount.ContainsKey("Serial")) val++;
-        if (batteries == 1) val++;
-        if (serialNumbers > 2) val--;
-        if (sum > 2) val--;
-        if (val > 0) ActiveOut[0] = true;
+        if (portCount.ContainsKey("Serial"))
+        {
+            Debug.Log("[FOR+] Bomb has a Serial port");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have a Serial port");
+        if (batteries == 1)
+        {
+            Debug.Log("[FOR+] Bomb has exactly 1 battery");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have exactly 1 battery");
+        if (serialNumbers > 2)
+        {
+            Debug.Log("[AGA+] Serial has more than 2 numbers");
+            val--;
+        }
+        else Debug.Log("[AGA-] Serial doesn't have more than 2 numbers");
+        if (sum > 2)
+        {
+            Debug.Log("[AGA+] More than 2 inputs are active");
+            val--;
+        }
+        else Debug.Log("[AGA-] No more than 2 inputs are active");
+        if (val > 0)
+        {
+            Debug.Log("RED OUT is active");
+            ActiveOut[0] = true;
+        }
+        else Debug.Log("RED OUT is inactive");
 
         val = 0;
-        if (duplicatePort) val++;
-        if (serial.Contains("4") || serial.Contains("8")) val++;
-        if (!serial.Contains("2")) val--;
-        if (ActiveIn[2]) val--;
-        if (val > 0) ActiveOut[1] = true;
+        if (duplicatePort)
+        {
+            Debug.Log("[FOR+] Bomb has duplicate ports");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have duplicate ports");
+        if (serial.Contains("4") || serial.Contains("8"))
+        {
+            Debug.Log("[FOR+] Serial contains a 4 or an 8");
+            val++;
+        }
+        else Debug.Log("[FOR-] Serial doesn't contain a 4 or an 8");
+        if (!serial.Contains("2"))
+        {
+            Debug.Log("[AGA+] Serial doesn't contain a 2");
+            val--;
+        }
+        else Debug.Log("[AGA-] Serial contains a 2");
+        if (ActiveIn[2])
+        {
+            Debug.Log("[AGA+] GREEN IN is active");
+            val--;
+        }
+        else Debug.Log("[AGA-] GREEN IN is inactive");
+        if (val > 0)
+        {
+            Debug.Log("YELLOW OUT is active");
+            ActiveOut[1] = true;
+        }
+        else Debug.Log("YELLOW OUT is inactive");
 
         val = 0;
-        if (sum == 3) val++;
-        if (portSum == 3) val++;
-        if (portSum < 3) val--;
-        if (serialNumbers > 3) val--;
-        if (val > 0) ActiveOut[2] = true;
+        if (sum == 3)
+        {
+            Debug.Log("[FOR+] Exactly 3 inputs are active");
+            val++;
+        }
+        else Debug.Log("[FOR-] Not exactly 3 inputs are active");
+        if (portSum == 3)
+        {
+            Debug.Log("[FOR+] Bomb has exactly 3 ports");
+            val++;
+        }
+        else Debug.Log("[FOR-] Bomb doesn't have exactly 3 ports");
+        if (portSum < 3)
+        {
+            Debug.Log("[AGA+] Bomb has less than 3 ports");
+            val--;
+        }
+        else Debug.Log("[AGA-] Bomb has at least 3 ports");
+        if (serialNumbers > 3)
+        {
+            Debug.Log("[AGA+] Serial has more than 3 numbers");
+            val--;
+        }
+        else Debug.Log("[AGA-] Serial doesn't have more than 3 numbers");
+        if (val > 0)
+        {
+            Debug.Log("GREEN OUT is active");
+            ActiveOut[2] = true;
+        }
+        else Debug.Log("GREEN OUT is inactive");
 
-        if (!ActiveOut[0] && !ActiveOut[1] && !ActiveOut[2]) ActiveOut[3] = true;
+        if (!ActiveOut[0] && !ActiveOut[1] && !ActiveOut[2])
+        {
+            Debug.Log("BLUE OUT is active by default");
+            ActiveOut[3] = true;
+        }
         else
         {
             val = 0;
-            if (sum == 4) val++;
-            if (!ActiveOut[0] || !ActiveOut[1] || !ActiveOut[2]) val++;
-            if (batteries < 2) val--;
-            if (!portCount.ContainsKey("Parallel")) val--;
-            if (val > 0) ActiveOut[3] = true;
+            if (sum == 4)
+            {
+                Debug.Log("[FOR+] All inputs are active");
+                val++;
+            }
+            else Debug.Log("[FOR-] Not all inputs are active");
+            if (!ActiveOut[0] || !ActiveOut[1] || !ActiveOut[2])
+            {
+                Debug.Log("[FOR+] At least one other output is inactive");
+                val++;
+            }
+            else Debug.Log("[FOR-] All other outputs are active");
+            if (batteries < 2)
+            {
+                Debug.Log("[AGA+] Bomb has less than 2 batteries");
+                val--;
+            }
+            else Debug.Log("[AGA-] Bomb has at least 2 batteries");
+            if (!portCount.ContainsKey("Parallel"))
+            {
+                Debug.Log("[AGA+] Bomb has no Parallel port");
+                val--;
+            }
+            else Debug.Log("[AGA-] Bomb has a Parallel port");
+            if (val > 0)
+            {
+                Debug.Log("BLUE OUT is active");
+                ActiveOut[3] = true;
+            }
+            else Debug.Log("BLUE OUT is inactive");
         }
 
         bool[][] grid = new bool[13][];
@@ -635,14 +862,21 @@ public class AdvancedMaze : MonoBehaviour
             }
         }
 
+        char[][] debugSolved = new char[6][];
+        char[][] debugShown = new char[6][];
+
         PlayFieldType = new int[6][];
         PlayFieldState = new int[6][];
         for (int x = 0; x < 6; x++)
         {
+            debugSolved[x] = new char[6];
+            debugShown[x] = new char[6];
+
             PlayFieldType[x] = new int[6];
             PlayFieldState[x] = new int[6];
             for (int y = 0; y < 6; y++)
             {
+                bool addedSolved = false;
                 int x2 = x * 2 + 1;
                 int y2 = y * 2 + 1;
                 if (grid[x2][y2-1])
@@ -776,6 +1010,8 @@ public class AdvancedMaze : MonoBehaviour
                             }
                             else
                             {
+                                debugSolved[x][y] += '┼';
+                                addedSolved = true;
                                 //-UP -DOWN -LEFT -RIGHT
                                 PlayFieldType[x][y] = -1;
                                 if (x == 0 || x == 5 || y == 0 || y == 5)
@@ -831,13 +1067,36 @@ public class AdvancedMaze : MonoBehaviour
                         }
                     }
                 }
+                if (!addedSolved)
+                {
+                    debugSolved[x][y] = GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                }
                 PlayFieldState[x][y] = Random.Range(0, 4);
+                debugShown[x][y] = GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
                 ApplyModel(Buttons[x][y].gameObject, PlayFieldType[x][y], PlayFieldState[x][y], (x + y) % 2 == 1);
                 x2 = x;
                 y2 = y;
                 Buttons[x][y].OnInteract += delegate() { HandleInteract(x2, y2); return false; };
             }
         }
+        string debugShownText = "";
+        string debugSolvedText = "";
+        for (int y = 0; y < 6; y++)
+        {
+            for(int x = 0; x < 6; x++)
+            {
+                debugShownText += debugShown[x][y];
+                debugSolvedText += debugSolved[x][y];
+                if (x == 5)
+                {
+                    debugShownText += "\n";
+                    debugSolvedText += "\n";
+                }
+            }
+        }
+
+        Debug.Log("Shown pipes:\n" + debugShownText);
+        Debug.Log("Intended solution:\n" + debugSolvedText);
     }
 
     private int[] GetConnections(int x, int y)

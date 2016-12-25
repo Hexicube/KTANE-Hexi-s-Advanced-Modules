@@ -57,6 +57,7 @@ public class AdvancedKnob : FixedTicker
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
         Display.text = "";
+        Debug.Log("Rotary Phone initial display: " + CurAnswer);
     }
 
     protected void OnActivate()
@@ -66,8 +67,11 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnNeedyActivation()
     {
+        Debug.Log("Rotary Phone old value: " + CurAnswer);
         DisplayNumber = Random.Range(0, 1000);
+        Debug.Log("New display: " + DisplayNumber);
         CurAnswer = (CurAnswer + DisplayNumber) % 1000;
+        Debug.Log("New value: " + CurAnswer);
         SetDisplay();
         Active = true;
         Response = 0;

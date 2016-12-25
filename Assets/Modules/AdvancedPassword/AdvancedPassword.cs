@@ -37,7 +37,7 @@ public class AdvancedPassword : MonoBehaviour
 
     private int GetDialChartVal(int dial, char c)
     {
-        int charVal = -1;
+        int charVal;
         if (c == 'A') charVal = 0;
         else if (c == 'B') charVal = 1;
         else if (c == 'C') charVal = 2;
@@ -100,6 +100,8 @@ public class AdvancedPassword : MonoBehaviour
             int a2 = a;
             Dials[a].OnInteract += delegate() { HandleInteract(a2); return false; };
         }
+
+        Debug.Log("Safety Safe dial click locations: " + ClickPos[0] + "," + ClickPos[1] + "," + ClickPos[2] + "," + ClickPos[3] + "," + ClickPos[4] + "," + ClickPos[5]);
 
         Lever.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         Lever.transform.Find("default").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
@@ -164,10 +166,15 @@ public class AdvancedPassword : MonoBehaviour
             }
         }
 
+        Debug.Log("Global offset: " + dialOffset % 12);
+
+        string offsetList = "";
+
         for (int a = 0; a < 6; a++)
         {
             int serialVal = 0;
             serialVal = GetDialChartVal(a, serial[a]);
+            offsetList += serialVal % 12;
             if (a == 5)
             {
                 serialVal += GetDialChartVal(5, serial[0]);
@@ -176,8 +183,12 @@ public class AdvancedPassword : MonoBehaviour
                 serialVal += GetDialChartVal(5, serial[3]);
                 serialVal += GetDialChartVal(5, serial[4]);
             }
+            else offsetList += ",";
             AnswerPos[a] = (ClickPos[a] + serialVal + dialOffset) % 12;
         }
+
+        Debug.Log("Local offsets: " + offsetList);
+        Debug.Log("Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
     }
 
     void HandleInteract(int dial)

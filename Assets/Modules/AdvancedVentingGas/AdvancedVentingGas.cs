@@ -86,28 +86,46 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void HandleResponse(bool R)
     {
-        if (DidHakuna)
+        if (DidHakuna && !Display.text.Equals(""))
         {
+            Debug.Log("Quiz: Is \"Hakuna Matata\" a passing craze?");
+            Debug.Log("Given answer: " + (R ? "Y" : "N"));
             DidHakuna = false;
-            if (R) GetComponent<KMNeedyModule>().HandleStrike();
-            else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            if (R)
+            {
+                Debug.Log("Answer was incorrect");
+                GetComponent<KMNeedyModule>().HandleStrike();
+            }
+            else
+            {
+                Debug.Log("Answer was correct");
+                Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            }
             GetComponent<KMNeedyModule>().HandlePass();
         }
         else
         {
             if (CurQ == null) return;
             GetComponent<KMNeedyModule>().HandlePass();
+            Debug.Log("Quiz: " + Display.text.Replace("\n", ""));
+            Debug.Log("Given answer: " + (R ? "Y" : "N"));
             if (CurQ(this, R))
             {
+                Debug.Log("Answer was correct");
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
             }
             else
             {
                 if (Display.text.Equals("Abort?"))
                 {
+                    Debug.Log("ABORT! ABORT!!! ABOOOOOOORT!!!!!");
                     while (!Exploded) Service.CauseStrike("ABORT!");
                 }
-                else GetComponent<KMNeedyModule>().HandleStrike();
+                else
+                {
+                    Debug.Log("Answer was incorrect");
+                    GetComponent<KMNeedyModule>().HandleStrike();
+                }
             }
         }
         HasReply = true;
@@ -118,7 +136,8 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void OnTimerExpired()
     {
-        if (CurQ == null) return;
+        if (CurQ == null && !DidHakuna) return;
+        DidHakuna = false;
         GetComponent<KMNeedyModule>().HandleStrike();
     }
 

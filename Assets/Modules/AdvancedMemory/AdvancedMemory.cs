@@ -21,6 +21,7 @@ public class AdvancedMemory : MonoBehaviour
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
+    private KMSelectable[] Buttons;
     public TextMesh DisplayMesh, StageMesh;
 
     private int[] Display;
@@ -29,6 +30,8 @@ public class AdvancedMemory : MonoBehaviour
 
     void Awake()
     {
+        Buttons = new KMSelectable[]{Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};
+
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
         Button0.OnInteract += Handle0;
@@ -137,7 +140,6 @@ public class AdvancedMemory : MonoBehaviour
                             Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
                             foreach (string s in responseDict["presentPorts"])
                             {
-                                Debug.Log("Port: " + s);
                                 if (s.Equals("Serial"))
                                 {
                                     serialPort = true;
@@ -191,6 +193,22 @@ public class AdvancedMemory : MonoBehaviour
                 prev1 = Solution[a];
             }
         }
+
+        Debug.Log("Non-FMN modules: " + count);
+        string displayText = "";
+        string solutionText = "";
+        for (int a = 0; a < count; a++)
+        {
+            if (a > 0 && a % 3 == 0)
+            {
+                displayText += " ";
+                solutionText += " ";
+            }
+            displayText += Display[a];
+            solutionText += Solution[a];
+        }
+        Debug.Log("Display: " + displayText);
+        Debug.Log("Solution: " + solutionText);
     }
 
     int ticker = 0;
@@ -227,6 +245,7 @@ public class AdvancedMemory : MonoBehaviour
         }
     }
 
+    private int litButton = -1;
     private void Handle(int val)
     {
         if (Solution == null) return;
@@ -236,6 +255,11 @@ public class AdvancedMemory : MonoBehaviour
             if (progress < Solution.Length) GetComponent<KMBombModule>().HandleStrike();
             else if (val == Solution[Position])
             {
+                if (litButton != -1)
+                {
+                    Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+                    litButton = -1;
+                }
                 if (DisplayMesh.text.Equals("-")) DisplayMesh.text = "";
                 if (Solution.Length > 10) //Double-decker bomb, vanilla caps at 10 slots (one is timer, one is this module)
                 {
@@ -246,7 +270,15 @@ public class AdvancedMemory : MonoBehaviour
                 if (Position == Solution.Length) GetComponent<KMBombModule>().HandlePass();
                 else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
             }
-            else GetComponent<KMBombModule>().HandleStrike();
+            else
+            {
+                GetComponent<KMBombModule>().HandleStrike();
+                if (litButton == -1)
+                {
+                    litButton = Display[Position];
+                    Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.8f, 0.5f);
+                }
+            }
         }
     }
 

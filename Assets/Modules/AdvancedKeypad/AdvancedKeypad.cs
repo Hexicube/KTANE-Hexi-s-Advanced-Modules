@@ -58,12 +58,16 @@ public class AdvancedKeypad : MonoBehaviour
         foreach (char a in CharList) values.Add(a);
         char[] labels = new char[8];
         int pos = 0;
+        string s = "Round Keypad symbol list: ";
         while (pos < 8)
         {
             int val = Random.Range(0, values.Count);
             labels[pos++] = values[val];
             values.RemoveAt(val);
+            if (pos > 1) s += ",";
+            s += labels[pos - 1];
         }
+        Debug.Log(s);
         pos = 0;
         while (pos < 8)
         {
@@ -100,6 +104,7 @@ public class AdvancedKeypad : MonoBehaviour
             }
             pos++;
         }
+        Debug.Log("Correct column: " + bestPos);
         pos = 0;
         while(pos < 8)
         {
@@ -114,6 +119,17 @@ public class AdvancedKeypad : MonoBehaviour
             }
             Solution[pos++] = !match;
         }
+        s = "Solution: ";
+        bool first = true;
+        for (pos = 0; pos < 8; pos++)
+        {
+            if (Solution[pos])
+            {
+                if (!first) s += ",";
+                s += labels[pos];
+            }
+        }
+        Debug.Log(s);
     }
 
     void Guess(int pos)
