@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class PolyDraw : MonoBehaviour
 {
+    public static GameObject SQUARE;
+
     public float Width, Height;
     public float BeatWidth, BeatHeight;
     public int Length;
@@ -14,6 +16,36 @@ public class PolyDraw : MonoBehaviour
 
     public void Awake()
     {
+        if (SQUARE == null)
+        {
+            SQUARE = new GameObject();
+
+            Mesh mesh = new Mesh();
+            MeshRenderer r = SQUARE.AddComponent<MeshRenderer>();
+            r.material.shader = Shader.Find("KT/Mobile/DiffuseTint");
+            r.material.color = new Color(0, 0, 0);
+
+            mesh.vertices = new Vector3[] {
+                new Vector3(0, 0.01f, -0.5f),
+                new Vector3(1, 0.01f, -0.5f),
+                new Vector3(1, 0.01f, 0.5f),
+                new Vector3(0, 0.01f, 0.5f)
+            };
+            mesh.uv = new Vector2[] {
+                new Vector2 (0, 0),
+                new Vector2 (0, 1),
+                new Vector2(1, 1),
+                new Vector2 (1, 0)
+            };
+            mesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 };
+            mesh.RecalculateNormals();
+
+            MeshFilter f = SQUARE.AddComponent<MeshFilter>();
+            f.mesh = mesh;
+
+            SQUARE.SetActive(false);
+        }
+
         gameObject.transform.Find("Cube").GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.5f, 0.5f);
 
         Unit = Width / (float)Length;
@@ -39,8 +71,6 @@ public class PolyDraw : MonoBehaviour
             beatList[a] = beatList[a + 1];
         }
         beatList[Length] = false;
-
-        ApplyState();
     }
 
     public void AddBeat()
@@ -64,69 +94,21 @@ public class PolyDraw : MonoBehaviour
 
     private void GenQuad(int start, int end)
     {
-        GameObject o = new GameObject();
-        o.transform.parent = gameObject.transform;
-        o.transform.localPosition = new Vector3();
+        GameObject o = (GameObject)Instantiate(SQUARE, gameObject.transform);
+        o.transform.localPosition = new Vector3(Left + Unit * start, 0, 0);
         o.transform.localRotation = new Quaternion();
-        o.transform.localScale = new Vector3(1, 1, 1);
-
-        Mesh mesh = new Mesh();
-        MeshRenderer r = o.AddComponent<MeshRenderer>();
-        MeshFilter f = o.AddComponent<MeshFilter>();
-        f.mesh = mesh;
-
-        mesh.vertices = new Vector3[] {
-            new Vector3(Left + Unit * start, 0.01f, -Height),
-            new Vector3(Left + Unit * end, 0.01f, -Height),
-            new Vector3(Left + Unit * end, 0.01f, Height),
-            new Vector3(Left + Unit * start, 0.01f, Height)
-        };
-        mesh.uv = new Vector2[] {
-            new Vector2 (0, 0),
-            new Vector2 (0, 1),
-            new Vector2(1, 1),
-            new Vector2 (1, 0)
-        };
-        mesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 };
-        mesh.RecalculateNormals();
-
-        r.material.shader = Shader.Find("KT/Mobile/DiffuseTint");
-        r.material.color = new Color(0, 0, 0);
-
+        o.transform.localScale = new Vector3(Unit * (end - start), 1, Height);
+        o.SetActive(true);
         currentQuads.Add(o);
     }
 
     private void GenBeat(int pos)
     {
-        GameObject o = new GameObject();
-        o.transform.parent = gameObject.transform;
-        o.transform.localPosition = new Vector3();
+        GameObject o = (GameObject)Instantiate(SQUARE, gameObject.transform);
+        o.transform.localPosition = new Vector3(Left + Unit * pos - BeatWidth, 0, 0);
         o.transform.localRotation = new Quaternion();
-        o.transform.localScale = new Vector3(1, 1, 1);
-
-        Mesh mesh = new Mesh();
-        MeshRenderer r = o.AddComponent<MeshRenderer>();
-        MeshFilter f = o.AddComponent<MeshFilter>();
-        f.mesh = mesh;
-
-        mesh.vertices = new Vector3[] {
-            new Vector3(Left + Unit * pos - BeatWidth / 2, 0.01f, -BeatHeight / 2),
-            new Vector3(Left + Unit * pos + BeatWidth / 2, 0.01f, -BeatHeight / 2),
-            new Vector3(Left + Unit * pos + BeatWidth / 2, 0.01f, BeatHeight / 2),
-            new Vector3(Left + Unit * pos - BeatWidth / 2, 0.01f, BeatHeight / 2)
-        };
-        mesh.uv = new Vector2[] {
-            new Vector2 (0, 0),
-            new Vector2 (0, 1),
-            new Vector2(1, 1),
-            new Vector2 (1, 0)
-        };
-        mesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 };
-        mesh.RecalculateNormals();
-
-        r.material.shader = Shader.Find("KT/Mobile/DiffuseTint");
-        r.material.color = new Color(0, 0, 0);
-
+        o.transform.localScale = new Vector3(BeatWidth, 1, BeatHeight);
+        o.SetActive(true);
         currentQuads.Add(o);
     }
 
@@ -135,7 +117,7 @@ public class PolyDraw : MonoBehaviour
         foreach (GameObject o in currentQuads)
         {
             o.SetActive(false);
-            Destroy(o);
+            DestroyImmediate(o);
         }
         currentQuads.Clear();
 

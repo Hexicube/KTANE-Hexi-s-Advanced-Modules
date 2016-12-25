@@ -424,11 +424,10 @@ public class AdvancedMorse : FixedTicker
     {
         if (solved || Answer == null) return;
 
-        //will be replaced with scrolling display
         LED2ticker++;
         if (LED2ticker == TIME_UNIT*2) LED2ticker = 0;
         if (LED2ticker == 0) LED2.material.color = LED_BLUE;
-        else LED2.material.color = LED_OFF;
+        else if (LED2ticker == 3) LED2.material.color = LED_OFF;
 
         if (transDown) ticksDown++;
         ticker++;
@@ -491,6 +490,7 @@ public class AdvancedMorse : FixedTicker
                 }
             }
         }
+        Draw.ApplyState();
 
         for (int a = 0; a < 3; a++)
         {
