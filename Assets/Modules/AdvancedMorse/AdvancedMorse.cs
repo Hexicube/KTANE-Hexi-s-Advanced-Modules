@@ -68,8 +68,8 @@ public class AdvancedMorse : FixedTicker
 
     public PolyDraw Draw;
 
-    private static Color LED_OFF = new Color(0, 0, 0, 0), LED_ON = new Color(0.7f, 0.6f, 0.2f, 0.4f), LED_BLUE = new Color(0.1f, 0.4f, 1f, 0.4f);
-    private MeshRenderer LED, LED2;
+    private static Color LED_OFF = new Color(0, 0, 0, 0), LED_ON = new Color(0.7f, 0.6f, 0.2f, 0.4f);
+    private MeshRenderer LED;
 
     private string[] DisplayCharsRaw = new string[3];
     private int[][] DisplayChars;
@@ -91,10 +91,6 @@ public class AdvancedMorse : FixedTicker
         LED.materials[1].color = LED_OFF;
         LED.materials[2].color = LED_OFF;
         LED.materials[3].color = LED_OFF;
-
-        transform.Find("Pacer").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
-        LED2 = gameObject.transform.Find("Pacer").Find("LED").GetComponent<MeshRenderer>();
-        LED2.material.color = LED_OFF;
 
         transform.Find("ReceiveBox").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
         transform.Find("ReceiveSwitch").GetComponent<MeshRenderer>().material.color = new Color(0.6f, 0.6f, 0.6f);
@@ -378,16 +374,22 @@ public class AdvancedMorse : FixedTicker
         Answer = "" + finalVal;
     }
 
+    private bool transDown;
+
     public bool HandleTransDown()
     {
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
         transDown = true;
+        if (transmitTicker >= 0) transmitTimings.Add(transmitTicker);
+        transmitTicker = 0;
         return false;
     }
 
     public void HandleTransUp()
     {
         transDown = false;
+        transmitTimings.Add(transmitTicker);
+        transmitTicker = 0;
     }
 
     private bool switchState;
@@ -409,86 +411,47 @@ public class AdvancedMorse : FixedTicker
 
     private bool solved = false;
 
-    private int ticker = 0;
-    private int ticksDown = 0;
-    private bool transDown = false;
-    private List<int> transLog = new List<int>();
+    private List<int> transmitTimings = new List<int>();
+    private int transmitTicker = -1;
 
     private int[] displayPosition = new int[3];
     private int[] displayTicker = new int[]{-1, -1, -1};
-
-    private int LED2ticker = -1;
 
     private const int TIME_UNIT = 12;
     override public void RealFixedTick()
     {
         if (solved || Answer == null) return;
 
-        LED2ticker++;
-        if (LED2ticker == TIME_UNIT*2) LED2ticker = 0;
-        if (LED2ticker == 0) LED2.material.color = LED_BLUE;
-        else if (LED2ticker == 3) LED2.material.color = LED_OFF;
-
-        if (transDown) ticksDown++;
-        ticker++;
+        if (transmitTicker >= 0) transmitTicker++;
         Draw.AddState(transDown);
-        if (ticker == TIME_UNIT*2)
+        if (transmitTicker >= 100 && !transDown)
         {
-            Draw.AddBeat();
-            ticker = 0;
-            if (ticksDown > (TIME_UNIT))
+            transmitTicker = -1;
+            string response = DeMorsify(transmitTimings);
+
+            Debug.Log("Provided response: " + response);
+            Debug.Log("Expected response: " + Answer);
+
+            if (response.Equals("E") && Answer.Equals("T"))
             {
-                transLog.Add(1);
+                Debug.Log("Interpreting E as T as they are indistinguishable");
+                response = "T";
+            }
+
+            if (response.Equals(Answer))
+            {
+                solved = true;
+                Draw.Clear();
+                LED.materials[1].color = LED_OFF;
+                LED.materials[2].color = LED_OFF;
+                LED.materials[3].color = LED_OFF;
+                GetComponent<KMBombModule>().HandlePass();
             }
             else
             {
-                if (transLog.Count > 0) transLog.Add(0);
+                GetComponent<KMBombModule>().HandleStrike();
             }
-            ticksDown = 0;
-
-            int c = transLog.Count;
-            if (c > 2)
-            {
-                if (transLog[c-3] == 0 && transLog[c-2] == 0 && transLog[c-1] == 0)
-                {
-                    c -= 2;
-
-                    List<int> data = new List<int>();
-                    int curHold = 0;
-                    for (int p = 0; p < c; p++)
-                    {
-                        if (transLog[p] == 1) curHold++;
-                        else
-                        {
-                            if (curHold == 1) data.Add(0);
-                            else if (curHold == 3) data.Add(1);
-                            else data.Add(-1);
-                            curHold = 0;
-                        }
-                    }
-
-                    string response = DeMorsify(data.ToArray());
-
-                    Debug.Log("Provided response: " + response);
-                    Debug.Log("Expected response: " + Answer);
-
-                    if (response.Equals(Answer))
-                    {
-                        solved = true;
-                        Draw.Clear();
-                        LED.materials[1].color = LED_OFF;
-                        LED.materials[2].color = LED_OFF;
-                        LED.materials[3].color = LED_OFF;
-                        LED2.material.color = LED_OFF;
-                        GetComponent<KMBombModule>().HandlePass();
-                    }
-                    else
-                    {
-                        GetComponent<KMBombModule>().HandleStrike();
-                    }
-                    transLog.Clear();
-                }
-            }
+            transmitTimings.Clear();
         }
         Draw.ApplyState();
 
@@ -736,21 +699,38 @@ public class AdvancedMorse : FixedTicker
         return data.ToArray();
     }
 
-    private string DeMorsify(int[] data)
+    private string DeMorsify(List<int> timings)
     {
-        List<int> values = new List<int>();
-        string result = "";
-        foreach (int i in data)
+        if (timings.Count == 1) return "E";
+        Debug.Log(timings.Count);
+
+        int[] gapTimes = new int[timings.Count / 2];
+        int[] holdTimes = new int[gapTimes.Length + 1];
+
+        for (int a = 0; a < gapTimes.Length; a++)
         {
-            if (i == -1)
-            {
-                result += GetLetter(values.ToArray());
-                values.Clear();
-            }
-            else values.Add(i);
+            gapTimes[a] = timings[a * 2 + 1];
         }
-        result += GetLetter(values.ToArray());
-        return result;
+
+        for (int a = 0; a < holdTimes.Length; a++)
+        {
+            holdTimes[a] = timings[a * 2];
+        }
+
+        int averageGap = 0;
+        for (int a = 0; a < gapTimes.Length; a++)
+        {
+            averageGap += gapTimes[a];
+        }
+        averageGap /= gapTimes.Length;
+
+        for (int a = 0; a < holdTimes.Length; a++)
+        {
+            if (holdTimes[a] < averageGap * 2) holdTimes[a] = 0;
+            else holdTimes[a] = 1;
+        }
+
+        return GetLetter(holdTimes);
     }
 
     private string GetLetter(int[] val)

@@ -134,7 +134,6 @@
                             <li>Numeric values outside the 1-26 range wrap around (Z+1=A, A-1=Z)</li>
                             <li>Three unique letters are being received on a loop, shown by the three flashing lights in the middle of the module</li>
                             <li>To solve the module, a correct response letter must be sent in morse using the transmit button in the bottom-right</li>
-                            <li>To assist with timings, a scrolling display with marks and a flashing LED show how long to hold the button for one unit of time as well as where each time unit starts</li>
                             <li>The small switch at the top can be used to toggle the received letter lights</li>
                         </ul>
                         Take the 4th and 5th character of the serial number, this is your character pair.
@@ -152,6 +151,8 @@
                             <li>If batteries are present and any received letters are divisible by the number of batteries present, subtract those received letters from both characters in your pair</li>
                         </ul>
                         After performing all steps, transmit the sum of your character pair.
+                        <br><br>
+                        Note: Transmitted morse is interpreted based on gaps between button holds. Holding for more than double the length of the average gap is considered to be a dash, and a dot otherwise. Additionally, in the case of E and T, they are considered equal.
                     </div>
                 </div>
                 <div class="page">
