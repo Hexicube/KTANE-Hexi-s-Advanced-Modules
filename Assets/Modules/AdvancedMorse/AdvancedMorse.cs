@@ -67,6 +67,7 @@ public class AdvancedMorse : FixedTicker
     public KMBombInfo Info;
 
     public PolyDraw Draw;
+    public TextMesh Wrong;
 
     private static Color LED_OFF = new Color(0, 0, 0, 0), LED_ON = new Color(0.7f, 0.6f, 0.2f, 0.4f);
     private MeshRenderer LED;
@@ -413,6 +414,7 @@ public class AdvancedMorse : FixedTicker
 
     private List<int> transmitTimings = new List<int>();
     private int transmitTicker = -1;
+    private int wrongAnswerTimer = 1;
 
     private int[] displayPosition = new int[3];
     private int[] displayTicker = new int[]{-1, -1, -1};
@@ -420,6 +422,12 @@ public class AdvancedMorse : FixedTicker
     private const int TIME_UNIT = 12;
     override public void RealFixedTick()
     {
+        if (wrongAnswerTimer > 0)
+        {
+            wrongAnswerTimer--;
+            if (wrongAnswerTimer == 0) Wrong.text = "";
+        }
+
         if (solved || Answer == null) return;
 
         if (transmitTicker >= 0) transmitTicker++;
@@ -427,7 +435,8 @@ public class AdvancedMorse : FixedTicker
         if (transmitTicker >= 100 && !transDown)
         {
             transmitTicker = -1;
-            string response = DeMorsify(transmitTimings);
+            int[] responseData = DeMorsify(transmitTimings);
+            string response = GetLetter(responseData);
 
             Debug.Log("Provided response: " + response);
             Debug.Log("Expected response: " + Answer);
@@ -449,6 +458,22 @@ public class AdvancedMorse : FixedTicker
             }
             else
             {
+                Wrong.transform.localPosition = new Vector3(-0.015f, 0.016f, -0.04f);
+                wrongAnswerTimer = 50;
+                if (response == "?")
+                {
+                    string data = "";
+                    foreach (int i in responseData)
+                    {
+                        if (i == 0) data += ".";
+                        else data += "_";
+                    }
+                    Wrong.transform.localPosition = new Vector3(-0.015f, 0.016f, -0.035f);
+                    wrongAnswerTimer = 100;
+                    Wrong.text = data;
+                }
+                else if (response == "E") Wrong.text = "E/T";
+                else Wrong.text = response;
                 GetComponent<KMBombModule>().HandleStrike();
             }
             transmitTimings.Clear();
@@ -699,9 +724,9 @@ public class AdvancedMorse : FixedTicker
         return data.ToArray();
     }
 
-    private string DeMorsify(List<int> timings)
+    private int[] DeMorsify(List<int> timings)
     {
-        if (timings.Count == 1) return "E";
+        if (timings.Count == 1) return new int[]{0};
         Debug.Log(timings.Count);
 
         int[] gapTimes = new int[timings.Count / 2];
@@ -730,7 +755,7 @@ public class AdvancedMorse : FixedTicker
             else holdTimes[a] = 1;
         }
 
-        return GetLetter(holdTimes);
+        return holdTimes;
     }
 
     private string GetLetter(int[] val)

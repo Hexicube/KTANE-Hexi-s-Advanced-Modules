@@ -209,6 +209,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1000013510795032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 4000010525634014}
+  - 23: {fileID: 23000013994898912}
+  - 102: {fileID: 102000011158662456}
+  - 114: {fileID: 114000013216171780}
+  m_Layer: 0
+  m_Name: Wrong Answer Display
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1000014120786702
 GameObject:
   m_ObjectHideFlags: 1
@@ -238,6 +256,19 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 4000014216350906}
+  m_Father: {fileID: 4000013067729530}
+  m_RootOrder: 9
+--- !u!4 &4000010525634014
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013510795032}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -0.015, y: 0.016, z: -0.04}
+  m_LocalScale: {x: 0.001, y: 0.0005, z: 1}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_Children: []
   m_Father: {fileID: 4000013067729530}
   m_RootOrder: 8
 --- !u!4 &4000010560922544
@@ -377,6 +408,7 @@ Transform:
   - {fileID: 4000012052653896}
   - {fileID: 4000010637193178}
   - {fileID: 4000012405827558}
+  - {fileID: 4000010525634014}
   - {fileID: 4000010424857176}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -570,6 +602,35 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!23 &23000013994898912
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013510795032}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: ea7383a11cc28a24cbea15073b68bf56, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
 --- !u!33 &33000010031473350
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -650,6 +711,27 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!102 &102000011158662456
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013510795032}
+  m_Text: A
+  m_OffsetZ: 0
+  m_CharacterSize: 1
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 1
+  m_TabSize: 4
+  m_FontSize: 400
+  m_FontStyle: 0
+  m_RichText: 1
+  m_Font: {fileID: 12800000, guid: 1ebe1d96973a920409b439b3a0e2bb63, type: 3}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4278190080
 --- !u!114 &114000010164689508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -765,6 +847,7 @@ MonoBehaviour:
   Sound: {fileID: 114000012359958084}
   Info: {fileID: 114000014199338234}
   Draw: {fileID: 114000013130788476}
+  Wrong: {fileID: 102000011158662456}
 --- !u!114 &114000012334732672
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -868,9 +951,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Width: 1
   Height: 0.1
-  BeatWidth: 0.25
-  BeatHeight: 1
+  Offset: -0.2
   Length: 96
+--- !u!114 &114000013216171780
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013510795032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - GUI/KT 3D Text
 --- !u!114 &114000013381227248
 MonoBehaviour:
   m_ObjectHideFlags: 1

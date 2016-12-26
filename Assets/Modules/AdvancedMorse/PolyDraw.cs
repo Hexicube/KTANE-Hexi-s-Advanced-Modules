@@ -5,12 +5,10 @@ public class PolyDraw : MonoBehaviour
 {
     public static GameObject SQUARE;
 
-    public float Width, Height;
-    public float BeatWidth, BeatHeight;
+    public float Width, Height, Offset;
     public int Length;
 
     private bool[] stateList;
-    private bool[] beatList;
 
     private float Left, Unit;
 
@@ -50,10 +48,8 @@ public class PolyDraw : MonoBehaviour
 
         Unit = Width / (float)Length;
         Left = -Unit * (float)Length / 2;
-        BeatWidth = Unit * BeatWidth;
 
         stateList = new bool[Length];
-        beatList = new bool[Length + 1];
 
         ApplyState();
     }
@@ -65,17 +61,6 @@ public class PolyDraw : MonoBehaviour
             stateList[a] = stateList[a+1];
         }
         stateList[Length-1] = state;
-
-        for (int a = 0; a < Length; a++)
-        {
-            beatList[a] = beatList[a + 1];
-        }
-        beatList[Length] = false;
-    }
-
-    public void AddBeat()
-    {
-        beatList[Length] = true;
     }
 
     public void Clear()
@@ -83,9 +68,7 @@ public class PolyDraw : MonoBehaviour
         for (int a = 0; a < Length; a++)
         {
             stateList[a] = false;
-            beatList[a] = false;
         }
-        beatList[Length] = false;
 
         ApplyState();
     }
@@ -95,19 +78,9 @@ public class PolyDraw : MonoBehaviour
     private void GenQuad(int start, int end)
     {
         GameObject o = (GameObject)Instantiate(SQUARE, gameObject.transform);
-        o.transform.localPosition = new Vector3(Left + Unit * start, 0, 0);
+        o.transform.localPosition = new Vector3(Left + Unit * start, 0, Offset);
         o.transform.localRotation = new Quaternion();
         o.transform.localScale = new Vector3(Unit * (end - start), 1, Height);
-        o.SetActive(true);
-        currentQuads.Add(o);
-    }
-
-    private void GenBeat(int pos)
-    {
-        GameObject o = (GameObject)Instantiate(SQUARE, gameObject.transform);
-        o.transform.localPosition = new Vector3(Left + Unit * pos - BeatWidth, 0, 0);
-        o.transform.localRotation = new Quaternion();
-        o.transform.localScale = new Vector3(BeatWidth, 1, BeatHeight);
         o.SetActive(true);
         currentQuads.Add(o);
     }
@@ -138,9 +111,7 @@ public class PolyDraw : MonoBehaviour
                 }
                 active = false;
             }
-            if (beatList[a]) GenBeat(a);
         }
-        if (beatList[Length]) GenBeat(Length);
         if (active) GenQuad(start, Length);
     }
 }
