@@ -137,8 +137,17 @@ public class AdvancedButton : FixedTicker
             foreach (string response in data)
             {
                 Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
-                if (responseDict["numbatteries"] == 2) batAA += 2;
-                else batD++;
+                if (responseDict.ContainsKey("type"))
+                {
+                    int t = responseDict["type"];
+                    if (t == 1) batAA += responseDict["numbatteries"];
+                    if (t == 2) batD += responseDict["numbatteries"];
+                }
+                else
+                {
+                    if (responseDict["numbatteries"] == 2) batAA += 2;
+                    else batD++;
+                }
             }
             data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
             foreach (string response in data)
