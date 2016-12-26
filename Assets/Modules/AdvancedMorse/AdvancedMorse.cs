@@ -379,6 +379,8 @@ public class AdvancedMorse : FixedTicker
 
     public bool HandleTransDown()
     {
+        if (Answer == null) return false;
+
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
         transDown = true;
         if (transmitTicker >= 0) transmitTimings.Add(transmitTicker);
@@ -388,6 +390,8 @@ public class AdvancedMorse : FixedTicker
 
     public void HandleTransUp()
     {
+        if (Answer == null) return;
+
         transDown = false;
         transmitTimings.Add(transmitTicker);
         transmitTicker = 0;

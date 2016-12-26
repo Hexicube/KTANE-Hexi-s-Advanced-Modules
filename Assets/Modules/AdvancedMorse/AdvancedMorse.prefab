@@ -186,6 +186,7 @@ GameObject:
   - 23: {fileID: 23000011324703150}
   - 114: {fileID: 114000010164689508}
   - 114: {fileID: 114000012334732672}
+  - 65: {fileID: 65000010431524812}
   m_Layer: 0
   m_Name: Transmit
   m_TagString: Untagged
@@ -694,6 +695,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013074350938}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &65000010431524812
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013074350938}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 7.5, y: 1, z: 1}
+  m_Center: {x: -3.25, y: 0, z: 0}
 --- !u!95 &95000011226062274
 Animator:
   serializedVersion: 3
@@ -748,7 +761,8 @@ MonoBehaviour:
   IsPassThrough: 0
   ChildRowLength: 0
   Highlight: {fileID: 114000011376452632}
-  SelectableColliders: []
+  SelectableColliders:
+  - {fileID: 65000010431524812}
   DefaultSelectableIndex: 0
   AllowSelectionWrapX: 0
   AllowSelectionWrapY: 0
@@ -778,13 +792,15 @@ MonoBehaviour:
   Children:
   - {fileID: 114000010164689508}
   - {fileID: 114000011460952780}
+  - {fileID: 114000011460952780}
+  - {fileID: 114000010164689508}
   IsPassThrough: 0
-  ChildRowLength: 0
+  ChildRowLength: 2
   Highlight: {fileID: 114000013381227248}
   SelectableColliders: []
   DefaultSelectableIndex: 0
-  AllowSelectionWrapX: 0
-  AllowSelectionWrapY: 0
+  AllowSelectionWrapX: 1
+  AllowSelectionWrapY: 1
 --- !u!114 &114000011038995016
 MonoBehaviour:
   m_ObjectHideFlags: 1
