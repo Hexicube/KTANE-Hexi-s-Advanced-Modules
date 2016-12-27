@@ -32,16 +32,6 @@ using Newtonsoft.Json;
 
 public class AdvancedMorse : FixedTicker
 {
-    private static char[] FIBB = new char[]{
-        (char)1,
-        (char)2,
-        (char)3,
-        (char)5,
-        (char)8,
-        (char)13,
-        (char)21
-    };
-
     private static char[] PRIME = new char[]{
         (char)2,
         (char)3,
@@ -240,59 +230,25 @@ public class AdvancedMorse : FixedTicker
         Debug.Log("After port flip: " + firstChar + secondChar);
 
         int largest;
-        int sumSmaller;
         if (disp1base > disp2base && disp1base > disp3base)
         {
             Debug.Log(DisplayCharsRaw[0] + " is largest");
             largest = disp1base;
-            sumSmaller = disp2base + disp3base;
         }
         else if (disp2base > disp3base)
         {
             Debug.Log(DisplayCharsRaw[1] + " is largest");
             largest = disp2base;
-            sumSmaller = disp1base + disp3base;
         }
         else
         {
             Debug.Log(DisplayCharsRaw[2] + " is largest");
             largest = disp3base;
-            sumSmaller = disp1base + disp2base;
         }
         firstChar += (char)largest;
-        secondChar += (char)sumSmaller;
-
         if (firstChar > 'Z') firstChar -= (char)26;
-        while (secondChar > 'Z') secondChar -= (char)26;
 
-        Debug.Log("After big/small add: " + firstChar + secondChar);
-
-        foreach (char f in FIBB)
-        {
-            if (disp1base == f)
-            {
-                Debug.Log(DisplayCharsRaw[0] + " is Fibb");
-                firstChar += f;
-                secondChar += f;
-            }
-            if (disp2base == f)
-            {
-                Debug.Log(DisplayCharsRaw[1] + " is Fibb");
-                firstChar += f;
-                secondChar += f;
-            }
-            if (disp3base == f)
-            {
-                Debug.Log(DisplayCharsRaw[2] + " is Fibb");
-                firstChar += f;
-                secondChar += f;
-            }
-        }
-
-        while (firstChar > 'Z') firstChar -= (char)26;
-        while (secondChar > 'Z') secondChar -= (char)26;
-
-        Debug.Log("After Fibonacci: " + firstChar + secondChar);
+        Debug.Log("After big add: " + firstChar + secondChar);
 
         foreach (char p in PRIME)
         {
@@ -369,10 +325,25 @@ public class AdvancedMorse : FixedTicker
 
         Debug.Log("After batteries: " + firstChar + secondChar);
 
-        char finalVal = (char)(firstChar + secondChar - 'A' + 1);
-        if (finalVal > 'Z') finalVal -= (char)26;
-        Debug.Log("Answer: " + finalVal);
-        Answer = "" + finalVal;
+        if (firstChar == secondChar)
+        {
+            Answer = "" + firstChar;
+            Debug.Log("Characters match, answer: " + Answer);
+        }
+        else if (firstChar > secondChar)
+        {
+            char finalVal = (char)(firstChar - secondChar + 'A' - 1);
+            Answer = "" + finalVal;
+            Debug.Log("First character is larger (diff), answer: " + Answer);
+        }
+        else
+        {
+            char finalVal = (char)(firstChar + secondChar - 'A' + 1);
+            if (finalVal > 'Z') finalVal -= (char)26;
+            Debug.Log("Answer: " + finalVal);
+            Answer = "" + finalVal;
+            Debug.Log("Second character is larger (sum), answer: " + Answer);
+        }
     }
 
     private bool transDown;
