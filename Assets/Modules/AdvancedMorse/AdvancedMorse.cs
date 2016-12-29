@@ -139,18 +139,6 @@ public class AdvancedMorse : FixedTicker
             else indOff.Add(responseDict["label"]);
         }
 
-        List<string> ports = new List<string>();
-        
-        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_PORTS, null);
-        foreach (string response in data)
-        {
-            Dictionary<string, string[]> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(response);
-            foreach (string s in responseDict["presentPorts"])
-            {
-                if (!ports.Contains(s.ToUpper())) ports.Add(s.ToUpper());
-            }
-        }
-
         int batteries = 0;
 
         data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
@@ -206,28 +194,6 @@ public class AdvancedMorse : FixedTicker
         }
 
         Debug.Log("After square check: " + firstChar + secondChar);
-
-        bool match = false;
-
-        foreach (string port in ports)
-        {
-            if (port.Contains(""+firstChar) || port.Contains(""+secondChar))
-            {
-                Debug.Log("Matching port: " + port);
-                match = true;
-                break;
-            }
-        }
-
-        if (match)
-        {
-            char temp = firstChar;
-            firstChar = secondChar;
-            secondChar = temp;
-        }
-        else Debug.Log("No matching ports");
-
-        Debug.Log("After port flip: " + firstChar + secondChar);
 
         int largest;
         if (disp1base > disp2base && disp1base > disp3base)

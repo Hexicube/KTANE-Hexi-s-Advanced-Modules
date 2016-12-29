@@ -127,7 +127,6 @@ public class AdvancedMemory : MonoBehaviour
                     foreach (char c in serial)
                     {
                         int val = GetDigit(c);
-                        Debug.Log(c + ": " + val);
                         if (val >= 0) numSerialDigits++;
                     }
 

@@ -35,3 +35,4 @@ Assets/TestHarness/*
 Assets/Plugins/*
 Assets/Examples/*
 *.meta
+Assets/scene.unity

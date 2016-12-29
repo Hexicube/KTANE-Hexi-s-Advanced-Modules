@@ -189,6 +189,22 @@ public class AdvancedPassword : MonoBehaviour
 
         Debug.Log("Local offsets: " + offsetList);
         Debug.Log("Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
+
+        foreach (GameObject o in TreasureChoices)
+        {
+            o.SetActive(false);
+        }
+        if (TREASURE_ENABLED)
+        {
+            if (FORCE_TREASURE || Random.value > 0.98)
+            {
+                doesOpen = true;
+                if (FORCE_TREASURE || Random.value > 0.7)
+                {
+                    TreasureChoices[Random.Range(0, TreasureChoices.Length)].SetActive(true);
+                }
+            }
+        }
     }
 
     void HandleInteract(int dial)
@@ -208,7 +224,7 @@ public class AdvancedPassword : MonoBehaviour
     bool HandleLever()
     {
         if (Pass) return false;
-        Lever.AddInteractionPunch(1.5f);
+        Lever.AddInteractionPunch(2.5f);
 
         bool ans = true;
         for (int a = 0; a < 6; a++)
@@ -234,5 +250,35 @@ public class AdvancedPassword : MonoBehaviour
         }
 
         return false;
+    }
+
+    private const bool TREASURE_ENABLED = false;
+    private const bool FORCE_TREASURE = false;
+
+    public GameObject Door;
+    public GameObject[] TreasureChoices;
+
+    private bool doesOpen, doneUnlock;
+    private float counter = 0f;
+    void Update()
+    {
+        if (TREASURE_ENABLED && doesOpen && Pass)
+        {
+            if (counter < 5f)
+            {
+                counter += Time.deltaTime;
+                if (counter > 5f) counter = 5f;
+                if (!doneUnlock && counter > 0.5f)
+                {
+                    doneUnlock = true;
+                    Lever.AddInteractionPunch(0.1f);
+                    Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, transform);
+                }
+                if (counter > 1f)
+                {
+                    Door.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 5f * (counter - 1f)));
+                }
+            }
+        }
     }
 }

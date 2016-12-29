@@ -17,7 +17,7 @@ public class AdvancedKnob : FixedTicker
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
-    public TextMesh Display;
+    public Nixie Num1, Num2, Num3;
 
     public Transform PhoneRing;
 
@@ -32,7 +32,9 @@ public class AdvancedKnob : FixedTicker
 
     private void SetDisplay()
     {
-        Display.text = (DisplayNumber / 100) + "\n" + ((DisplayNumber / 10) % 10) + "\n" + (DisplayNumber % 10);
+        Num1.SetValue(DisplayNumber / 100);
+        Num2.SetValue((DisplayNumber / 10) % 10);
+        Num3.SetValue(DisplayNumber % 10);
     }
 
     void Awake()
@@ -56,7 +58,6 @@ public class AdvancedKnob : FixedTicker
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
-        Display.text = "";
         Debug.Log("Rotary Phone initial display: " + CurAnswer);
     }
 
@@ -80,7 +81,9 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnNeedyDeactivation()
     {
-        Display.text = "";
+        Num1.SetValue(-1);
+        Num2.SetValue(-1);
+        Num3.SetValue(-1);
     }
 
     protected void OnTimerExpired()
