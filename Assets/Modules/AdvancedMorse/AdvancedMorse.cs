@@ -151,7 +151,7 @@ public class AdvancedMorse : FixedTicker
         char firstChar = serial[3];
         char secondChar = serial[4];
 
-        Debug.Log("Initial character pair: " + firstChar + secondChar);
+        Debug.Log("Initial character pair: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (string ind in indOn)
         {
@@ -176,7 +176,7 @@ public class AdvancedMorse : FixedTicker
         if (firstChar > 'Z') firstChar -= (char)26;
         if (secondChar > 'Z') secondChar -= (char)26;
 
-        Debug.Log("After indicators: " + firstChar + secondChar);
+        Debug.Log("After indicators: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         int sum = ((firstChar - 'A') + (secondChar - 'A') + 1) % 26 + 1;
         int root = (int)Mathf.Sqrt(sum);
@@ -193,7 +193,7 @@ public class AdvancedMorse : FixedTicker
             if (secondChar < 'A') secondChar += (char)26;
         }
 
-        Debug.Log("After square check: " + firstChar + secondChar);
+        Debug.Log("After square check: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         int largest;
         if (disp1base > disp2base && disp1base > disp3base)
@@ -214,7 +214,7 @@ public class AdvancedMorse : FixedTicker
         firstChar += (char)largest;
         if (firstChar > 'Z') firstChar -= (char)26;
 
-        Debug.Log("After big add: " + firstChar + secondChar);
+        Debug.Log("After big add: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (char p in PRIME)
         {
@@ -238,7 +238,7 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After prime: " + firstChar + secondChar);
+        Debug.Log("After prime: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (char s in SQUARE)
         {
@@ -262,7 +262,7 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After square: " + firstChar + secondChar);
+        Debug.Log("After square: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         if (batteries > 0)
         {
@@ -289,7 +289,7 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After batteries: " + firstChar + secondChar);
+        Debug.Log("After batteries: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         if (firstChar == secondChar)
         {
@@ -316,7 +316,7 @@ public class AdvancedMorse : FixedTicker
 
     public bool HandleTransDown()
     {
-        if (Answer == null) return false;
+        if (Answer == null || transDown) return false;
 
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
         transDown = true;
@@ -327,7 +327,7 @@ public class AdvancedMorse : FixedTicker
 
     public void HandleTransUp()
     {
-        if (Answer == null) return;
+        if (Answer == null || !transDown) return;
 
         transDown = false;
         transmitTimings.Add(transmitTicker);

@@ -284,7 +284,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle0()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button0.AddInteractionPunch();
+        Button0.AddInteractionPunch(0.2f);
         Handle(0);
         return false;
     }
@@ -292,7 +292,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle1()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button1.AddInteractionPunch();
+        Button1.AddInteractionPunch(0.2f);
         Handle(1);
         return false;
     }
@@ -300,7 +300,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle2()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button2.AddInteractionPunch();
+        Button2.AddInteractionPunch(0.2f);
         Handle(2);
         return false;
     }
@@ -308,7 +308,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle3()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button3.AddInteractionPunch();
+        Button3.AddInteractionPunch(0.2f);
         Handle(3);
         return false;
     }
@@ -316,7 +316,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle4()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button4.AddInteractionPunch();
+        Button4.AddInteractionPunch(0.2f);
         Handle(4);
         return false;
     }
@@ -324,7 +324,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle5()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button5.AddInteractionPunch();
+        Button5.AddInteractionPunch(0.2f);
         Handle(5);
         return false;
     }
@@ -332,7 +332,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle6()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button6.AddInteractionPunch();
+        Button6.AddInteractionPunch(0.2f);
         Handle(6);
         return false;
     }
@@ -340,7 +340,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle7()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button7.AddInteractionPunch();
+        Button7.AddInteractionPunch(0.2f);
         Handle(7);
         return false;
     }
@@ -348,7 +348,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle8()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button8.AddInteractionPunch();
+        Button8.AddInteractionPunch(0.2f);
         Handle(8);
         return false;
     }
@@ -356,7 +356,7 @@ public class AdvancedMemory : MonoBehaviour
     private bool Handle9()
     {
         if (Solution == null || Position == Solution.Length) return false;
-        Button9.AddInteractionPunch();
+        Button9.AddInteractionPunch(0.2f);
         Handle(9);
         return false;
     }
