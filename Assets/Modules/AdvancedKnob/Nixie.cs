@@ -18,13 +18,15 @@ public class Nixie : MonoBehaviour
             Glows[a].SetActive(false);
 
             Bars[a].GetComponent<MeshRenderer>().material.color = new Color(0.2f, 0.2f, 0.2f);
-            Glows[a].GetComponent<MeshRenderer>().material.color = new Color(1, 0.4f, 0, 2);
+            Glows[a].GetComponent<MeshRenderer>().material.color = new Color(1, 0.4f, 0, 1);
         }
 	}
 
     private int val = -1;
     public void SetValue(int v)
     {
+        if (v == val) return;
+
         if (val != -1)
         {
             Bars[val].SetActive(true);

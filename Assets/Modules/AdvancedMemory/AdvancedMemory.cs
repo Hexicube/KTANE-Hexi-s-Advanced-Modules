@@ -17,6 +17,9 @@ using Newtonsoft.Json;
 
 public class AdvancedMemory : MonoBehaviour
 {
+    public static int loggingID;
+    public int thisLoggingID;
+
     public KMBombInfo BombInfo;
     public KMAudio Sound;
 
@@ -30,6 +33,8 @@ public class AdvancedMemory : MonoBehaviour
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         Buttons = new KMSelectable[]{Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};
 
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
@@ -193,7 +198,7 @@ public class AdvancedMemory : MonoBehaviour
             }
         }
 
-        Debug.Log("Non-FMN modules: " + count);
+        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Non-FMN modules: " + count);
         string displayText = "";
         string solutionText = "";
         for (int a = 0; a < count; a++)
@@ -206,8 +211,8 @@ public class AdvancedMemory : MonoBehaviour
             displayText += Display[a];
             solutionText += Solution[a];
         }
-        Debug.Log("Display: " + displayText);
-        Debug.Log("Solution: " + solutionText);
+        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Display: " + displayText);
+        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Solution: " + solutionText);
     }
 
     int ticker = 0;
@@ -271,6 +276,7 @@ public class AdvancedMemory : MonoBehaviour
             }
             else
             {
+                Debug.Log("[Plumbing #"+thisLoggingID+"] Stage " + (Position+1) + ": Pressed " + val + " instead of " + Solution[Position]);
                 GetComponent<KMBombModule>().HandleStrike();
                 if (litButton == -1)
                 {

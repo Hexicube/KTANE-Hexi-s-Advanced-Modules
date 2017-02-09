@@ -12,12 +12,16 @@ using System.Collections;
 
 public class AdvancedKnob : FixedTicker
 {
+    public static int loggingID;
+    public int thisLoggingID;
+
     public static bool HasFailed; //Prevent voice-line from playing the very first time.
 
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
     public Nixie Num1, Num2, Num3;
+    public TimerDial Dial1, Dial2;
 
     public Transform PhoneRing;
 
@@ -39,6 +43,8 @@ public class AdvancedKnob : FixedTicker
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;
@@ -58,7 +64,7 @@ public class AdvancedKnob : FixedTicker
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
         CurAnswer = Random.Range(0, 1000);
         DisplayNumber = CurAnswer;
-        Debug.Log("Rotary Phone initial display: " + CurAnswer);
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone initial display: " + CurAnswer);
     }
 
     protected void OnActivate()
@@ -68,11 +74,11 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnNeedyActivation()
     {
-        Debug.Log("Rotary Phone old value: " + CurAnswer);
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone old value: " + CurAnswer);
         DisplayNumber = Random.Range(0, 1000);
-        Debug.Log("New display: " + DisplayNumber);
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] New display: " + DisplayNumber);
         CurAnswer = (CurAnswer + DisplayNumber) % 1000;
-        Debug.Log("New value: " + CurAnswer);
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] New value: " + CurAnswer);
         SetDisplay();
         Active = true;
         Response = 0;
@@ -81,6 +87,9 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnNeedyDeactivation()
     {
+        Dial1.Move(0);
+        Dial2.Move(0);
+
         Num1.SetValue(-1);
         Num2.SetValue(-1);
         Num3.SetValue(-1);
@@ -101,6 +110,13 @@ public class AdvancedKnob : FixedTicker
 
     public override void RealFixedTick()
     {
+        if (Active)
+        {
+            int t = (int)(GetComponent<KMNeedyModule>().GetNeedyTimeRemaining() + 0.8f);
+            Dial1.Move(t / 10);
+            Dial2.Move(t % 10);
+        }
+
         if (InSpin)
         {
             Progress++;
@@ -110,23 +126,27 @@ public class AdvancedKnob : FixedTicker
             {
                 InSpin = false;
                 angle = 180f;
-
-                Response = Response * 10 + Target;
-                ResponsePos++;
-                if (ResponsePos == 3)
+                if (Active)
                 {
-                    Active = false;
-                    if (Response == CurAnswer)
+                    Response = Response * 10 + Target;
+                    ResponsePos++;
+                    if (ResponsePos == 3)
                     {
-                        GetComponent<KMNeedyModule>().HandlePass();
-                        Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-                    }
-                    else
-                    {
-                        GetComponent<KMNeedyModule>().HandleStrike();
-                        GetComponent<KMNeedyModule>().HandlePass();
-                        CurAnswer = DisplayNumber;
-                        PhoneDelay = 75;
+                        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Provided value: " + Response);
+                        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Expected value: " + CurAnswer);
+                        Active = false;
+                        if (Response == CurAnswer)
+                        {
+                            GetComponent<KMNeedyModule>().HandlePass();
+                            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+                        }
+                        else
+                        {
+                            GetComponent<KMNeedyModule>().HandleStrike();
+                            GetComponent<KMNeedyModule>().HandlePass();
+                            CurAnswer = DisplayNumber;
+                            PhoneDelay = 50;
+                        }
                     }
                 }
             }
@@ -145,13 +165,12 @@ public class AdvancedKnob : FixedTicker
                 bool voice = false;
                 if (HasFailed)
                 {
-                    if (Random.Range(0, 7) == 0) voice = true;
+                    if (Random.Range(0, 3) == 0) voice = true;
                 }
                 HasFailed = true;
                 if (voice)
                 {
                     string name = SoundNames[Random.Range(0, SoundNames.Length)];
-                    //Debug.Log(name);
                     Sound.PlaySoundAtTransform(name, gameObject.transform);
                 }
                 else Sound.PlaySoundAtTransform("NoNumber", gameObject.transform);
@@ -180,6 +199,8 @@ public class AdvancedKnob : FixedTicker
     private float GetSpinPosition()
     {
         int forward = spindata[Target][0], pause = spindata[Target][1], back = spindata[Target][2];
+
+        if (Progress == forward || Progress == (forward + pause + back - 1)) GetComponent<KMSelectable>().AddInteractionPunch(0.1f);
 
         int pos = Progress;
         int lim = forward;

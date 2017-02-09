@@ -14,6 +14,9 @@ using System.Collections.Generic;
 
 public class AdvancedKeypad : MonoBehaviour
 {
+    public static int loggingID = 0;
+    public int thisLoggingID;
+
     public KMSelectable Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8;
     public KMAudio Sound;
 
@@ -39,6 +42,8 @@ public class AdvancedKeypad : MonoBehaviour
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         Buttons = new KMSelectable[] { Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8 };
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;
@@ -67,7 +72,7 @@ public class AdvancedKeypad : MonoBehaviour
             if (pos > 1) s += ",";
             s += labels[pos - 1];
         }
-        Debug.Log(s);
+        Debug.Log("[Round Keypad #"+thisLoggingID+"] "+s);
         pos = 0;
         while (pos < 8)
         {
@@ -104,7 +109,7 @@ public class AdvancedKeypad : MonoBehaviour
             }
             pos++;
         }
-        Debug.Log("Correct column: " + bestPos);
+        Debug.Log("[Round Keypad #"+thisLoggingID+"] Correct column: " + bestPos);
         pos = 0;
         while(pos < 8)
         {
@@ -129,7 +134,7 @@ public class AdvancedKeypad : MonoBehaviour
                 s += labels[pos];
             }
         }
-        Debug.Log(s);
+        Debug.Log("[Round Keypad #"+thisLoggingID+"] "+s);
     }
 
     void Guess(int pos)

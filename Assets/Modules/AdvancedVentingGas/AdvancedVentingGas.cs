@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 
 public class AdvancedVentingGas : MonoBehaviour
 {
+    public static int loggingID;
+    public int thisLoggingID;
+
     public KMBombInfo BombInfo;
     public KMAudio Sound;
 
@@ -45,6 +48,8 @@ public class AdvancedVentingGas : MonoBehaviour
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         Display.text = "";
 
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
@@ -88,17 +93,17 @@ public class AdvancedVentingGas : MonoBehaviour
     {
         if (DidHakuna && !Display.text.Equals(""))
         {
-            Debug.Log("Quiz: Is \"Hakuna Matata\" a passing craze?");
-            Debug.Log("Given answer: " + (R ? "Y" : "N"));
+            Debug.Log("[Answering Questions #"+thisLoggingID+"] Quiz: Is \"Hakuna Matata\" a passing craze?");
+            Debug.Log("[Answering Questions #"+thisLoggingID+"] Given answer: " + (R ? "Y" : "N"));
             DidHakuna = false;
             if (R)
             {
-                Debug.Log("Answer was incorrect");
+                Debug.Log("[Answering Questions #"+thisLoggingID+"] Answer was incorrect");
                 GetComponent<KMNeedyModule>().HandleStrike();
             }
             else
             {
-                Debug.Log("Answer was correct");
+                Debug.Log("[Answering Questions #"+thisLoggingID+"] Answer was correct");
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
             }
             GetComponent<KMNeedyModule>().HandlePass();
@@ -107,23 +112,23 @@ public class AdvancedVentingGas : MonoBehaviour
         {
             if (CurQ == null) return;
             GetComponent<KMNeedyModule>().HandlePass();
-            Debug.Log("Quiz: " + Display.text.Replace("\n", ""));
-            Debug.Log("Given answer: " + (R ? "Y" : "N"));
+            Debug.Log("[Answering Questions #"+thisLoggingID+"] Quiz: " + Display.text.Replace("\n", ""));
+            Debug.Log("[Answering Questions #"+thisLoggingID+"] Given answer: " + (R ? "Y" : "N"));
             if (CurQ(this, R))
             {
-                Debug.Log("Answer was correct");
+                Debug.Log("[Answering Questions #"+thisLoggingID+"] Answer was correct");
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
             }
             else
             {
                 if (Display.text.Equals("Abort?"))
                 {
-                    Debug.Log("ABORT! ABORT!!! ABOOOOOOORT!!!!!");
+                    Debug.Log("[Answering Questions #"+thisLoggingID+"] ABORT! ABORT!!! ABOOOOOOORT!!!!!");
                     while (!Exploded) Service.CauseStrike("ABORT!");
                 }
                 else
                 {
-                    Debug.Log("Answer was incorrect");
+                    Debug.Log("[Answering Questions #"+thisLoggingID+"] Answer was incorrect");
                     GetComponent<KMNeedyModule>().HandleStrike();
                 }
             }

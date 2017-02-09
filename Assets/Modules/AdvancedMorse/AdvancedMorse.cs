@@ -32,6 +32,9 @@ using Newtonsoft.Json;
 
 public class AdvancedMorse : FixedTicker
 {
+    public static int loggingID;
+    public int thisLoggingID;
+
     private static char[] PRIME = new char[]{
         (char)2,
         (char)3,
@@ -69,6 +72,8 @@ public class AdvancedMorse : FixedTicker
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
         ButtonTransmit.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
@@ -112,7 +117,7 @@ public class AdvancedMorse : FixedTicker
 
     public void GenSolution()
     {
-        Debug.Log("Morsematics display characters: " + DisplayCharsRaw[0] + DisplayCharsRaw[1] + DisplayCharsRaw[2]);
+        Debug.Log("[Morsematics #"+thisLoggingID+"] Morsematics display characters: " + DisplayCharsRaw[0] + DisplayCharsRaw[1] + DisplayCharsRaw[2]);
 
         int disp1base = DisplayCharsRaw[0][0] - 'A' + 1;
         int disp2base = DisplayCharsRaw[1][0] - 'A' + 1;
@@ -151,7 +156,7 @@ public class AdvancedMorse : FixedTicker
         char firstChar = serial[3];
         char secondChar = serial[4];
 
-        Debug.Log("Initial character pair: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] Initial character pair: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (string ind in indOn)
         {
@@ -159,7 +164,7 @@ public class AdvancedMorse : FixedTicker
                 ind.Contains(DisplayCharsRaw[1]) ||
                 ind.Contains(DisplayCharsRaw[2]))
             {
-                Debug.Log("Matching indicator: " + ind + " (ON)");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] Matching indicator: " + ind + " (ON)");
                 firstChar++;
             }
         }
@@ -169,68 +174,68 @@ public class AdvancedMorse : FixedTicker
                 ind.Contains(DisplayCharsRaw[1]) ||
                 ind.Contains(DisplayCharsRaw[2]))
             {
-                Debug.Log("Matching indicator: " + ind + " (OFF)");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] Matching indicator: " + ind + " (OFF)");
                 secondChar++;
             }
         }
         if (firstChar > 'Z') firstChar -= (char)26;
         if (secondChar > 'Z') secondChar -= (char)26;
 
-        Debug.Log("After indicators: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After indicators: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         int sum = ((firstChar - 'A') + (secondChar - 'A') + 1) % 26 + 1;
         int root = (int)Mathf.Sqrt(sum);
         if (root * root == sum)
         {
-            Debug.Log("Character sum is square");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Character sum is square");
             firstChar += (char)4;
             if (firstChar > 'Z') firstChar -= (char)26;
         }
         else
         {
-            Debug.Log("Character sum is not square");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Character sum is not square");
             secondChar -= (char)4;
             if (secondChar < 'A') secondChar += (char)26;
         }
 
-        Debug.Log("After square check: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After square check: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         int largest;
         if (disp1base > disp2base && disp1base > disp3base)
         {
-            Debug.Log(DisplayCharsRaw[0] + " is largest");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is largest");
             largest = disp1base;
         }
         else if (disp2base > disp3base)
         {
-            Debug.Log(DisplayCharsRaw[1] + " is largest");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is largest");
             largest = disp2base;
         }
         else
         {
-            Debug.Log(DisplayCharsRaw[2] + " is largest");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is largest");
             largest = disp3base;
         }
         firstChar += (char)largest;
         if (firstChar > 'Z') firstChar -= (char)26;
 
-        Debug.Log("After big add: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After big add: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (char p in PRIME)
         {
             if (disp1base == p)
             {
-                Debug.Log(DisplayCharsRaw[0] + " is prime");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is prime");
                 firstChar -= p;
             }
             if (disp2base == p)
             {
-                Debug.Log(DisplayCharsRaw[1] + " is prime");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is prime");
                 firstChar -= p;
             }
             if (disp3base == p)
             {
-                Debug.Log(DisplayCharsRaw[2] + " is prime");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is prime");
                 firstChar -= p;
             }
         }
@@ -238,23 +243,23 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After prime: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After prime: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         foreach (char s in SQUARE)
         {
             if (disp1base == s)
             {
-                Debug.Log(DisplayCharsRaw[0] + " is square");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is square");
                 secondChar -= s;
             }
             if (disp2base == s)
             {
-                Debug.Log(DisplayCharsRaw[1] + " is square");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is square");
                 secondChar -= s;
             }
             if (disp3base == s)
             {
-                Debug.Log(DisplayCharsRaw[2] + " is square");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is square");
                 secondChar -= s;
             }
         }
@@ -262,25 +267,25 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After square: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After square: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         if (batteries > 0)
         {
             if (disp1base % batteries == 0)
             {
-                Debug.Log(DisplayCharsRaw[0] + " is divisible");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is divisible");
                 firstChar -= (char)disp1base;
                 secondChar -= (char)disp1base;
             }
             if (disp2base % batteries == 0)
             {
-                Debug.Log(DisplayCharsRaw[1] + " is divisible");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is divisible");
                 firstChar -= (char)disp2base;
                 secondChar -= (char)disp2base;
             }
             if (disp3base % batteries == 0)
             {
-                Debug.Log(DisplayCharsRaw[2] + " is divisible");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is divisible");
                 firstChar -= (char)disp3base;
                 secondChar -= (char)disp3base;
             }
@@ -289,26 +294,25 @@ public class AdvancedMorse : FixedTicker
         while (firstChar < 'A') firstChar += (char)26;
         while (secondChar < 'A') secondChar += (char)26;
 
-        Debug.Log("After batteries: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
+        Debug.Log("[Morsematics #"+thisLoggingID+"] After batteries: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
         if (firstChar == secondChar)
         {
             Answer = "" + firstChar;
-            Debug.Log("Characters match, answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Characters match, answer: " + Answer);
         }
         else if (firstChar > secondChar)
         {
             char finalVal = (char)(firstChar - secondChar + 'A' - 1);
             Answer = "" + finalVal;
-            Debug.Log("First character is larger (diff), answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] First character is larger (diff), answer: " + Answer);
         }
         else
         {
             char finalVal = (char)(firstChar + secondChar - 'A' + 1);
             if (finalVal > 'Z') finalVal -= (char)26;
-            Debug.Log("Answer: " + finalVal);
             Answer = "" + finalVal;
-            Debug.Log("Second character is larger (sum), answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Second character is larger (sum), answer: " + Answer);
         }
     }
 
@@ -379,12 +383,12 @@ public class AdvancedMorse : FixedTicker
             int[] responseData = DeMorsify(transmitTimings);
             string response = GetLetter(responseData);
 
-            Debug.Log("Provided response: " + response);
-            Debug.Log("Expected response: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Provided response: " + response);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Expected response: " + Answer);
 
             if (response.Equals("E") && Answer.Equals("T"))
             {
-                Debug.Log("Interpreting E as T as they are indistinguishable");
+                Debug.Log("[Morsematics #"+thisLoggingID+"] Interpreting E as T as they are indistinguishable");
                 response = "T";
             }
 

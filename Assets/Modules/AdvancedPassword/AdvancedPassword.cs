@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 
 public class AdvancedPassword : MonoBehaviour
 {
+    public static int loggingID;
+    public int thisLoggingID;
+
     public KMSelectable Dial1, Dial2, Dial3, Dial4, Dial5, Dial6, Lever;
     private KMSelectable[] Dials;
 
@@ -81,6 +84,8 @@ public class AdvancedPassword : MonoBehaviour
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         GetComponent<KMBombModule>().OnActivate += Init;
 
         Dials = new KMSelectable[] { Dial1, Dial2, Dial3, Dial4, Dial5, Dial6 };
@@ -101,7 +106,7 @@ public class AdvancedPassword : MonoBehaviour
             Dials[a].OnInteract += delegate() { HandleInteract(a2); return false; };
         }
 
-        Debug.Log("Safety Safe dial click locations: " + ClickPos[0] + "," + ClickPos[1] + "," + ClickPos[2] + "," + ClickPos[3] + "," + ClickPos[4] + "," + ClickPos[5]);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Safety Safe dial click locations: " + ClickPos[0] + "," + ClickPos[1] + "," + ClickPos[2] + "," + ClickPos[3] + "," + ClickPos[4] + "," + ClickPos[5]);
 
         Lever.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         Lever.transform.Find("default").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
@@ -166,7 +171,7 @@ public class AdvancedPassword : MonoBehaviour
             }
         }
 
-        Debug.Log("Global offset: " + dialOffset % 12);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Global offset: " + dialOffset % 12);
 
         string offsetList = "";
 
@@ -187,8 +192,8 @@ public class AdvancedPassword : MonoBehaviour
             AnswerPos[a] = (ClickPos[a] + serialVal + dialOffset) % 12;
         }
 
-        Debug.Log("Local offsets: " + offsetList);
-        Debug.Log("Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Local offsets: " + offsetList);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
 
         foreach (GameObject o in TreasureChoices)
         {
@@ -196,10 +201,10 @@ public class AdvancedPassword : MonoBehaviour
         }
         if (TREASURE_ENABLED)
         {
-            if (FORCE_TREASURE || Random.value > 0.98)
+            if (FORCE_TREASURE || Random.value >= 0.9975) //1 in 400
             {
                 doesOpen = true;
-                if (FORCE_TREASURE || Random.value > 0.7)
+                if (FORCE_TREASURE || Random.value >= 0.7) //30%
                 {
                     TreasureChoices[Random.Range(0, TreasureChoices.Length)].SetActive(true);
                 }

@@ -35,6 +35,9 @@ using Newtonsoft.Json;
 
 public class AdvancedButton : FixedTicker
 {
+    public static int loggingID = 0;
+    public int thisLoggingID;
+
     public KMSelectable Button;
     public KMAudio Sound;
     public KMBombInfo Info;
@@ -77,6 +80,8 @@ public class AdvancedButton : FixedTicker
 
     void Awake()
     {
+        thisLoggingID = loggingID++;
+
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
         ticker = -1;
@@ -129,8 +134,6 @@ public class AdvancedButton : FixedTicker
 
         if (batAA == -1)
         {
-            Debug.Log("-- Calculating Square Button rule --");
-
             batAA = 0;
 
             List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
@@ -168,11 +171,11 @@ public class AdvancedButton : FixedTicker
                 else if (serial.Contains("1")) highSerial = 1;
             }
 
-            Debug.Log("Batteries: " + batAA + "AA, " + batD + "D");
-            Debug.Log("Highest serial number: " + highSerial);
-            Debug.Log("Serial contains a vowel: " + serialVowel);
-            Debug.Log("Button colour: " + buttonCol);
-            Debug.Log("Button text: " + "\"" + buttonLabels[buttonText] + "\" " + buttonText);
+            Debug.Log("[Square Button #"+thisLoggingID+"] Batteries: " + batAA + "AA, " + batD + "D");
+            Debug.Log("[Square Button #"+thisLoggingID+"] Highest serial number: " + highSerial);
+            Debug.Log("[Square Button #"+thisLoggingID+"] Serial contains a vowel: " + serialVowel);
+            Debug.Log("[Square Button #"+thisLoggingID+"] Button colour: " + buttonCol);
+            Debug.Log("[Square Button #"+thisLoggingID+"] Button text: " + "\"" + buttonLabels[buttonText] + "\" " + buttonText);
 
             if (buttonCol == 1 && batAA > batD) hold = true;
             else if ((buttonCol < 2) && buttonLabels[buttonText].Length >= highSerial) hold = false;
@@ -186,33 +189,31 @@ public class AdvancedButton : FixedTicker
             else if (unlitInd >= 2 && serialVowel) hold = false;
             else hold = true;
 
-            Debug.Log("Hold: " + hold);
-            if (!hold) Debug.Log("Release and Match: " + catch22);
-
-            Debug.Log("-- Square Button rule calculated -- ");
+            Debug.Log("[Square Button #"+thisLoggingID+"] Hold: " + hold);
+            if (!hold) Debug.Log("[Square Button #"+thisLoggingID+"] Release and Match: " + catch22);
         }
 
-        Debug.Log("Handling Square Button release...");
+        Debug.Log("[Square Button #"+thisLoggingID+"] Handling Square Button release...");
 
         if (hold)
         {
             if (ticker >= 0)
             {
-                Debug.Log("Rule dictates holding, button was held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates holding, button was held.");
                 int time = (int)Info.GetTime();
-                Debug.Log("Current seconds remaining: " + time);
+                Debug.Log("[Square Button #"+thisLoggingID+"] Current seconds remaining: " + time);
                 if (flashing)
                 {
                     if (holdColour == 0) //Cyan
                     {
-                        Debug.Log("Flashing Cyan (total time multiple 7), time % 7 = " + (time % 7));
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Flashing Cyan (total time multiple 7), time % 7 = " + (time % 7));
                         if (time % 7 == 0) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
                     }
                     else if (holdColour == 1) //Orange
                     {
                         time %= 60;
-                        Debug.Log("Flashing Orange (prime or 0), seconds = " + time);
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Flashing Orange (prime or 0), seconds = " + time);
                         if (time == 0 || time == 2 || time == 3 || time == 5 ||
                             time == 7 || time == 11 || time == 13 || time == 17 ||
                             time == 19 || time == 23 || time == 29 || time == 31 ||
@@ -224,7 +225,7 @@ public class AdvancedButton : FixedTicker
                     {
                         time++;
                         time %= 60;
-                        Debug.Log("Flashing Green (multiple of 4), one second earlier digits sum = " + (time / 10) + "+" + (time % 10) + "=" + ((time / 10) + (time % 10)));
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Flashing Green (multiple of 4), one second earlier digits sum = " + (time / 10) + "+" + (time % 10) + "=" + ((time / 10) + (time % 10)));
                         time = (time / 10) + (time % 10);
                         if (time % 4 == 0) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
@@ -235,19 +236,21 @@ public class AdvancedButton : FixedTicker
                     time %= 60;
                     time = (time / 10) + (time % 10);
                     if (time > 10) time -= 10;
-                    Debug.Log("Solid Colour, seconds sum = " + time);
                     if (holdColour == 0) //Cyan
                     {
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Solid Cyan, seconds sum = " + time);
                         if (time == 7) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
                     }
                     else if (holdColour == 1) //Orange
                     {
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Solid Orange, seconds sum = " + time);
                         if (time == 3) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
                     }
                     else
                     {
+                        Debug.Log("[Square Button #"+thisLoggingID+"] Solid Green, seconds sum = " + time);
                         if (time == 5) GetComponent<KMBombModule>().HandlePass();
                         else GetComponent<KMBombModule>().HandleStrike();
                     }
@@ -255,7 +258,7 @@ public class AdvancedButton : FixedTicker
             }
             else
             {
-                Debug.Log("Rule dictates holding, button was not held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates holding, button was not held.");
                 GetComponent<KMBombModule>().HandleStrike();
             }
         }
@@ -263,15 +266,15 @@ public class AdvancedButton : FixedTicker
         {
             if (ticker >= 0)
             {
-                Debug.Log("Rule dictates not holding, button was held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates not holding, button was held.");
                 GetComponent<KMBombModule>().HandleStrike();
             }
             else
             {
-                Debug.Log("Rule dictates not holding, button was not held.");
-                Debug.Log("Rule also dictates matching seconds.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates not holding, button was not held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule also dictates matching seconds.");
                 int time = (int)Info.GetTime() % 60;
-                Debug.Log("Displayed seconds: " + time);
+                Debug.Log("[Square Button #"+thisLoggingID+"] Displayed seconds: " + time);
                 if (time % 11 == 0) GetComponent<KMBombModule>().HandlePass();
                 else GetComponent<KMBombModule>().HandleStrike();
             }
@@ -280,12 +283,12 @@ public class AdvancedButton : FixedTicker
         {
             if (ticker >= 0)
             {
-                Debug.Log("Rule dictates not holding, button was held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates not holding, button was held.");
                 GetComponent<KMBombModule>().HandleStrike();
             }
             else
             {
-                Debug.Log("Rule dictates not holding, button was not held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates not holding, button was not held.");
                 GetComponent<KMBombModule>().HandlePass();
             }
         }
