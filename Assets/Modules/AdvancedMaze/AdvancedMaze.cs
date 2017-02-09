@@ -1068,8 +1068,12 @@ public class AdvancedMaze : MonoBehaviour
         {
             for(int x = 0; x < 6; x++)
             {
-                debugShownText += "[Plumbing #"+thisLoggingID+"] "+debugShown[x][y];
-                debugSolvedText += "[Plumbing #"+thisLoggingID+"] "+debugSolved[x][y];
+                if(x == 0) {
+                    debugShownText += "[Plumbing #"+thisLoggingID+"] ";
+                    debugSolvedText += "[Plumbing #"+thisLoggingID+"] ";
+                }
+                debugShownText += debugShown[x][y];
+                debugSolvedText += debugSolved[x][y];
                 if (x == 5)
                 {
                     debugShownText += "\n";
