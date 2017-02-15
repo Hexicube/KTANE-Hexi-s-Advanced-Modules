@@ -74,7 +74,7 @@ using Newtonsoft.Json;
 
 public class AdvancedMaze : MonoBehaviour
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     private static char[][] PIPE_SEGMENTS = new char[][]
@@ -1128,6 +1128,20 @@ public class AdvancedMaze : MonoBehaviour
     public bool HandleCheck()
     {
         if (Solved) return false;
+
+        string curState = "";
+        for (int y = 0; y < 6; y++)
+        {
+            for(int x = 0; x < 6; x++)
+            {
+                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                if (x == 5) curState += "\n";
+            }
+        }
+
+        Debug.Log("[Plumbing #"+thisLoggingID+"] Current state:\n" + curState);
+
         ButtonCheck.AddInteractionPunch();
 
         List<int[]> positions = new List<int[]>();

@@ -12,7 +12,10 @@ using System.Collections;
 
 public class AdvancedKnob : FixedTicker
 {
-    public static int loggingID;
+    private const int NUM_DIGITS = 3;
+    private static int MODULO = -1;
+
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public static bool HasFailed; //Prevent voice-line from playing the very first time.
@@ -20,7 +23,7 @@ public class AdvancedKnob : FixedTicker
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
-    public Nixie Num1, Num2, Num3;
+    public Nixie[] NumList;
     public TimerDial Dial1, Dial2;
 
     public Transform PhoneRing;
@@ -36,13 +39,26 @@ public class AdvancedKnob : FixedTicker
 
     private void SetDisplay()
     {
-        Num1.SetValue(DisplayNumber / 100);
-        Num2.SetValue((DisplayNumber / 10) % 10);
-        Num3.SetValue(DisplayNumber % 10);
+        int counter = 0;
+        int val = DisplayNumber;
+        while(counter < NUM_DIGITS) {
+            NumList[NUM_DIGITS - 1 - counter].SetValue(val % 10);
+            counter++;
+            val /= 10;
+        }
     }
 
     void Awake()
     {
+        if(MODULO == -1) {
+            MODULO = 1;
+            int counter = 0;
+            while(counter < NUM_DIGITS) {
+                counter++;
+                MODULO *= 10;
+            }
+        }
+
         thisLoggingID = loggingID++;
 
         Button0.OnInteract += Handle0;
@@ -62,7 +78,7 @@ public class AdvancedKnob : FixedTicker
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
         GetComponent<KMNeedyModule>().OnNeedyDeactivation += OnNeedyDeactivation;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
-        CurAnswer = Random.Range(0, 1000);
+        CurAnswer = Random.Range(0, MODULO);
         DisplayNumber = CurAnswer;
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone initial display: " + CurAnswer);
     }
@@ -75,9 +91,9 @@ public class AdvancedKnob : FixedTicker
     protected void OnNeedyActivation()
     {
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone old value: " + CurAnswer);
-        DisplayNumber = Random.Range(0, 1000);
+        DisplayNumber = Random.Range(0, MODULO);
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] New display: " + DisplayNumber);
-        CurAnswer = (CurAnswer + DisplayNumber) % 1000;
+        CurAnswer = (CurAnswer + DisplayNumber) % MODULO;
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] New value: " + CurAnswer);
         SetDisplay();
         Active = true;
@@ -90,15 +106,13 @@ public class AdvancedKnob : FixedTicker
         Dial1.Move(0);
         Dial2.Move(0);
 
-        Num1.SetValue(-1);
-        Num2.SetValue(-1);
-        Num3.SetValue(-1);
+        foreach(Nixie n in NumList) n.SetValue(-1);
     }
 
     protected void OnTimerExpired()
     {
         GetComponent<KMNeedyModule>().HandleStrike();
-        CurAnswer = Random.Range(0, 1000);
+        CurAnswer = Random.Range(0, MODULO);
         DisplayNumber = CurAnswer;
         SetDisplay();
         Active = false;
@@ -130,7 +144,7 @@ public class AdvancedKnob : FixedTicker
                 {
                     Response = Response * 10 + Target;
                     ResponsePos++;
-                    if (ResponsePos == 3)
+                    if (ResponsePos == NUM_DIGITS)
                     {
                         Debug.Log("[Rotary Phone #"+thisLoggingID+"] Provided value: " + Response);
                         Debug.Log("[Rotary Phone #"+thisLoggingID+"] Expected value: " + CurAnswer);

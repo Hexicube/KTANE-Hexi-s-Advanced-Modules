@@ -62,7 +62,7 @@ using System.Collections.Generic;
 
 public class AdvancedSimon : FixedTicker
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMSelectable ButtonTL, ButtonTR, ButtonBL, ButtonBR;
@@ -79,6 +79,8 @@ public class AdvancedSimon : FixedTicker
         new int[]{ 2, 0, 1, 3 }, //G-GRYB
         new int[]{ 1, 2, 3, 0 }  //B-YGBR
     };
+
+    private static string[] COL_LIST = new string[]{"R", "Y", "G", "B"};
 
     private int PuzzleType;
 
@@ -187,7 +189,7 @@ public class AdvancedSimon : FixedTicker
                     else if (PuzzleDisplay[0][1]) Answer[0] = 1;
                     else if (PuzzleDisplay[0][2]) Answer[0] = 2;
                     else Answer[0] = 3;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: One flashed, press it (" + Answer[0] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: One flashed, press it (" + Answer[0] + ":" + COL_LIST[Answer[0]] + ")");
                 }
                 else if (numFlashed == 2)
                 {
@@ -201,12 +203,12 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Two flashed with blue, press highest (" + Answer[0] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Two flashed with blue, press highest (" + Answer[0] + ":" + COL_LIST[Answer[0]] + ")");
                     }
                     else
                     {
                         Answer[0] = 3;
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Two flashed without blue, press blue (3)");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Two flashed without blue, press blue (3:B)");
                     }
                 }
                 else if (numFlashed == 3)
@@ -221,18 +223,18 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Three flashed including red, press lowest (" + Answer[0] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Three flashed including red, press lowest (" + Answer[0] + ":" + COL_LIST[Answer[0]] + ")");
                     }
                     else
                     {
                         Answer[0] = 0;
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Three flashed excluding red, press red (0)");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Three flashed excluding red, press red (0:R)");
                     }
                 }
                 else
                 {
                     Answer[0] = PRIORITY[TLtype][1];
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Four flashed, press second highest (" + Answer[0] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 1: Four flashed, press second highest (" + Answer[0] + ":" + COL_LIST[Answer[0]] + ")");
                 }
             }
             else if (a == 1)
@@ -249,7 +251,7 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Red and blue flashed, press highest out of yellow and green (" + Answer[1] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Red and blue flashed, press highest out of yellow and green (" + Answer[1] + ":" + COL_LIST[Answer[1]] + ")");
                     }
                     else
                     {
@@ -261,7 +263,7 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Two flashed including yellow or green, press lowest that didn't flash (" + Answer[1] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Two flashed including yellow or green, press lowest that didn't flash (" + Answer[1] + ":" + COL_LIST[Answer[1]] + ")");
                     }
                 }
                 else if (numFlashed == 1)
@@ -269,18 +271,18 @@ public class AdvancedSimon : FixedTicker
                     if (!PuzzleDisplay[1][3])
                     {
                         Answer[1] = 3;
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: One flashed but not blue, press blue (3)");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: One flashed but not blue, press blue (3:B)");
                     }
                     else
                     {
                         Answer[1] = 1;
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Blue flashed, press yellow (1)");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Blue flashed, press yellow (1:Y)");
                     }
                 }
                 else if (numFlashed == 4)
                 {
                     Answer[1] = Answer[0];
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Four flashed, press stage 1 (" + Answer[1] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Four flashed, press stage 1 (" + Answer[1] + ":" + COL_LIST[Answer[1]] + ")");
                 }
                 else
                 {
@@ -288,7 +290,7 @@ public class AdvancedSimon : FixedTicker
                     else if (!PuzzleDisplay[1][1]) Answer[1] = 1;
                     else if (!PuzzleDisplay[1][2]) Answer[1] = 2;
                     else Answer[1] = 3;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Three flashed, press whatever didn't flash (" + Answer[1] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 2: Three flashed, press whatever didn't flash (" + Answer[1] + ":" + COL_LIST[Answer[1]] + ")");
                 }
             }
             else if (a == 2)
@@ -325,7 +327,7 @@ public class AdvancedSimon : FixedTicker
                                 }
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Three flashed and one was pressed, press highest unpressed that flashed (" + Answer[2] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Three flashed and one was pressed, press highest unpressed that flashed (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                     }
                     else
                     {
@@ -337,7 +339,7 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Three flashed and weren't pressed, press highest that flashes (" + Answer[2] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Three flashed and weren't pressed, press highest that flashes (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                     }
                 }
                 else if (numFlashed == 2)
@@ -346,7 +348,7 @@ public class AdvancedSimon : FixedTicker
                         (PuzzleDisplay[2][2] && !G) || (PuzzleDisplay[2][3] && !B))
                     {
                         Answer[2] = Answer[0];
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Two flashed and at least one unpressed, press stage 1 (" + Answer[2] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Two flashed and at least one unpressed, press stage 1 (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                     }
                     else
                     {
@@ -358,7 +360,7 @@ public class AdvancedSimon : FixedTicker
                                 break;
                             }
                         }
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Two flashed and both pressed, press lowest no-flash (" + Answer[2] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Two flashed and both pressed, press lowest no-flash (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                     }
                 }
                 else if (numFlashed == 1)
@@ -367,12 +369,12 @@ public class AdvancedSimon : FixedTicker
                     else if (PuzzleDisplay[2][1]) Answer[2] = 1;
                     else if (PuzzleDisplay[2][2]) Answer[2] = 2;
                     else Answer[2] = 3;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: One flashed, press it (" + Answer[2] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: One flashed, press it (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                 }
                 else
                 {
                     Answer[2] = PRIORITY[TLtype][2];
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Four flashed, press second lowest (" + Answer[2] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 3: Four flashed, press second lowest (" + Answer[2] + ":" + COL_LIST[Answer[2]] + ")");
                 }
             }
             else if (a == 3)
@@ -383,7 +385,7 @@ public class AdvancedSimon : FixedTicker
                     else if (!Y) Answer[3] = 1;
                     else if (!G) Answer[3] = 2;
                     else Answer[3] = 3;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three unique pressed, press other (" + Answer[3] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three unique pressed, press other (" + Answer[3] + ":" + COL_LIST[Answer[3]] + ")");
                 }
                 else if (numFlashed == 3)
                 {
@@ -407,18 +409,18 @@ public class AdvancedSimon : FixedTicker
                     if (unpressed >= 0 && unpressed < 4)
                     {
                         Answer[3] = unpressed;
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three flashed and exactly one unpressed, press it (" + Answer[3] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three flashed and exactly one unpressed, press it (" + Answer[3] + ":" + COL_LIST[Answer[3]] + ")");
                     }
                     else
                     {
                         Answer[3] = PRIORITY[TLtype][3];
-                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three flashed and not exactly one unpressed, press lowest (" + Answer[3] + ")");
+                        Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Three flashed and not exactly one unpressed, press lowest (" + Answer[3] + ":" + COL_LIST[Answer[3]] + ")");
                     }
                 }
                 else if (numFlashed == 4)
                 {
                     Answer[3] = PRIORITY[TLtype][3];
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Four flashed, press lowest (" + Answer[3] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Four flashed, press lowest (" + Answer[3] + ":" + COL_LIST[Answer[3]] + ")");
                 }
                 else if (numFlashed == 1)
                 {
@@ -426,12 +428,12 @@ public class AdvancedSimon : FixedTicker
                     else if (PuzzleDisplay[3][1]) Answer[3] = 1;
                     else if (PuzzleDisplay[3][2]) Answer[3] = 2;
                     else Answer[3] = 3;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: One flashed, press it (" + Answer[3] + ")");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: One flashed, press it (" + Answer[3] + ":" + COL_LIST[Answer[3]] + ")");
                 }
                 else
                 {
                     Answer[3] = 2;
-                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Two flashed, press green (2)");
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Stage 4: Two flashed, press green (2:G)");
                 }
             }
             if (Answer[a] == 0) R = true;
@@ -579,6 +581,54 @@ public class AdvancedSimon : FixedTicker
         }
         else
         {
+            string ans = Answer[0] + "";
+            string ans2 = COL_LIST[Answer[0]];
+            if(Progress >= 1) {
+                ans += Answer[1];
+                ans2 += COL_LIST[Answer[1]];
+            }
+            if(Progress >= 2) {
+                ans += Answer[2];
+                ans2 += COL_LIST[Answer[2]];
+            }
+            if(Progress >= 3) {
+                ans += Answer[3];
+                ans2 += COL_LIST[Answer[3]];
+            }
+            Debug.Log("[Simon States #"+thisLoggingID+"] Expected answer: " + ans + ":" + ans2);
+
+            ans = "";
+            ans2 = "";
+            if(SubProgress >= 1) {
+                ans += Answer[0];
+                ans2 += COL_LIST[Answer[0]];
+            }
+            else {
+                ans += val;
+                ans2 += COL_LIST[val];
+            }
+            if(SubProgress >= 2) {
+                ans += Answer[1];
+                ans2 += COL_LIST[Answer[1]];
+            }
+            else if(SubProgress >= 1) {
+                ans += val;
+                ans2 += COL_LIST[val];
+            }
+            if(SubProgress >= 3) {
+                ans += Answer[3];
+                ans2 += COL_LIST[Answer[3]];
+            }
+            else if(SubProgress >= 2) {
+                ans += val;
+                ans2 += COL_LIST[val];
+            }
+            if(SubProgress >= 3) {
+                ans += val;
+                ans2 += COL_LIST[val];
+            }
+            Debug.Log("[Simon States #"+thisLoggingID+"] Given answer: " + ans + ":" + ans2);
+
             GetComponent<KMBombModule>().HandleStrike();
             SubProgress = 0;
         }

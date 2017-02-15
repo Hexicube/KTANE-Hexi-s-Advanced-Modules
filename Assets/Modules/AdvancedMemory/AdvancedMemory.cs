@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 public class AdvancedMemory : MonoBehaviour
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMBombInfo BombInfo;
@@ -271,12 +271,15 @@ public class AdvancedMemory : MonoBehaviour
                 }
                 DisplayMesh.text += val;
                 Position++;
-                if (Position == Solution.Length) GetComponent<KMBombModule>().HandlePass();
-                else Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+                if (Position == Solution.Length) {
+                    Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module solved.");
+                    GetComponent<KMBombModule>().HandlePass();
+                }
+                Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
             }
             else
             {
-                Debug.Log("[Plumbing #"+thisLoggingID+"] Stage " + (Position+1) + ": Pressed " + val + " instead of " + Solution[Position]);
+                Debug.Log("[Forget Me Not #"+thisLoggingID+"] Stage " + (Position+1) + ": Pressed " + val + " instead of " + Solution[Position]);
                 GetComponent<KMBombModule>().HandleStrike();
                 if (litButton == -1)
                 {

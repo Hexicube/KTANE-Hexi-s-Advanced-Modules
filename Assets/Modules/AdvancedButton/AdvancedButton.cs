@@ -35,7 +35,7 @@ using Newtonsoft.Json;
 
 public class AdvancedButton : FixedTicker
 {
-    public static int loggingID = 0;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMSelectable Button;

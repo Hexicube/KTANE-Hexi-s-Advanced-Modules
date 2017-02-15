@@ -4022,6 +4022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce0dd39d5811ddd429290d4d79c71da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisLoggingID: 0
   Sound: {fileID: 11485596}
   Button0: {fileID: 11443572}
   Button1: {fileID: 11422700}
@@ -4033,9 +4034,10 @@ MonoBehaviour:
   Button7: {fileID: 11484954}
   Button8: {fileID: 11471514}
   Button9: {fileID: 11426398}
-  Num1: {fileID: 114000010633175622}
-  Num2: {fileID: 114000013474338216}
-  Num3: {fileID: 114000010411259550}
+  NumList:
+  - {fileID: 114000010633175622}
+  - {fileID: 114000013474338216}
+  - {fileID: 114000010411259550}
   Dial1: {fileID: 114000013535390508}
   Dial2: {fileID: 114000012385339610}
   PhoneRing: {fileID: 432840}

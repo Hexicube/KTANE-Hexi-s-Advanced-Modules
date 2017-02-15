@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 public class AdvancedPassword : MonoBehaviour
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMSelectable Dial1, Dial2, Dial3, Dial4, Dial5, Dial6, Lever;
@@ -194,6 +194,9 @@ public class AdvancedPassword : MonoBehaviour
 
         Debug.Log("[Safety Safe #"+thisLoggingID+"] Local offsets: " + offsetList);
         Debug.Log("[Safety Safe #"+thisLoggingID+"] Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Answer: " + (AnswerPos[0] - ClickPos[0]) + "," + (AnswerPos[1] - ClickPos[1]) + "," +
+                                                                (AnswerPos[2] - ClickPos[2]) + "," + (AnswerPos[3] - ClickPos[3]) + "," +
+                                                                (AnswerPos[4] - ClickPos[4]) + "," + (AnswerPos[5] - ClickPos[5]));
 
         foreach (GameObject o in TreasureChoices)
         {
@@ -240,6 +243,10 @@ public class AdvancedPassword : MonoBehaviour
                 break;
             }
         }
+        
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Input: " + (DialPos[0] - ClickPos[0]) + "," + (DialPos[1] - ClickPos[1]) + "," +
+                                                               (DialPos[2] - ClickPos[2]) + "," + (DialPos[3] - ClickPos[3]) + "," +
+                                                               (DialPos[4] - ClickPos[4]) + "," + (DialPos[5] - ClickPos[5]));
 
         if (ans)
         {

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 public class AdvancedKeypad : MonoBehaviour
 {
-    public static int loggingID = 0;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMSelectable Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8;
@@ -155,7 +155,10 @@ public class AdvancedKeypad : MonoBehaviour
                     break;
                 }
             }
-            if (done) GetComponent<KMBombModule>().HandlePass();
+            if (done) {
+                Debug.Log("[Round Keypad #"+thisLoggingID+"] Module solved.");
+                GetComponent<KMBombModule>().HandlePass();
+            }
         }
         else
         {

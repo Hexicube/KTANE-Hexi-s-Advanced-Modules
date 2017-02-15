@@ -32,7 +32,7 @@ using Newtonsoft.Json;
 
 public class AdvancedMorse : FixedTicker
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     private static char[] PRIME = new char[]{

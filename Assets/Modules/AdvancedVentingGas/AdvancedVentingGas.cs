@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 
 public class AdvancedVentingGas : MonoBehaviour
 {
-    public static int loggingID;
+    public static int loggingID = 1;
     public int thisLoggingID;
 
     public KMBombInfo BombInfo;
