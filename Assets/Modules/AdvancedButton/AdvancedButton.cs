@@ -70,6 +70,12 @@ public class AdvancedButton : FixedTicker
         new Color(0.91f, 0.88f, 0.86f), //White
         new Color(0.2f, 0.2f, 0.2f)     //Black
     };
+    private static string[] colourNames = new string[]{
+        "Yellow",
+        "Blue",
+        "White",
+        "Black"
+    };
 
     private static string[] buttonLabels = new string[]{
         "purple", "jade", "maroon", "indigo",
@@ -174,7 +180,7 @@ public class AdvancedButton : FixedTicker
             Debug.Log("[Square Button #"+thisLoggingID+"] Batteries: " + batAA + "AA, " + batD + "D");
             Debug.Log("[Square Button #"+thisLoggingID+"] Highest serial number: " + highSerial);
             Debug.Log("[Square Button #"+thisLoggingID+"] Serial contains a vowel: " + serialVowel);
-            Debug.Log("[Square Button #"+thisLoggingID+"] Button colour: " + buttonCol);
+            Debug.Log("[Square Button #"+thisLoggingID+"] Button colour: " + colourNames[buttonCol]);
             Debug.Log("[Square Button #"+thisLoggingID+"] Button text: " + "\"" + buttonLabels[buttonText] + "\" " + buttonText);
 
             if (buttonCol == 1 && batAA > batD) hold = true;
@@ -289,6 +295,7 @@ public class AdvancedButton : FixedTicker
             else
             {
                 Debug.Log("[Square Button #"+thisLoggingID+"] Rule dictates not holding, button was not held.");
+                Debug.Log("[Square Button #"+thisLoggingID+"] Rule does not dictate matching seconds.");
                 GetComponent<KMBombModule>().HandlePass();
             }
         }

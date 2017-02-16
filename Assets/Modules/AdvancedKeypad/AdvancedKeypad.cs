@@ -164,6 +164,7 @@ public class AdvancedKeypad : MonoBehaviour
         {
             Buttons[pos].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
             GetComponent<KMBombModule>().HandleStrike();
+            Debug.Log("[Round Keypad #"+thisLoggingID+"] Incorrect symbol: "+Buttons[pos].transform.Find("Label").GetComponent<TextMesh>().text);
         }
     }
 

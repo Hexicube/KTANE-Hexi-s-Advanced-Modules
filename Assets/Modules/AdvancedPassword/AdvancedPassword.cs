@@ -175,6 +175,7 @@ public class AdvancedPassword : MonoBehaviour
 
         string offsetList = "";
 
+        int[] logAnswers = new int[6];
         for (int a = 0; a < 6; a++)
         {
             int serialVal = 0;
@@ -190,13 +191,12 @@ public class AdvancedPassword : MonoBehaviour
             }
             else offsetList += ",";
             AnswerPos[a] = (ClickPos[a] + serialVal + dialOffset) % 12;
+            logAnswers[a] = (serialVal + dialOffset) % 12;
         }
 
         Debug.Log("[Safety Safe #"+thisLoggingID+"] Local offsets: " + offsetList);
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Answer: " + logAnswers[0] + "," + logAnswers[1] + "," + logAnswers[2] + "," + logAnswers[3] + "," + logAnswers[4] + "," + logAnswers[5]);
         Debug.Log("[Safety Safe #"+thisLoggingID+"] Final positions: " + AnswerPos[0] + "," + AnswerPos[1] + "," + AnswerPos[2] + "," + AnswerPos[3] + "," + AnswerPos[4] + "," + AnswerPos[5]);
-        Debug.Log("[Safety Safe #"+thisLoggingID+"] Answer: " + (AnswerPos[0] - ClickPos[0]) + "," + (AnswerPos[1] - ClickPos[1]) + "," +
-                                                                (AnswerPos[2] - ClickPos[2]) + "," + (AnswerPos[3] - ClickPos[3]) + "," +
-                                                                (AnswerPos[4] - ClickPos[4]) + "," + (AnswerPos[5] - ClickPos[5]));
 
         foreach (GameObject o in TreasureChoices)
         {
