@@ -1128,19 +1128,13 @@ public class AdvancedMaze : MonoBehaviour
     public bool HandleCheck()
     {
         if (Solved) return false;
-
+        
         string curState = "";
-        for (int y = 0; y < 6; y++)
+        bool[][] scanState = new bool[6][];
+        for (int x = 0; x < 6; x++)
         {
-            for(int x = 0; x < 6; x++)
-            {
-                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
-                curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
-                if (x == 5) curState += "\n";
-            }
+            scanState[x] = new bool[6];
         }
-
-        Debug.Log("[Plumbing #"+thisLoggingID+"] Current state:\n" + curState);
 
         ButtonCheck.AddInteractionPunch();
 
@@ -1167,6 +1161,7 @@ public class AdvancedMaze : MonoBehaviour
             int[] pos = positions[0];
             positions.RemoveAt(0);
             if (done[pos[0]][pos[1]]) continue;
+            scanState[pos[0]][pos[1]] = true;
 
             allPipes.Add(pos);
             int[] conn = GetConnections(pos[0], pos[1]);
@@ -1174,6 +1169,8 @@ public class AdvancedMaze : MonoBehaviour
             {
                 if (dir == 0)
                 {
+                    if(pos[1] > 0) scanState[pos[0]][pos[1] - 1] = true;
+
                     int[] otherConn = GetConnections(pos[0], pos[1] - 1);
                     bool found = false;
                     foreach (int otherDir in otherConn)
@@ -1186,6 +1183,22 @@ public class AdvancedMaze : MonoBehaviour
                     }
                     if (!found)
                     {
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: " + (pos[0]+1) + ":" + (pos[1]+1));
+
+                        curState = "";
+                        for (int y = 0; y < 6; y++)
+                        {
+                            for(int x = 0; x < 6; x++)
+                            {
+                                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                                if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                                else curState += "┼";
+                                if (x == 5) curState += "\n";
+                            }
+                        }
+
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                         GetComponent<KMBombModule>().HandleStrike();
                         return false;
                     }
@@ -1194,6 +1207,8 @@ public class AdvancedMaze : MonoBehaviour
                 }
                 if (dir == 1)
                 {
+                    if(pos[0] < 5) scanState[pos[0] + 1][pos[1]] = true;
+
                     int[] otherConn = GetConnections(pos[0] + 1, pos[1]);
                     bool found = false;
                     foreach (int otherDir in otherConn)
@@ -1206,6 +1221,22 @@ public class AdvancedMaze : MonoBehaviour
                     }
                     if (!found)
                     {
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: " + (pos[0]+1) + ":" + (pos[1]+1));
+
+                        curState = "";
+                        for (int y = 0; y < 6; y++)
+                        {
+                            for(int x = 0; x < 6; x++)
+                            {
+                                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                                if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                                else curState += "┼";
+                                if (x == 5) curState += "\n";
+                            }
+                        }
+
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                         GetComponent<KMBombModule>().HandleStrike();
                         return false;
                     }
@@ -1214,6 +1245,8 @@ public class AdvancedMaze : MonoBehaviour
                 }
                 if (dir == 2)
                 {
+                    if(pos[1] < 5) scanState[pos[0]][pos[1] + 1] = true;
+
                     int[] otherConn = GetConnections(pos[0], pos[1] + 1);
                     bool found = false;
                     foreach (int otherDir in otherConn)
@@ -1226,6 +1259,22 @@ public class AdvancedMaze : MonoBehaviour
                     }
                     if (!found)
                     {
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: " + (pos[0]+1) + ":" + (pos[1]+1));
+
+                        curState = "";
+                        for (int y = 0; y < 6; y++)
+                        {
+                            for(int x = 0; x < 6; x++)
+                            {
+                                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                                if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                                else curState += "┼";
+                                if (x == 5) curState += "\n";
+                            }
+                        }
+
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                         GetComponent<KMBombModule>().HandleStrike();
                         return false;
                     }
@@ -1234,6 +1283,8 @@ public class AdvancedMaze : MonoBehaviour
                 }
                 if (dir == 3)
                 {
+                    if(pos[0] > 0) scanState[pos[0] - 1][pos[1]] = true;
+
                     int[] otherConn = GetConnections(pos[0] - 1, pos[1]);
                     bool found = false;
                     foreach (int otherDir in otherConn)
@@ -1246,6 +1297,22 @@ public class AdvancedMaze : MonoBehaviour
                     }
                     if (!found)
                     {
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: " + (pos[0]+1) + ":" + (pos[1]+1));
+
+                        curState = "";
+                        for (int y = 0; y < 6; y++)
+                        {
+                            for(int x = 0; x < 6; x++)
+                            {
+                                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                                if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                                else curState += "┼";
+                                if (x == 5) curState += "\n";
+                            }
+                        }
+
+                        Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                         GetComponent<KMBombModule>().HandleStrike();
                         return false;
                     }
@@ -1273,6 +1340,22 @@ public class AdvancedMaze : MonoBehaviour
                 }
                 if (!found)
                 {
+                    Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: 0:" + (pos+1) + " (input disconnected)");
+
+                    curState = "";
+                    for (int y = 0; y < 6; y++)
+                    {
+                        for(int x = 0; x < 6; x++)
+                        {
+                            if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                            if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                            else curState += "┼";
+                            if (x == 5) curState += "\n";
+                        }
+                    }
+
+                    Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                     GetComponent<KMBombModule>().HandleStrike();
                     return false;
                 }
@@ -1292,11 +1375,44 @@ public class AdvancedMaze : MonoBehaviour
                 }
                 if (!found)
                 {
+                    Debug.Log("[Plumbing #"+thisLoggingID+"] Incorrect pipe at: 7:" + (pos+1) + " (output disconnected)");
+
+                    curState = "";
+                    for (int y = 0; y < 6; y++)
+                    {
+                        for(int x = 0; x < 6; x++)
+                        {
+                            if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                            if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                            else curState += "┼";
+                            if (x == 5) curState += "\n";
+                        }
+                    }
+
+                    Debug.Log("[Plumbing #"+thisLoggingID+"] Scanned state:\n" + curState);
+
                     GetComponent<KMBombModule>().HandleStrike();
                     return false;
                 }
             }
         }
+
+        //Note: Solutions where the inputs and outputs are not actually linked are possible, provided the pipes are both ends are connected properly. However, this is incredibly rare and not worth preventing.
+
+        Debug.Log("[Plumbing #"+thisLoggingID+"] Module solved.");
+
+        for (int y = 0; y < 6; y++)
+        {
+            for(int x = 0; x < 6; x++)
+            {
+                if(x == 0) curState += "[Plumbing #"+thisLoggingID+"] ";
+                if(scanState[x][y]) curState += GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
+                else curState += "┼";
+                if (x == 5) curState += "\n";
+            }
+        }
+
+        Debug.Log("[Plumbing #"+thisLoggingID+"] Given solution:\n" + curState);
 
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         GetComponent<KMBombModule>().HandlePass();

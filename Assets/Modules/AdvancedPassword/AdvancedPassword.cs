@@ -202,14 +202,18 @@ public class AdvancedPassword : MonoBehaviour
         {
             o.SetActive(false);
         }
-        if (TREASURE_ENABLED)
+        if (TREASURE_ENABLED || FORCE_TREASURE)
         {
             if (FORCE_TREASURE || Random.value >= 0.9975) //1 in 400
             {
                 doesOpen = true;
                 if (FORCE_TREASURE || Random.value >= 0.7) //30%
                 {
-                    TreasureChoices[Random.Range(0, TreasureChoices.Length)].SetActive(true);
+                    int choice = Random.Range(0, TreasureChoices.Length);
+                    for(int a = 0; a < TreasureChoices.Length; a++) {
+                        if(a == choice) TreasureChoices[a].SetActive(true);
+                        else TreasureChoices[a].SetActive(false);
+                    }
                 }
             }
         }
@@ -253,12 +257,16 @@ public class AdvancedPassword : MonoBehaviour
 
         if (ans)
         {
+            Debug.Log("[Safety Safe #"+thisLoggingID+"] Module solved.");
             Lever.transform.localEulerAngles = new Vector3(0, 210, 0);
             Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
             GetComponent<KMBombModule>().HandlePass();
             Pass = true;
         }
-        else GetComponent<KMBombModule>().HandleStrike();
+        else {
+            Debug.Log("[Safety Safe #"+thisLoggingID+"] Answer incorrect.");
+            GetComponent<KMBombModule>().HandleStrike();
+        }
         for (int a = 0; a < 6; a++)
         {
             Dials[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = (DialPos[a] == AnswerPos[a]) ? new Color(0, 1, 0) : new Color(1, 0, 0);
