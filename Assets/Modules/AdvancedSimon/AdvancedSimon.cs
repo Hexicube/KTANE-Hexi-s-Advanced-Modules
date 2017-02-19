@@ -533,49 +533,11 @@ public class AdvancedSimon : FixedTicker
                 ticker = -50;
                 if (Progress == PuzzleDisplay.Length)
                 {
+                    Debug.Log("[Simon States #"+thisLoggingID+"] Module solved.");
                     GetComponent<KMBombModule>().HandlePass();
                     PuzzleDisplay = null;
                 }
-                /*else
-                {
-                    ButtonRed.OnInteract = null;
-                    ButtonYellow.OnInteract = null;
-                    ButtonGreen.OnInteract = null;
-                    ButtonBlue.OnInteract = null;
-                    List<KMSelectable> buttons = new List<KMSelectable>() { ButtonTL, ButtonTR, ButtonBL, ButtonBR };
-                    int i = 0;
-                    while (buttons.Count > 0)
-                    {
-                        int pos = Random.Range(0, buttons.Count);
-                        KMSelectable b = buttons[pos];
-                        if (i == 0)
-                        {
-                            ButtonRed = b;
-                            b.GetComponent<MeshRenderer>().material.color = DARKRED;
-                            b.OnInteract += HandleRed;
-                        }
-                        else if (i == 1)
-                        {
-                            ButtonYellow = b;
-                            b.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
-                            b.OnInteract += HandleYellow;
-                        }
-                        else if (i == 2)
-                        {
-                            ButtonGreen = b;
-                            b.GetComponent<MeshRenderer>().material.color = DARKGREEN;
-                            b.OnInteract += HandleGreen;
-                        }
-                        else
-                        {
-                            ButtonBlue = b;
-                            b.GetComponent<MeshRenderer>().material.color = DARKBLUE;
-                            b.OnInteract += HandleBlue;
-                        }
-                        i++;
-                        buttons.RemoveAt(pos);
-                    }
-                }*/
+                else Debug.Log("[Simon States #"+thisLoggingID+"] Stage " + Progress + " complete.");
             }
             else SubProgress++;
         }

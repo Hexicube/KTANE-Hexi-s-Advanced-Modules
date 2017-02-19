@@ -256,7 +256,10 @@ public class AdvancedMemory : MonoBehaviour
         if (Position < Solution.Length)
         {
             int progress = BombInfo.GetSolvedModuleNames().Count;
-            if (progress < Solution.Length) GetComponent<KMBombModule>().HandleStrike();
+            if (progress < Solution.Length) {
+                Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
+                GetComponent<KMBombModule>().HandleStrike();
+            }
             else if (val == Solution[Position])
             {
                 if (litButton != -1)

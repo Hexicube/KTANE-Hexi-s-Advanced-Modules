@@ -244,9 +244,12 @@ public class AdvancedPassword : MonoBehaviour
             }
         }
         
-        Debug.Log("[Safety Safe #"+thisLoggingID+"] Input: " + (DialPos[0] - ClickPos[0]) + "," + (DialPos[1] - ClickPos[1]) + "," +
-                                                               (DialPos[2] - ClickPos[2]) + "," + (DialPos[3] - ClickPos[3]) + "," +
-                                                               (DialPos[4] - ClickPos[4]) + "," + (DialPos[5] - ClickPos[5]));
+        int[] curPosList = new int[6];
+        for(int a = 0; a < 6; a++) {
+            curPosList[a] = DialPos[a] - ClickPos[a];
+            if(curPosList[a] < 0) curPosList[a] += 12;
+        }
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Input: " + curPosList[0] + "," + curPosList[1] + "," + curPosList[2] + "," + curPosList[3] + "," + curPosList[4] + "," + curPosList[5]);
 
         if (ans)
         {
