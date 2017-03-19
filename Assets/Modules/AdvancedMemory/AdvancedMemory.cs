@@ -25,7 +25,7 @@ public class AdvancedMemory : MonoBehaviour
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
     private KMSelectable[] Buttons;
-    public TextMesh DisplayMesh, StageMesh;
+    public TextMesh DisplayMesh, DisplayMeshBig, StageMesh;
 
     private int[] Display;
     private int[] Solution;
@@ -36,8 +36,14 @@ public class AdvancedMemory : MonoBehaviour
         thisLoggingID = loggingID++;
 
         Buttons = new KMSelectable[]{Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};
-
+        
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+
+        transform.Find("Main Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        transform.Find("Stage Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+
+        transform.Find("Main Display").FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0.2f, 0, 0.5f);
+        transform.Find("Stage Display").FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0.2f, 0, 0.5f);
 
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
@@ -226,6 +232,7 @@ public class AdvancedMemory : MonoBehaviour
             if (Display == null)
             {
                 DisplayMesh.text = "";
+                DisplayMeshBig.text = "";
                 StageMesh.text = "";
             }
             else
@@ -233,17 +240,20 @@ public class AdvancedMemory : MonoBehaviour
                 int progress = BombInfo.GetSolvedModuleNames().Count;
                 if (progress >= Display.Length)
                 {
-                    StageMesh.text = "-";
+                    StageMesh.text = "--";
                     if (!done)
                     {
-                        DisplayMesh.text = "-";
+                        UpdateDisplayMesh(-1);
                         done = true;
                     }
                 }
                 else
                 {
-                    DisplayMesh.text = "" + Display[progress];
-                    StageMesh.text = "" + (progress + 1);
+                    int stage = progress + 1;
+                    if (stage < 10) StageMesh.text = "0" + stage;
+                    else StageMesh.text = "" + stage;
+
+                    UpdateDisplayMesh(progress);
                 }
             }
         }
@@ -267,13 +277,8 @@ public class AdvancedMemory : MonoBehaviour
                     Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
                     litButton = -1;
                 }
-                if (DisplayMesh.text.Equals("-")) DisplayMesh.text = "";
-                if (Solution.Length > 10) //Double-decker bomb, vanilla caps at 10 slots (one is timer, one is this module)
-                {
-                    if (Position == (Solution.Length + 1) / 2) DisplayMesh.text += "\n";
-                }
-                DisplayMesh.text += val;
                 Position++;
+                UpdateDisplayMesh(-1);
                 if (Position == Solution.Length) {
                     Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module solved.");
                     GetComponent<KMBombModule>().HandlePass();
@@ -290,6 +295,48 @@ public class AdvancedMemory : MonoBehaviour
                     Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.8f, 0.5f);
                 }
             }
+        }
+    }
+
+    private void UpdateDisplayMesh(int solved)
+    {
+        if (solved == -1)
+        {
+            DisplayMeshBig.text = "";
+
+            string text = "";
+
+            int num = solved + 1;
+            if (solved == -1) num = Solution.Length;
+            for (int a = 0; a < num; a++)
+            {
+                string val = "-";
+                if (solved == -1)
+                {
+                    if (a < Position) val = "" + Solution[a];
+                }
+                else
+                {
+                    if (a == solved) val = "" + Display[a];
+                }
+
+                if(a > 0)
+                {
+                    if (a % 3 == 0)
+                    {
+                        if (a % 12 == 0) text += "\n";
+                        else text += " ";
+                    }
+                }
+                text += val;
+            }
+
+            DisplayMesh.text = text;
+        }
+        else
+        {
+            DisplayMesh.text = "";
+            DisplayMeshBig.text = "" + Display[solved];
         }
     }
 
