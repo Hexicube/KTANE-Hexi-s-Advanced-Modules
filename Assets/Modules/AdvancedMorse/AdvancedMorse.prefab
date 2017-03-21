@@ -397,7 +397,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012071015244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.225, y: 0, z: 0.225}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -440,9 +440,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: f221a9b83f398bc498d6fa7af61f1be9, type: 2}
-  - {fileID: 2100000, guid: 6cfeb9d1861b6ae4f8c92b28769a736f, type: 2}
-  - {fileID: 2100000, guid: 6cfeb9d1861b6ae4f8c92b28769a736f, type: 2}
-  - {fileID: 2100000, guid: 6cfeb9d1861b6ae4f8c92b28769a736f, type: 2}
+  - {fileID: 2100000, guid: bd5ef1ef02cd1ca4f8311c2e3a15d279, type: 2}
+  - {fileID: 2100000, guid: bd5ef1ef02cd1ca4f8311c2e3a15d279, type: 2}
+  - {fileID: 2100000, guid: bd5ef1ef02cd1ca4f8311c2e3a15d279, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -858,6 +858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df345e2587dbbfb47a2bb1d81d02bbda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisLoggingID: 0
   ButtonTransmit: {fileID: 114000010164689508}
   ButtonSwitch: {fileID: 114000011460952780}
   Sound: {fileID: 114000012359958084}

@@ -5,7 +5,7 @@ public class TimerDial : MonoBehaviour
 {
     private float pos;
     private int targ;
-	void Update()
+    void Update()
     {
         float t = targ * 36;
 	    float diff = pos - t;
@@ -20,8 +20,8 @@ public class TimerDial : MonoBehaviour
         }
 
         transform.localRotation = Quaternion.Euler(new Vector3(0, pos, 0));
-	}
-
+    }
+    
     public void Move(int target)
     {
         targ = target;

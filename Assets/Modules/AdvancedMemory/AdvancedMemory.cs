@@ -42,9 +42,6 @@ public class AdvancedMemory : MonoBehaviour
         transform.Find("Main Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         transform.Find("Stage Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
 
-        transform.Find("Main Display").FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0.2f, 0, 0.5f);
-        transform.Find("Stage Display").FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0.2f, 0, 0.5f);
-
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;
@@ -250,7 +247,11 @@ public class AdvancedMemory : MonoBehaviour
                 else
                 {
                     int stage = progress + 1;
-                    if (stage < 10) StageMesh.text = "0" + stage;
+                    if (stage < 10)
+                    {
+                        if (Display.Length < 10) StageMesh.text = "" + stage;
+                        else StageMesh.text = "0" + stage;
+                    }
                     else StageMesh.text = "" + stage;
 
                     UpdateDisplayMesh(progress);
