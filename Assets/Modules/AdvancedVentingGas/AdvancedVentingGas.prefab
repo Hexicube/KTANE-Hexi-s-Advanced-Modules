@@ -514,7 +514,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: bd5ef1ef02cd1ca4f8311c2e3a15d279, type: 2}
+  - {fileID: 2100000, guid: f221a9b83f398bc498d6fa7af61f1be9, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -845,6 +845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e73d61ad40453f241bdbaf1fb58cb963, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisLoggingID: 0
   BombInfo: {fileID: 11424554}
   Sound: {fileID: 11417278}
   Service: {fileID: 11488352}
@@ -946,7 +947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114000012375022826
 MonoBehaviour:
   m_ObjectHideFlags: 1

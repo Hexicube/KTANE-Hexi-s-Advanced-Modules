@@ -50,6 +50,8 @@ public class AdvancedVentingGas : MonoBehaviour
     {
         thisLoggingID = loggingID++;
 
+        transform.Find("Plane").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+
         Display.text = "";
 
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
