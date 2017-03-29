@@ -180,7 +180,6 @@ public class AdvancedPassword : MonoBehaviour
         {
             int serialVal = 0;
             serialVal = GetDialChartVal(a, serial[a]);
-            offsetList += serialVal % 12;
             if (a == 5)
             {
                 serialVal += GetDialChartVal(5, serial[0]);
@@ -188,8 +187,9 @@ public class AdvancedPassword : MonoBehaviour
                 serialVal += GetDialChartVal(5, serial[2]);
                 serialVal += GetDialChartVal(5, serial[3]);
                 serialVal += GetDialChartVal(5, serial[4]);
+                offsetList += serialVal % 12;
             }
-            else offsetList += ",";
+            else offsetList += serialVal % 12 + ",";
             AnswerPos[a] = (ClickPos[a] + serialVal + dialOffset) % 12;
             logAnswers[a] = (serialVal + dialOffset) % 12;
         }
