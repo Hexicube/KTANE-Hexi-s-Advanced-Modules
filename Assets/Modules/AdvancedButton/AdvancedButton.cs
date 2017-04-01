@@ -60,7 +60,7 @@ public class AdvancedButton : FixedTicker
 
     private static Color[] colours = new Color[]{
         new Color(0.25f, 0.75f, 1), //Cyan
-        new Color(1, 0.5f, 0),      //Orange
+        new Color(1, 0.25f, 0),      //Orange
         new Color(0, 1, 0)          //Green
     };
 
