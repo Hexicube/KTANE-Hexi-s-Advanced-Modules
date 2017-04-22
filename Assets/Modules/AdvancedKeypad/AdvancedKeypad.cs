@@ -109,7 +109,7 @@ public class AdvancedKeypad : MonoBehaviour
             }
             pos++;
         }
-        Debug.Log("[Round Keypad #"+thisLoggingID+"] Correct column: " + bestPos);
+        Debug.Log("[Round Keypad #"+thisLoggingID+"] Correct column: " + (bestPos + 1));
         pos = 0;
         while(pos < 8)
         {
