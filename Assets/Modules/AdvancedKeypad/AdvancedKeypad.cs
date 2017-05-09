@@ -26,13 +26,13 @@ public class AdvancedKeypad : MonoBehaviour
     protected bool[] Solution;
 
     private static char[] CharList = new char[]{
-        'Ѽ', 'æ', '©', 'Ӭ', 'Ҩ', 'Ҋ', 'ϗ', 'ϰ',
+        'Ѽ', 'æ', '©', 'Ӭ', 'Ҩ', 'Ҋ', 'ϗ', 'Ϟ',
         'Ԇ', 'Ϙ', 'Ѯ', 'ƛ', 'Ω', '¶', 'ψ', '¿',
         'Ϭ', 'Ͼ', 'Ͽ', '★', '☆', 'ټ', '҂', 'Ѣ',
         'Ѭ', 'Ѧ', 'Җ'
     };
     private static char[][] ResultLists = new char[][]{
-        new char[]{'Ϙ', 'Ѧ', 'ƛ', 'ϰ', 'Ѭ', 'ϗ', 'Ͽ'},
+        new char[]{'Ϙ', 'Ѧ', 'ƛ', 'Ϟ', 'Ѭ', 'ϗ', 'Ͽ'},
         new char[]{'Ӭ', 'Ϙ', 'Ͽ', 'Ҩ', '☆', 'ϗ', '¿'},
         new char[]{'©', 'Ѽ', 'Ҩ', 'Җ', 'Ԇ', 'ƛ', '☆'},
         new char[]{'Ϭ', '¶', 'Ѣ', 'Ѭ', 'Җ', '¿', 'ټ'},
