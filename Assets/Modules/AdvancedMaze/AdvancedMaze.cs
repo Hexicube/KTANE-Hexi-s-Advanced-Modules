@@ -104,6 +104,7 @@ public class AdvancedMaze : MonoBehaviour
     private KMSelectable[][] Buttons;
     public GameObject EntryLeft1,  EntryLeft2,  EntryLeft3,  EntryLeft4,  EntryLeft5,  EntryLeft6,
                       EntryRight1, EntryRight2, EntryRight3, EntryRight4, EntryRight5, EntryRight6;
+    private GameObject[] EntryLeftList, EntryRightList;
 
     private int[][] PlayFieldType, PlayFieldState;
     private int[] EntryLocations, ExitLocations;
@@ -113,6 +114,8 @@ public class AdvancedMaze : MonoBehaviour
     private bool[] ActiveIn, ActiveOut;
 
     private bool Solved;
+    private float fadeState;
+    private bool[][] fadeList;
 
     private void ApplyModel(GameObject button, int type, int rot, bool light)
     {
@@ -139,6 +142,39 @@ public class AdvancedMaze : MonoBehaviour
         }
 
         button.GetComponent<MeshRenderer>().material.color = bgCol;
+    }
+
+    void Update()
+    {
+        if(fadeState > 0 && fadeState < 3)
+        {
+            float start = fadeState - 2;
+            float end = start + Time.deltaTime;
+            if(start < 0) start = 0;
+            if(start > 1) start = 1;
+            if(end < 0) end = 0;
+            if(end > 1) end = 1;
+            if(end > start)
+            {
+                Vector3 move = new Vector3(0, (end-start)*1.5f, 0);
+                for(int x = 0; x < 6; x++)
+                {
+                    for(int y = 0; y < 6; y++)
+                    {
+                        if(!fadeList[x][y])
+                        {
+                            Buttons[x][y].transform.FindChild("Pipe").localPosition -= move;
+                        }
+                    }
+                }
+                for(int a = 0; a < 4; a++)
+                {
+                    if(!ActiveIn[a]) EntryLeftList[EntryLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
+                    if(!ActiveOut[a]) EntryRightList[ExitLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
+                }
+            }
+            fadeState += Time.deltaTime;
+        }
     }
 
     void Awake()
@@ -176,6 +212,9 @@ public class AdvancedMaze : MonoBehaviour
         EntryRight4.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         EntryRight5.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         EntryRight6.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        
+        EntryLeftList  = new GameObject[]{EntryLeft1,  EntryLeft2,  EntryLeft3,  EntryLeft4,  EntryLeft5,  EntryLeft6};
+        EntryRightList = new GameObject[]{EntryRight1, EntryRight2, EntryRight3, EntryRight4, EntryRight5, EntryRight6};
 
         ButtonCheck.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
@@ -1422,6 +1461,10 @@ public class AdvancedMaze : MonoBehaviour
             if (pos[0] >= 0 && pos[0] <= 5 && pos[1] >= 0 && pos[1] <= 5)
                 Buttons[pos[0]][pos[1]].transform.Find("Pipe").GetComponent<MeshRenderer>().material.color = ((pos[0] + pos[1]) % 2 == 1) ? new Color(0.1f, 0.6f, 1) : new Color(0.1f, 0.3f, 1);
         }
+
+        fadeState = .001f;
+        fadeList = scanState;
+
         return false;
     }
 }
