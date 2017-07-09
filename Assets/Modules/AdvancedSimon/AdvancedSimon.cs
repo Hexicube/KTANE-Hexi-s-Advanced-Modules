@@ -119,7 +119,11 @@ public class AdvancedSimon : FixedTicker
         while (buttons.Count > 0)
         {
             int pos = Random.Range(0, buttons.Count);
-            if (pos == 0 && TLtype == -1) TLtype = i;
+            if (pos == 0 && TLtype == -1)
+            {
+                Debug.Log("[Simon States #"+thisLoggingID+"] Dominant: "+COL_LIST[i]);
+                TLtype = i;
+            }
             KMSelectable b = buttons[pos];
             if (i == 0)
             {
@@ -164,6 +168,12 @@ public class AdvancedSimon : FixedTicker
                 PuzzleDisplay[a][posList[pos]] = true;
                 posList.RemoveAt(pos);
             }
+            string col = "";
+            if(PuzzleDisplay[a][0]) col += COL_LIST[0]; else col += "-";
+            if(PuzzleDisplay[a][1]) col += COL_LIST[1]; else col += "-";
+            if(PuzzleDisplay[a][2]) col += COL_LIST[2]; else col += "-";
+            if(PuzzleDisplay[a][3]) col += COL_LIST[3]; else col += "-";
+            Debug.Log("[Simon States #"+thisLoggingID+"] Stage "+(a+1)+" colours: "+col);
         }
 
         Answer = new int[len];
@@ -561,34 +571,13 @@ public class AdvancedSimon : FixedTicker
 
             ans = "";
             ans2 = "";
-            if(SubProgress >= 1) {
-                ans += Answer[0];
-                ans2 += COL_LIST[Answer[0]];
+            for(int a = 0; a < SubProgress; a++)
+            {
+                ans += Answer[a];
+                ans2 += COL_LIST[Answer[a]];
             }
-            else {
-                ans += val;
-                ans2 += COL_LIST[val];
-            }
-            if(SubProgress >= 2) {
-                ans += Answer[1];
-                ans2 += COL_LIST[Answer[1]];
-            }
-            else if(SubProgress >= 1) {
-                ans += val;
-                ans2 += COL_LIST[val];
-            }
-            if(SubProgress >= 3) {
-                ans += Answer[3];
-                ans2 += COL_LIST[Answer[3]];
-            }
-            else if(SubProgress >= 2) {
-                ans += val;
-                ans2 += COL_LIST[val];
-            }
-            if(SubProgress >= 3) {
-                ans += val;
-                ans2 += COL_LIST[val];
-            }
+            ans += val;
+            ans2 += COL_LIST[val];
             Debug.Log("[Simon States #"+thisLoggingID+"] Given answer: " + ans + ":" + ans2);
 
             GetComponent<KMBombModule>().HandleStrike();
