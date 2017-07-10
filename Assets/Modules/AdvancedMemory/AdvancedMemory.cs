@@ -14,9 +14,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class AdvancedMemory : MonoBehaviour
 {
+    public static readonly string[] ignoredModules = {
+        "Forget Me Not",
+        "Turn The Key"
+    };
+
     public static int loggingID = 1;
     public int thisLoggingID;
 
@@ -69,12 +75,7 @@ public class AdvancedMemory : MonoBehaviour
 
     private void ActivateModule()
     {
-        List<string> modules = BombInfo.GetSolvableModuleNames();
-        int count = 0;
-        foreach (string s in modules)
-        {
-            if (!s.Equals("Forget Me Not")) count++;
-        }
+        int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
         Display = new int[count];
         Solution = new int[count];
 
@@ -234,7 +235,7 @@ public class AdvancedMemory : MonoBehaviour
             }
             else
             {
-                int progress = BombInfo.GetSolvedModuleNames().Count;
+                int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
@@ -266,7 +267,7 @@ public class AdvancedMemory : MonoBehaviour
         if (Solution == null) return;
         if (Position < Solution.Length)
         {
-            int progress = BombInfo.GetSolvedModuleNames().Count;
+            int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
             if (progress < Solution.Length) {
                 Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
                 GetComponent<KMBombModule>().HandleStrike();
