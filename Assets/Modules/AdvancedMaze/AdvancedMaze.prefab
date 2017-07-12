@@ -6667,6 +6667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77cb4f6aa654a684f82ebc22e4f7cb4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisLoggingID: 0
   Sound: {fileID: 11472806}
   Info: {fileID: 11466262}
   ButtonCheck: {fileID: 11402110}
@@ -6723,6 +6724,7 @@ MonoBehaviour:
   PipeT: {fileID: 198894, guid: dd20084c30b4b4c498658afb0e273ced, type: 2}
   PipeCross: {fileID: 188104, guid: 4b004f5556f0e3145bd368679ad932d8, type: 2}
   PipeEnd: {fileID: 172604, guid: 2230b6e8c3a1b054caa19f8117d6d3e2, type: 2}
+  BaseMaterial: {fileID: 2100000, guid: f221a9b83f398bc498d6fa7af61f1be9, type: 2}
 --- !u!114 &11478122
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -19,8 +19,9 @@ using System.Linq;
 public class AdvancedMemory : MonoBehaviour
 {
     public static readonly string[] ignoredModules = {
-        "Forget Me Not",
-        "Turn The Key"
+        "Forget Me Not", //Mandatory to prevent unsolvable bombs.
+        "Turn The Key",  //TTK is timer based, and stalls the bomb if only it and FMN are left.
+        "Souvenir",      //Similar situation to TTK, stalls the bomb.
     };
 
     public static int loggingID = 1;
