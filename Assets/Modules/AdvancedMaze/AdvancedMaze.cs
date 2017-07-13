@@ -280,7 +280,7 @@ public class AdvancedMaze : MonoBehaviour
 
         ButtonCheck.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
-        Invoke("Init", 0.25f + 0.01f * thisLoggingID);
+        Invoke("Init", 0.25f + 0.01f * (thisLoggingID % 100));
     }
 
     void HandleInteract(int x, int y)
