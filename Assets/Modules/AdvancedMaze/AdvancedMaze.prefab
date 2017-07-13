@@ -1831,6 +1831,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 439408}
+  - 23: {fileID: 23000011227742498}
+  - 33: {fileID: 33000010494872996}
   m_Layer: 0
   m_Name: Play Field
   m_TagString: Untagged
@@ -2335,7 +2337,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 193438}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.225}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -6725,6 +6727,7 @@ MonoBehaviour:
   PipeCross: {fileID: 188104, guid: 4b004f5556f0e3145bd368679ad932d8, type: 2}
   PipeEnd: {fileID: 172604, guid: 2230b6e8c3a1b054caa19f8117d6d3e2, type: 2}
   BaseMaterial: {fileID: 2100000, guid: f221a9b83f398bc498d6fa7af61f1be9, type: 2}
+  PlayField: {fileID: 198496}
 --- !u!114 &11478122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7108,6 +7111,41 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 193438}
   m_IsPrefabParent: 1
+--- !u!23 &23000011227742498
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 198496}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials: []
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!33 &33000010494872996
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 198496}
+  m_Mesh: {fileID: 0}
 --- !u!114 &114000010032579022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7302,7 +7340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Mobile/DiffuseTint
+  - KT/Mobile/DiffuseTint
 --- !u!114 &114000011024816632
 MonoBehaviour:
   m_ObjectHideFlags: 1

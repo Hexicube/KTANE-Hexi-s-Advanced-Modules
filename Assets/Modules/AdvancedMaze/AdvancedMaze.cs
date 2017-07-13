@@ -119,7 +119,77 @@ public class AdvancedMaze : MonoBehaviour
 
     public Material BaseMaterial;
 
-    private static Material whiteMat, lightGreyMat, darkGreyMat, blackMat, redMat, yellowMat, greenMat, blueMat;
+    public GameObject PlayField;
+    private Mesh MergedMesh;
+    private bool PipesAreMerged = false;
+
+    private static Material whiteMat, lightGreyMat, darkGreyMat, blackMat, redMat, yellowMat, greenMat, blueMat, lightBlueMat, darkBlueMat;
+
+    public void SetMergedMode(bool on) {
+        if(on && !PipesAreMerged) {
+            if(MergedMesh == null) {
+                MergedMesh = new Mesh();
+
+                CombineInstance[] ciList = new CombineInstance[36];
+                for(int x = 0; x < 6; x++) {
+                    for(int y = 0; y < 6; y++) {
+                        CombineInstance ci = new CombineInstance();
+                        Transform pipe = Buttons[x][y].transform.FindChild("Pipe");
+                        ci.mesh = pipe.gameObject.GetComponent<MeshFilter>().sharedMesh;
+
+                        ci.transform = pipe.transform.localToWorldMatrix;
+
+                        if((x+y) % 2 == 1) ci.subMeshIndex = 0;
+                        else ci.subMeshIndex = 1;
+                        if(Solved && fadeList[x][y]) ci.subMeshIndex += 2;
+
+                        ciList[x*6+y] = ci;
+                    }
+                }
+                Mesh[] subMesh = new Mesh[4];
+                for(int a = 0; a < 4; a++) {
+                    List<CombineInstance> list = new List<CombineInstance>();
+                    subMesh[a] = new Mesh();
+                    for(int b = 0; b < 36; b++) {
+                        if(ciList[b].subMeshIndex == a) {
+                            list.Add(ciList[b]);
+                        }
+                    }
+                    CombineInstance[] list2 = list.ToArray();
+                    for(int b = 0; b < list2.Length; b++) list2[b].subMeshIndex = 0;
+                    subMesh[a].CombineMeshes(list2);
+                }
+
+                ciList = new CombineInstance[2];
+                for(int a = 0; a < 2; a++) {
+                    ciList[a].transform = PlayField.transform.worldToLocalMatrix;
+                    ciList[a].mesh = subMesh[a + (Solved?2:0)];
+                }
+                MergedMesh.CombineMeshes(ciList, false);
+                MergedMesh.Optimize();
+            }
+            for(int x = 0; x < 6; x++) {
+                for(int y = 0; y < 6; y++) {
+                    Buttons[x][y].transform.FindChild("Pipe").gameObject.SetActive(false);
+                }
+            }
+            MeshFilter mf = PlayField.GetComponent<MeshFilter>();
+            mf.mesh = MergedMesh;
+            if(Solved) PlayField.GetComponent<MeshRenderer>().materials = new Material[]{lightBlueMat, darkBlueMat};
+        }
+        if(!on && PipesAreMerged) {
+            for(int x = 0; x < 6; x++) {
+                for(int y = 0; y < 6; y++) {
+                    Buttons[x][y].transform.FindChild("Pipe").gameObject.SetActive(true);
+                }
+            }
+
+            PlayField.GetComponent<MeshFilter>().mesh = null;
+            DestroyImmediate(MergedMesh);
+        }
+        PlayField.GetComponent<MeshRenderer>().enabled = on;
+        PipesAreMerged = on;
+    }
 
     private void ApplyModel(GameObject button, int type, int rot, bool light) {
         ApplyModel(button, type, rot, light ? whiteMat : lightGreyMat, blackMat);
@@ -175,6 +245,7 @@ public class AdvancedMaze : MonoBehaviour
                     if(!ActiveIn[a]) EntryLeftList[EntryLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
                     if(!ActiveOut[a]) EntryRightList[ExitLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
                 }
+                if(end == 1) SetMergedMode(true);
             }
             fadeState += Time.deltaTime;
         }
@@ -191,6 +262,8 @@ public class AdvancedMaze : MonoBehaviour
             yellowMat    = new Material(BaseMaterial); yellowMat.color    = new Color(1, 1, 0.1f);
             greenMat     = new Material(BaseMaterial); greenMat.color     = new Color(0.1f, 0.8f, 0.1f);
             blueMat      = new Material(BaseMaterial); blueMat.color      = new Color(0.1f, 0.4f, 1);
+            lightBlueMat = new Material(BaseMaterial); lightBlueMat.color = new Color(0.1f, 0.6f, 1);
+            darkBlueMat  = new Material(BaseMaterial); darkBlueMat.color  = new Color(0.1f, 0.3f, 1);
         }
 
         thisLoggingID = loggingID++;
@@ -248,6 +321,8 @@ public class AdvancedMaze : MonoBehaviour
         }
         
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+
+        MergedMesh = null;
     }
 
     void Init()
@@ -1133,6 +1208,12 @@ public class AdvancedMaze : MonoBehaviour
 
         Debug.Log("[Plumbing #"+thisLoggingID+"] Shown pipes:\n" + debugShownText);
         Debug.Log("[Plumbing #"+thisLoggingID+"] Intended solution:\n" + debugSolvedText);
+
+        GetComponent<KMSelectable>().OnInteract += delegate(){if(!Solved) SetMergedMode(false); return true;};
+        GetComponent<KMSelectable>().OnCancel += delegate(){if(!Solved) SetMergedMode(true); return true;};
+        MeshRenderer mr = PlayField.GetComponent<MeshRenderer>();
+        mr.sharedMaterials = new Material[]{whiteMat, lightGreyMat};
+        SetMergedMode(true);
     }
 
     private int[] GetConnections(int x, int y)
@@ -1466,10 +1547,13 @@ public class AdvancedMaze : MonoBehaviour
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         GetComponent<KMBombModule>().HandlePass();
         Solved = true;
+
+        SetMergedMode(false);
+        MergedMesh = null;
         foreach (int[] pos in allPipes)
         {
             if (pos[0] >= 0 && pos[0] <= 5 && pos[1] >= 0 && pos[1] <= 5)
-                Buttons[pos[0]][pos[1]].transform.Find("Pipe").GetComponent<MeshRenderer>().material.color = ((pos[0] + pos[1]) % 2 == 1) ? new Color(0.1f, 0.6f, 1) : new Color(0.1f, 0.3f, 1);
+                Buttons[pos[0]][pos[1]].transform.Find("Pipe").GetComponent<MeshRenderer>().material = ((pos[0] + pos[1]) % 2 == 1) ? lightBlueMat : darkBlueMat;
         }
 
         fadeState = .001f;
