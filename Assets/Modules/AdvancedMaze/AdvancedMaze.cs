@@ -123,7 +123,7 @@ public class AdvancedMaze : MonoBehaviour
     private Mesh MergedMesh;
     private bool PipesAreMerged = false;
 
-    private static Material whiteMat, lightGreyMat, darkGreyMat, blackMat, redMat, yellowMat, greenMat, blueMat, lightBlueMat, darkBlueMat;
+    private static Material whiteMat, lightGreyMat, redMat, yellowMat, greenMat, blueMat, lightBlueMat, darkBlueMat;
 
     public void SetMergedMode(bool on) {
         if(on && !PipesAreMerged) {
@@ -185,17 +185,16 @@ public class AdvancedMaze : MonoBehaviour
             }
 
             PlayField.GetComponent<MeshFilter>().mesh = null;
-            DestroyImmediate(MergedMesh);
         }
         PlayField.GetComponent<MeshRenderer>().enabled = on;
         PipesAreMerged = on;
     }
 
     private void ApplyModel(GameObject button, int type, int rot, bool light) {
-        ApplyModel(button, type, rot, light ? whiteMat : lightGreyMat, blackMat);
+        ApplyModel(button, type, rot, light ? whiteMat : lightGreyMat);
     }
 
-    private void ApplyModel(GameObject button, int type, int rot, Material pipeMat, Material bgMat) {
+    private void ApplyModel(GameObject button, int type, int rot, Material pipeMat) {
         if (type != -1) {
             GameObject g = null;
             if (type == 0) g = Instantiate(PipeStraight);
@@ -213,8 +212,6 @@ public class AdvancedMaze : MonoBehaviour
             g.GetComponent<MeshRenderer>().material = pipeMat;
             g.SetActive(true);
         }
-
-        button.GetComponent<MeshRenderer>().material = bgMat;
     }
 
     void Update()
@@ -253,11 +250,10 @@ public class AdvancedMaze : MonoBehaviour
 
     void Awake()
     {
+
         if(whiteMat == null) {
             whiteMat     = new Material(BaseMaterial); whiteMat.color     = new Color(1, 1, 1);
             lightGreyMat = new Material(BaseMaterial); lightGreyMat.color = new Color(0.6f, 0.6f, 0.6f);
-            darkGreyMat  = new Material(BaseMaterial); darkGreyMat.color  = new Color(0.3f, 0.3f, 0.3f);
-            blackMat     = new Material(BaseMaterial); blackMat.color     = new Color(0, 0, 0);
             redMat       = new Material(BaseMaterial); redMat.color       = new Color(1, 0.1f, 0.1f);
             yellowMat    = new Material(BaseMaterial); yellowMat.color    = new Color(1, 1, 0.1f);
             greenMat     = new Material(BaseMaterial); greenMat.color     = new Color(0.1f, 0.8f, 0.1f);
@@ -278,32 +274,13 @@ public class AdvancedMaze : MonoBehaviour
             new KMSelectable[]{ButtonA5, ButtonB5, ButtonC5, ButtonD5, ButtonE5, ButtonF5},
             new KMSelectable[]{ButtonA6, ButtonB6, ButtonC6, ButtonD6, ButtonE6, ButtonF6}
         };
-
-        foreach (KMSelectable[] list in Buttons) {
-            foreach (KMSelectable b in list) {
-                b.GetComponent<MeshRenderer>().material = blackMat;
-            }
-        }
-
-        EntryLeft1.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryLeft2.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryLeft3.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryLeft4.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryLeft5.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryLeft6.GetComponent<MeshRenderer>().material  = blackMat;
-        EntryRight1.GetComponent<MeshRenderer>().material = blackMat;
-        EntryRight2.GetComponent<MeshRenderer>().material = blackMat;
-        EntryRight3.GetComponent<MeshRenderer>().material = blackMat;
-        EntryRight4.GetComponent<MeshRenderer>().material = blackMat;
-        EntryRight5.GetComponent<MeshRenderer>().material = blackMat;
-        EntryRight6.GetComponent<MeshRenderer>().material = blackMat;
         
         EntryLeftList  = new GameObject[]{EntryLeft1,  EntryLeft2,  EntryLeft3,  EntryLeft4,  EntryLeft5,  EntryLeft6};
         EntryRightList = new GameObject[]{EntryRight1, EntryRight2, EntryRight3, EntryRight4, EntryRight5, EntryRight6};
 
         ButtonCheck.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
-        GetComponent<KMBombModule>().OnActivate += Init;
+        Invoke("Init", 0.25f + 0.01f * thisLoggingID);
     }
 
     void HandleInteract(int x, int y)
@@ -322,11 +299,16 @@ public class AdvancedMaze : MonoBehaviour
         
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
 
+        if(MergedMesh != null) DestroyImmediate(MergedMesh);
         MergedMesh = null;
     }
 
     void Init()
     {
+        PlayField.transform.FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        PlayField.transform.FindChild("Backing").FindChild("Left").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+        PlayField.transform.FindChild("Backing").FindChild("Right").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+
         ButtonCheck.OnInteract += HandleCheck;
 
         EntryLocations = new int[4];
@@ -350,38 +332,24 @@ public class AdvancedMaze : MonoBehaviour
             redMat, yellowMat, greenMat, blueMat
         };
 
-        ApplyModel(EntryLeft1, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryLeft2, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryLeft3, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryLeft4, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryLeft5, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryLeft6, -1, 0, whiteMat, darkGreyMat);
-
         for (int a = 0; a < 4; a++)
         {
-            if (EntryLocations[a] == 1) ApplyModel(EntryLeft1, 4, 3, matList[a], darkGreyMat);
-            if (EntryLocations[a] == 2) ApplyModel(EntryLeft2, 4, 3, matList[a], darkGreyMat);
-            if (EntryLocations[a] == 3) ApplyModel(EntryLeft3, 4, 3, matList[a], darkGreyMat);
-            if (EntryLocations[a] == 4) ApplyModel(EntryLeft4, 4, 3, matList[a], darkGreyMat);
-            if (EntryLocations[a] == 5) ApplyModel(EntryLeft5, 4, 3, matList[a], darkGreyMat);
-            if (EntryLocations[a] == 6) ApplyModel(EntryLeft6, 4, 3, matList[a], darkGreyMat);
+            if (EntryLocations[a] == 1) ApplyModel(EntryLeft1, 4, 3, matList[a]);
+            if (EntryLocations[a] == 2) ApplyModel(EntryLeft2, 4, 3, matList[a]);
+            if (EntryLocations[a] == 3) ApplyModel(EntryLeft3, 4, 3, matList[a]);
+            if (EntryLocations[a] == 4) ApplyModel(EntryLeft4, 4, 3, matList[a]);
+            if (EntryLocations[a] == 5) ApplyModel(EntryLeft5, 4, 3, matList[a]);
+            if (EntryLocations[a] == 6) ApplyModel(EntryLeft6, 4, 3, matList[a]);
         }
 
-        ApplyModel(EntryRight1, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryRight2, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryRight3, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryRight4, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryRight5, -1, 0, whiteMat, darkGreyMat);
-        ApplyModel(EntryRight6, -1, 0, whiteMat, darkGreyMat);
-
         for (int a = 0; a < 4; a++)
         {
-            if (ExitLocations[a] == 1) ApplyModel(EntryRight1, 4, 1, matList[a], darkGreyMat);
-            if (ExitLocations[a] == 2) ApplyModel(EntryRight2, 4, 1, matList[a], darkGreyMat);
-            if (ExitLocations[a] == 3) ApplyModel(EntryRight3, 4, 1, matList[a], darkGreyMat);
-            if (ExitLocations[a] == 4) ApplyModel(EntryRight4, 4, 1, matList[a], darkGreyMat);
-            if (ExitLocations[a] == 5) ApplyModel(EntryRight5, 4, 1, matList[a], darkGreyMat);
-            if (ExitLocations[a] == 6) ApplyModel(EntryRight6, 4, 1, matList[a], darkGreyMat);
+            if (ExitLocations[a] == 1) ApplyModel(EntryRight1, 4, 1, matList[a]);
+            if (ExitLocations[a] == 2) ApplyModel(EntryRight2, 4, 1, matList[a]);
+            if (ExitLocations[a] == 3) ApplyModel(EntryRight3, 4, 1, matList[a]);
+            if (ExitLocations[a] == 4) ApplyModel(EntryRight4, 4, 1, matList[a]);
+            if (ExitLocations[a] == 5) ApplyModel(EntryRight5, 4, 1, matList[a]);
+            if (ExitLocations[a] == 6) ApplyModel(EntryRight6, 4, 1, matList[a]);
         }
 
         Dictionary<string, int> portCount = new Dictionary<string, int>();
