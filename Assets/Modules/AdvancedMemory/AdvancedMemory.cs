@@ -18,6 +18,8 @@ using System.Linq;
 
 public class AdvancedMemory : MonoBehaviour
 {
+    private const bool TEST_MODE = false;
+
     public static readonly string[] ignoredModules = {
         "Forget Me Not", //Mandatory to prevent unsolvable bombs.
         "Turn The Key",  //TTK is timer based, and stalls the bomb if only it and FMN are left.
@@ -77,6 +79,7 @@ public class AdvancedMemory : MonoBehaviour
     private void ActivateModule()
     {
         int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        if(TEST_MODE) count += 200;
         Display = new int[count];
         Solution = new int[count];
 
@@ -237,20 +240,18 @@ public class AdvancedMemory : MonoBehaviour
             else
             {
                 int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+                if(TEST_MODE) progress += 200;
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
-                    if (!done)
-                    {
+                    if(!done) {
                         UpdateDisplayMesh(-1);
                         done = true;
                     }
                 }
-                else
-                {
-                    int stage = progress + 1;
-                    if (stage < 10)
-                    {
+                else {
+                    int stage = (progress + 1) % 100;
+                    if(stage < 10) {
                         if (Display.Length < 10) StageMesh.text = "" + stage;
                         else StageMesh.text = "0" + stage;
                     }
@@ -269,6 +270,7 @@ public class AdvancedMemory : MonoBehaviour
         if (Position < Solution.Length)
         {
             int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+            if(TEST_MODE) progress += 200;
             if (progress < Solution.Length) {
                 Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
                 GetComponent<KMBombModule>().HandleStrike();
@@ -303,41 +305,38 @@ public class AdvancedMemory : MonoBehaviour
 
     private void UpdateDisplayMesh(int solved)
     {
-        if (solved == -1)
-        {
-            DisplayMeshBig.text = "";
-
-            string text = "";
-
-            int num = solved + 1;
-            if (solved == -1) num = Solution.Length;
-            for (int a = 0; a < num; a++)
-            {
-                string val = "-";
-                if (solved == -1)
-                {
-                    if (a < Position) val = "" + Solution[a];
-                }
-                else
-                {
-                    if (a == solved) val = "" + Display[a];
-                }
-
-                if(a > 0)
-                {
-                    if (a % 3 == 0)
-                    {
-                        if (a % 12 == 0) text += "\n";
-                        else text += " ";
-                    }
-                }
-                text += val;
+        if(solved == -1) {
+            if(Position > 24) {
+                DisplayMesh.text = "";
+                string sum = ""+Solution.Length;
+                string pos = ""+Position;
+                while(pos.Length < sum.Length) pos = "0"+pos;
+                DisplayMeshBig.text = pos + "/" + sum;
             }
+            else {
+                DisplayMeshBig.text = "";
 
-            DisplayMesh.text = text;
+                string text = "";
+
+                for(int a = 0; a < Solution.Length; a++) {
+                    string val = "-";
+                    if (a < Position) val = "" + Solution[a];
+
+                    if(a > 0) {
+                        if (a % 3 == 0) {
+                            if (a % 12 == 0) text += "\n";
+                            else text += " ";
+                        }
+                    }
+                    text += val;
+
+                    if(a == 23) break;
+                }
+
+                DisplayMesh.text = text;
+            }
         }
-        else
-        {
+        else {
             DisplayMesh.text = "";
             DisplayMeshBig.text = "" + Display[solved];
         }

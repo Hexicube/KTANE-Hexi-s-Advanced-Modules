@@ -207,6 +207,22 @@ Font:
       height: 0
     advance: 2
     flipped: 0
+  - serializedVersion: 2
+    index: 47
+    uv:
+      serializedVersion: 2
+      x: 0.76
+      y: 0.04
+      width: 0.2
+      height: 0.28
+    vert:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 5
+      height: 7
+    advance: 2
+    flipped: 0
   m_Texture: {fileID: 0}
   m_KerningValues: []
   m_PixelScale: 0.1
