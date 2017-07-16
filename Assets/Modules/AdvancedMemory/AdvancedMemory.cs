@@ -18,7 +18,9 @@ using System.Linq;
 
 public class AdvancedMemory : MonoBehaviour
 {
-    private const bool TEST_MODE = false;
+    public ToneGenerator Tone;
+
+    private const int TEST_MODULE = 0; //This number is added to the total module count and solved module count, for testing.
 
     public static readonly string[] ignoredModules = {
         "Forget Me Not", //Mandatory to prevent unsolvable bombs.
@@ -79,7 +81,7 @@ public class AdvancedMemory : MonoBehaviour
     private void ActivateModule()
     {
         int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-        if(TEST_MODE) count += 200;
+        count += TEST_MODULE;
         Display = new int[count];
         Solution = new int[count];
 
@@ -240,7 +242,7 @@ public class AdvancedMemory : MonoBehaviour
             else
             {
                 int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-                if(TEST_MODE) progress += 200;
+                progress += TEST_MODULE;
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
@@ -270,7 +272,7 @@ public class AdvancedMemory : MonoBehaviour
         if (Position < Solution.Length)
         {
             int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-            if(TEST_MODE) progress += 200;
+            progress += TEST_MODULE;
             if (progress < Solution.Length) {
                 Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
                 GetComponent<KMBombModule>().HandleStrike();
@@ -289,6 +291,7 @@ public class AdvancedMemory : MonoBehaviour
                     GetComponent<KMBombModule>().HandlePass();
                 }
                 Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+                //Tone.SetTone(500 + Position * 1200 / Solution.Length);
             }
             else
             {
