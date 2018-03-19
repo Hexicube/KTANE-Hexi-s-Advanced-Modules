@@ -143,11 +143,10 @@ public class AdvancedButton : FixedTicker
             batAA = 0;
 
             List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
-            foreach (string response in data)
-            {
+            foreach (string response in data) {
                 Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
-                if (responseDict["numbatteries"] == 2) batAA += 2;
-                else batD++;
+                if (responseDict["numbatteries"] == 1) batD++;
+                else batAA += responseDict["numbatteries"];
             }
             data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
             foreach (string response in data)
@@ -302,5 +301,171 @@ public class AdvancedButton : FixedTicker
         Light.material.color = BLACK;
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, gameObject.transform);
         return;
+    }
+
+    //Twitch Plays support
+
+    bool TwitchZenMode;
+    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'. If you want to press and release at a specific time, use 'press <time>'. Release the button with 'release <time> <time> ...'. Times are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.";
+    //string TwitchManualCode = "Forget Me Not";
+    
+    public void TwitchHandleForcedSolve() {
+        buttonDown = false;
+        GetComponent<KMBombModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(cmd.StartsWith("hold")) {
+            if(buttonDown) {
+                yield return "sendtochaterror Button is already held.";
+                yield break;
+            }
+
+            yield return "Advanced Button";
+            yield return Button;
+            yield break;
+        }
+        else if(cmd.StartsWith("press") || cmd.StartsWith("tap")) {
+            if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
+            else if(cmd.StartsWith("tap ")) cmd = cmd.Substring(4);
+            else if(cmd.Equals("press") || cmd.Equals("tap")) {
+                if(buttonDown) {
+                    yield return "sendtochaterror Button is currently held.";
+                    yield break;
+                }
+
+                yield return "Advanced Button";
+                yield return Button;
+                yield return new WaitForSeconds(0.25f);
+                yield return Button;
+                yield break;
+            }
+            else {
+                yield return "sendtochaterror Commands must start with hold, press, tap, or release.";
+                yield break;
+            }
+            if(buttonDown) {
+                yield return "sendtochaterror Button is currently held.";
+                yield break;
+            }
+
+            string[] clist = cmd.Split(' ');
+            List<int> times = new List<int>();
+            bool secondsMode = false;
+            times.Add(TimeToSeconds(clist[0], out secondsMode));
+            for(int a = 1; a < clist.Length; a++) {
+                bool mode = false;
+                times.Add(TimeToSeconds(clist[a], out mode));
+                if(mode != secondsMode) {
+                    yield return "sendtochaterror Times can only be specified as seconds or full timer, not both.";
+                    yield break;
+                }
+            }
+
+            yield return "Advanced Button";
+            IEnumerator releaseCoroutine = ScheduleAction(false, times, secondsMode);
+            while(releaseCoroutine.MoveNext()) {
+                yield return releaseCoroutine.Current;
+            }
+        }
+        else if(cmd.StartsWith("release")) {
+            if(!cmd.StartsWith("release ")) {
+                yield return "sendtochaterror No release time(s) specified.";
+                yield break;
+            }
+            if(!buttonDown) {
+                yield return "sendtochaterror Button is not currently held.";
+                yield break;
+            }
+            cmd = cmd.Substring(8);
+
+            string[] clist = cmd.Split(' ');
+            List<int> times = new List<int>();
+            bool secondsMode = false;
+            times.Add(TimeToSeconds(clist[0], out secondsMode));
+            for(int a = 1; a < clist.Length; a++) {
+                bool mode = false;
+                times.Add(TimeToSeconds(clist[a], out mode));
+                if(mode != secondsMode) {
+                    yield return "sendtochaterror Times can only be specified as seconds or full timer, not both.";
+                    yield break;
+                }
+            }
+
+            yield return "Advanced Button";
+            IEnumerator releaseCoroutine = ScheduleAction(true, times, secondsMode);
+            while(releaseCoroutine.MoveNext()) {
+                yield return releaseCoroutine.Current;
+            }
+        }
+        else yield return "sendtochaterror Commands must start with hold, press, tap, or release.";
+        yield break;
+    }
+
+    private IEnumerator ScheduleAction(bool buttonDown, List<int> times, bool secondsMode) {
+        int curTime = (int)(Info.GetTime()+0.5f);
+        int targetTime = -1;
+        if(secondsMode) {
+            if(TwitchZenMode) {
+                foreach(int time in times) {
+                    if(time < curTime) continue;
+                    if(time < targetTime) targetTime = time;
+                }
+            }
+            else {
+                foreach(int time in times) {
+                    if(time > curTime) continue;
+                    if(time > targetTime) targetTime = time;
+                }
+            }
+        }
+        else {
+            if(TwitchZenMode) {
+                foreach(int time in times) {
+                    int t2 = time;
+                    while(t2 < curTime) t2 += 60;
+                    if(t2 < targetTime) targetTime = t2;
+                }
+            }
+            else {
+                foreach(int time in times) {
+                    int t2 = time;
+                    while(t2 <= curTime) t2 += 60;
+                    t2 -= 60;
+                    if(t2 > targetTime) targetTime = t2;
+                }
+            }
+        }
+
+        if(targetTime == -1) {
+            yield return "sendtochaterror No valid times.";
+            yield break;
+        }
+        yield return "sendtochat Target time: " + (targetTime / 60).ToString("D2") + ":" + (targetTime % 60).ToString("D2");
+        if(Mathf.Abs(curTime-targetTime) > 15) yield return "waiting music";
+
+        while(true) {
+            curTime = (int)(Info.GetTime()+0.5f);
+            if(curTime != targetTime) yield return null;
+            else {
+                yield return Button;
+                break;
+            }
+        }
+        yield break;
+    }
+
+    private int TimeToSeconds(string time, out bool seconds) {
+        if(time.Contains(":")) {
+            string[] spl = time.Split(':');
+            if(spl.Length != 2) throw new System.FormatException("Invalid time format: '"+time+"'");
+
+            seconds = false;
+            return int.Parse(spl[0]) * 60 + int.Parse(spl[1]);
+        }
+        else {
+            seconds = true;
+            return int.Parse(time);
+        }
     }
 }

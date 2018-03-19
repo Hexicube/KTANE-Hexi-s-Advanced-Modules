@@ -20,8 +20,6 @@ public class AdvancedMemory : MonoBehaviour
 {
     public ToneGenerator Tone;
 
-    private const int TEST_MODULE = 0; //This number is added to the total module count and solved module count, for testing.
-
     public static readonly string[] ignoredModules = {
         "Forget Me Not", //Mandatory to prevent unsolvable bombs.
         "Turn The Key",  //TTK is timer based, and stalls the bomb if only it and FMN are left.
@@ -50,8 +48,8 @@ public class AdvancedMemory : MonoBehaviour
         
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
-        transform.Find("Main Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
-        transform.Find("Stage Display").FindChild("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        transform.Find("Main Display").Find("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        transform.Find("Stage Display").Find("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
 
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
@@ -81,7 +79,6 @@ public class AdvancedMemory : MonoBehaviour
     private void ActivateModule()
     {
         int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-        count += TEST_MODULE;
         Display = new int[count];
         Solution = new int[count];
 
@@ -242,7 +239,6 @@ public class AdvancedMemory : MonoBehaviour
             else
             {
                 int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-                progress += TEST_MODULE;
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
@@ -266,43 +262,43 @@ public class AdvancedMemory : MonoBehaviour
     }
 
     private int litButton = -1;
-    private void Handle(int val)
+    private bool Handle(int val)
     {
-        if (Solution == null) return;
-        if (Position < Solution.Length)
+        if (Solution == null || Position >= Solution.Length) return false;
+
+        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        if (progress < Solution.Length) {
+            Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
+            GetComponent<KMBombModule>().HandleStrike();
+            return false;
+        }
+        else if (val == Solution[Position])
         {
-            int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-            progress += TEST_MODULE;
-            if (progress < Solution.Length) {
-                Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
-                GetComponent<KMBombModule>().HandleStrike();
-            }
-            else if (val == Solution[Position])
+            if (litButton != -1)
             {
-                if (litButton != -1)
-                {
-                    Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-                    litButton = -1;
-                }
-                Position++;
-                UpdateDisplayMesh(-1);
-                if (Position == Solution.Length) {
-                    Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module solved.");
-                    GetComponent<KMBombModule>().HandlePass();
-                }
-                Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-                //Tone.SetTone(500 + Position * 1200 / Solution.Length);
+                Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+                litButton = -1;
             }
-            else
+            Position++;
+            UpdateDisplayMesh(-1);
+            if (Position == Solution.Length) {
+                Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module solved.");
+                GetComponent<KMBombModule>().HandlePass();
+            }
+            Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
+            //Tone.SetTone(500 + Position * 1200 / Solution.Length);
+            return true;
+        }
+        else
+        {
+            Debug.Log("[Forget Me Not #"+thisLoggingID+"] Stage " + (Position+1) + ": Pressed " + val + " instead of " + Solution[Position]);
+            GetComponent<KMBombModule>().HandleStrike();
+            if (litButton == -1)
             {
-                Debug.Log("[Forget Me Not #"+thisLoggingID+"] Stage " + (Position+1) + ": Pressed " + val + " instead of " + Solution[Position]);
-                GetComponent<KMBombModule>().HandleStrike();
-                if (litButton == -1)
-                {
-                    litButton = Display[Position];
-                    Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.8f, 0.5f);
-                }
+                litButton = Display[Position];
+                Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.8f, 0.5f);
             }
+            return false;
         }
     }
 
@@ -441,5 +437,108 @@ public class AdvancedMemory : MonoBehaviour
             case '9': return 9;
             default: return -1;
         }
+    }
+
+    //Twitch Plays support
+
+    string TwitchHelpMessage = "Enter the Forget Me Not sequence with \"!{0} press 531820...\". The sequence length depends on how many modules were on the bomb. You may use spaces and commas in the digit sequence.";
+    //string TwitchManualCode = "Forget Me Not";
+
+    public void TwitchHandleForcedSolve() {
+        Position = Solution.Length;
+        UpdateDisplayMesh(-1);
+        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module forcibly solved.");
+        GetComponent<KMBombModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(Solution == null || Position >= Solution.Length) yield break;
+
+        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Handling twitch command: \"" + cmd + "\"");
+
+        int cut;
+        if(cmd.StartsWith("submit ")) cut = 7;
+        else if (cmd.StartsWith("press ")) cut = 6;
+        else {
+            yield return "sendtochaterror Use either 'submit' or 'press' followed by a number sequence.";
+            yield break;
+        }
+
+        List<int> digits = new List<int>();
+        char[] strSplit = cmd.Substring(cut).ToCharArray();
+        foreach(char c in strSplit) {
+            if(!"0123456789 ,".Contains(c)) {
+                yield return "sendtochaterror Invalid character in number sequence: '" + c + "'";
+                yield return "sendtochaterror Valid characters are 0-9, space, and comma.";
+                yield break;
+            }
+
+            int d = GetDigit(c);
+            if(d != -1) digits.Add(d);
+        }
+        if(digits.Count == 0) yield break;
+        yield return "Forget Me Not";
+
+        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        if(progress < Solution.Length) {
+            yield return "sendtochat DansGame A little early, don't you think?";
+            Handle(digits[0]);
+            yield break;
+        }
+        yield return "sendtochat PogChamp Here we go!";
+        yield return "multiple strikes"; //Needed for fake solve.
+
+        SolveType solve = pickSolveType(digits.Count, Solution.Length - Position);
+
+        foreach(int d in digits) {
+            Button5.AddInteractionPunch(0.2f);
+            bool valid = Handle(d);
+            if(!valid) {
+                if(solve == SolveType.REGULAR && BombInfo.GetTime() >= 45 && Random.value > 0.95) {
+                    yield return new WaitForSeconds(2);
+                    yield return "sendtochat Kreygasm We did it reddit!";
+                    yield return new WaitForSeconds(1);
+                    yield return "sendtochat Kappa Nope, just kidding.";
+                }
+                else yield return "sendtochat DansGame This isn't correct...";
+                yield return "sendtochat Correct digits entered: " + Position;
+                yield break;
+            }
+            if(Position >= Solution.Length) {
+                yield return "sendtochat Kreygasm We did it reddit!";
+                yield break;
+            }
+
+            if(getMusicToggle(solve, Position, digits.Count, Solution.Length - Position)) yield return "toggle waiting music";
+            yield return new WaitForSeconds(getDelay(solve, Position, digits.Count, Solution.Length - Position));
+        }
+    }
+
+    public enum SolveType {
+        REGULAR, ACCELERATOR, SLOWSTART
+    }
+
+    public static SolveType pickSolveType(int dlen, int slen) {
+        if(dlen > slen) dlen = slen;
+
+        if(dlen > 12 && Random.value > 0.9) return SolveType.SLOWSTART;
+        if(dlen > 4 && Random.value > 0.75) return SolveType.ACCELERATOR;
+        return SolveType.REGULAR;
+    }
+
+    public static float getDelay(SolveType type, int curpos, int dlen, int slen) {
+        switch(type) {
+            case SolveType.SLOWSTART: {
+                if(curpos < 7) return 0.5f + Random.value * 2.5f;
+                return 0.05f;
+            }
+            case SolveType.ACCELERATOR: return Mathf.Max(3f / (float)(curpos+1), 0.05f);
+            default: return 0.05f;
+        }
+    }
+
+    public static bool getMusicToggle(SolveType type, int curpos, int dlen, int slen) {
+        if(type == SolveType.ACCELERATOR) return (curpos == 0) || (curpos == 7);
+        return false;
     }
 }

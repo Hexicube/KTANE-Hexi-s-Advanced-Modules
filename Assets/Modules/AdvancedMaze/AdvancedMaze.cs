@@ -134,7 +134,7 @@ public class AdvancedMaze : MonoBehaviour
                 for(int x = 0; x < 6; x++) {
                     for(int y = 0; y < 6; y++) {
                         CombineInstance ci = new CombineInstance();
-                        Transform pipe = Buttons[x][y].transform.FindChild("Pipe");
+                        Transform pipe = Buttons[x][y].transform.Find("Pipe");
                         ci.mesh = pipe.gameObject.GetComponent<MeshFilter>().sharedMesh;
 
                         ci.transform = pipe.transform.localToWorldMatrix;
@@ -166,11 +166,11 @@ public class AdvancedMaze : MonoBehaviour
                     ciList[a].mesh = subMesh[a + (Solved?2:0)];
                 }
                 MergedMesh.CombineMeshes(ciList, false);
-                MergedMesh.Optimize();
+                ;
             }
             for(int x = 0; x < 6; x++) {
                 for(int y = 0; y < 6; y++) {
-                    Buttons[x][y].transform.FindChild("Pipe").gameObject.SetActive(false);
+                    Buttons[x][y].transform.Find("Pipe").gameObject.SetActive(false);
                 }
             }
             MeshFilter mf = PlayField.GetComponent<MeshFilter>();
@@ -180,7 +180,7 @@ public class AdvancedMaze : MonoBehaviour
         if(!on && PipesAreMerged) {
             for(int x = 0; x < 6; x++) {
                 for(int y = 0; y < 6; y++) {
-                    Buttons[x][y].transform.FindChild("Pipe").gameObject.SetActive(true);
+                    Buttons[x][y].transform.Find("Pipe").gameObject.SetActive(true);
                 }
             }
 
@@ -233,14 +233,14 @@ public class AdvancedMaze : MonoBehaviour
                     {
                         if(!fadeList[x][y])
                         {
-                            Buttons[x][y].transform.FindChild("Pipe").localPosition -= move;
+                            Buttons[x][y].transform.Find("Pipe").localPosition -= move;
                         }
                     }
                 }
                 for(int a = 0; a < 4; a++)
                 {
-                    if(!ActiveIn[a]) EntryLeftList[EntryLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
-                    if(!ActiveOut[a]) EntryRightList[ExitLocations[a]-1].transform.FindChild("Pipe").localPosition -= move;
+                    if(!ActiveIn[a]) EntryLeftList[EntryLocations[a]-1].transform.Find("Pipe").localPosition -= move;
+                    if(!ActiveOut[a]) EntryRightList[ExitLocations[a]-1].transform.Find("Pipe").localPosition -= move;
                 }
                 if(end == 1) SetMergedMode(true);
             }
@@ -305,9 +305,9 @@ public class AdvancedMaze : MonoBehaviour
 
     void Init()
     {
-        PlayField.transform.FindChild("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
-        PlayField.transform.FindChild("Backing").FindChild("Left").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
-        PlayField.transform.FindChild("Backing").FindChild("Right").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+        PlayField.transform.Find("Backing").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        PlayField.transform.Find("Backing").Find("Left").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
+        PlayField.transform.Find("Backing").Find("Right").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
 
         ButtonCheck.OnInteract += HandleCheck;
 

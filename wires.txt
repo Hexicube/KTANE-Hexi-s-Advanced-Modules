@@ -1,0 +1,28 @@
+-- On the Subject of Blue Wires --
+- Well, isn't this a predicament? -
+
+This module will have 6 blue wires, each having its own label.
+One wire is the fail-safe, and another is the controller.
+To disarm the module, cut the fail-safe followed by the controller.
+
+Cutting the controller before the fail-safe will instantly detonate the bomb.
+Cutting the fail-safe and taking more than 3 seconds to cut the controller will detonate the bomb.
+Cutting any other wire will cause a strike.
+
+If a rule would prevent any wire from being the controller, ignore it.
+The fail-safe wire cannot be the same as the controller wire, controller takes priority.
+Follow the rules below until only one wire remains.
+
+Finding the controller:
+- If any wire labels have exactly the same name as a present port, they can't be the controller.
+- If any wire labels contain exactly 2 vowels, they can't be the controller.
+- If any wire labels match an unlit indicator, they can't be the controller.
+- If any wire labels contain a vowel, they can't be the controller.
+- The wire with the lowest alphabetical name is the controller.
+
+Finding the fail-safe:
+- If any wire labels match, they can't be the fail-safe.
+- If any wire labels contain duplicate characters, they can't be the fail-safe.
+- If any wire labels contain numbers from the serial, they can't be the fail-safe.
+- If any wire labels contain exactly one vowel, they can't be the fail-safe.
+- The wire with the highest alphabetical name is the fail-safe.

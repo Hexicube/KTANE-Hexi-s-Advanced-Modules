@@ -228,20 +228,20 @@ public class AdvancedMorse : FixedTicker
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is prime");
                 firstChar -= p;
             }
+            if (firstChar < 'A') firstChar += (char)26;
             if (disp2base == p)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is prime");
                 firstChar -= p;
             }
+            if (firstChar < 'A') firstChar += (char)26;
             if (disp3base == p)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is prime");
                 firstChar -= p;
             }
+            if (firstChar < 'A') firstChar += (char)26;
         }
-
-        while (firstChar < 'A') firstChar += (char)26;
-        while (secondChar < 'A') secondChar += (char)26;
 
         Debug.Log("[Morsematics #"+thisLoggingID+"] After prime: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
@@ -252,20 +252,20 @@ public class AdvancedMorse : FixedTicker
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[0] + " is square");
                 secondChar -= s;
             }
+            if (secondChar < 'A') secondChar += (char)26;
             if (disp2base == s)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is square");
                 secondChar -= s;
             }
+            if (secondChar < 'A') secondChar += (char)26;
             if (disp3base == s)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is square");
                 secondChar -= s;
             }
+            if (secondChar < 'A') secondChar += (char)26;
         }
-
-        while (firstChar < 'A') firstChar += (char)26;
-        while (secondChar < 'A') secondChar += (char)26;
 
         Debug.Log("[Morsematics #"+thisLoggingID+"] After square: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
@@ -277,22 +277,25 @@ public class AdvancedMorse : FixedTicker
                 firstChar -= (char)disp1base;
                 secondChar -= (char)disp1base;
             }
+            if (firstChar < 'A') firstChar += (char)26;
+            if (secondChar < 'A') secondChar += (char)26;
             if (disp2base % batteries == 0)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[1] + " is divisible");
                 firstChar -= (char)disp2base;
                 secondChar -= (char)disp2base;
             }
+            if (firstChar < 'A') firstChar += (char)26;
+            if (secondChar < 'A') secondChar += (char)26;
             if (disp3base % batteries == 0)
             {
                 Debug.Log("[Morsematics #"+thisLoggingID+"] " + DisplayCharsRaw[2] + " is divisible");
                 firstChar -= (char)disp3base;
                 secondChar -= (char)disp3base;
             }
+            if (firstChar < 'A') firstChar += (char)26;
+            if (secondChar < 'A') secondChar += (char)26;
         }
-
-        while (firstChar < 'A') firstChar += (char)26;
-        while (secondChar < 'A') secondChar += (char)26;
 
         Debug.Log("[Morsematics #"+thisLoggingID+"] After batteries: " + firstChar + secondChar + "(" + (int)(firstChar - 'A' + 1) + "," + (int)(secondChar - 'A' + 1) + ")");
 
