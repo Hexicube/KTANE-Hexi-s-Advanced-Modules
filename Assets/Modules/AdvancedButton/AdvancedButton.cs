@@ -306,7 +306,7 @@ public class AdvancedButton : FixedTicker
     //Twitch Plays support
 
     bool TwitchZenMode;
-    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'. If you want to press and release at a specific time, use 'press <time>'. Release the button with 'release <time> <time> ...'. Times are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.";
+    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.";
     //string TwitchManualCode = "Forget Me Not";
     
     public void TwitchHandleForcedSolve() {
@@ -405,7 +405,7 @@ public class AdvancedButton : FixedTicker
     private IEnumerator ScheduleAction(bool buttonDown, List<int> times, bool secondsMode) {
         int curTime = (int)(Info.GetTime()+0.5f);
         int targetTime = -1;
-        if(secondsMode) {
+        if(!secondsMode) {
             if(TwitchZenMode) {
                 foreach(int time in times) {
                     if(time < curTime) continue;
@@ -446,7 +446,7 @@ public class AdvancedButton : FixedTicker
 
         while(true) {
             curTime = (int)(Info.GetTime()+0.5f);
-            if(curTime != targetTime) yield return null;
+            if(curTime != targetTime) yield return "trycancel";
             else {
                 yield return Button;
                 break;
@@ -458,14 +458,31 @@ public class AdvancedButton : FixedTicker
     private int TimeToSeconds(string time, out bool seconds) {
         if(time.Contains(":")) {
             string[] spl = time.Split(':');
-            if(spl.Length != 2) throw new System.FormatException("Invalid time format: '"+time+"'");
+            if(spl.Length < 2 || spl.Length > 3) throw new System.FormatException("Invalid time format: '"+time+"'");
 
             seconds = false;
-            return int.Parse(spl[0]) * 60 + int.Parse(spl[1]);
+            if(spl.Length == 2) {
+                int m = int.Parse(spl[0]);
+                if(m < 0 || m > 59) throw new System.FormatException("Numbers on full timer must be in the 0-59 range: '"+time+"'");
+                int s = int.Parse(spl[1]);
+                if(s < 0 || s > 59) throw new System.FormatException("Numbers on full timer must be in the 0-59 range: '"+time+"'");
+                return m * 60 + s;
+            }
+            else {
+                int h = int.Parse(spl[0]);
+                if(h < 0 || h > 59) throw new System.FormatException("Numbers on full timer must be in the 0-59 range: '"+time+"'");
+                int m = int.Parse(spl[1]);
+                if(m < 0 || m > 59) throw new System.FormatException("Numbers on full timer must be in the 0-59 range: '"+time+"'");
+                int s = int.Parse(spl[2]);
+                if(s < 0 || s > 59) throw new System.FormatException("Numbers on full timer must be in the 0-59 range: '"+time+"'");
+                return h * 3600 + m * 60 + s;
+            }
         }
         else {
             seconds = true;
-            return int.Parse(time);
+            int amt = int.Parse(time);
+            if(amt < 0 || amt > 59) throw new System.FormatException("Seconds values must be in the 0-59 range: '"+time+"'");
+            return amt;
         }
     }
 }

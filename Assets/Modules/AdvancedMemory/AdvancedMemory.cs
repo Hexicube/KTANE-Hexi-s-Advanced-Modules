@@ -468,8 +468,7 @@ public class AdvancedMemory : MonoBehaviour
         char[] strSplit = cmd.Substring(cut).ToCharArray();
         foreach(char c in strSplit) {
             if(!"0123456789 ,".Contains(c)) {
-                yield return "sendtochaterror Invalid character in number sequence: '" + c + "'";
-                yield return "sendtochaterror Valid characters are 0-9, space, and comma.";
+                yield return "sendtochaterror Invalid character in number sequence: '" + c + "'.\nValid characters are 0-9, space, and comma.";
                 yield break;
             }
 
