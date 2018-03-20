@@ -40,6 +40,8 @@ public class AdvancedMemory : MonoBehaviour
     private int[] Solution;
     private int Position;
 
+    private bool forcedSolve = false;
+
     void Awake()
     {
         thisLoggingID = loggingID++;
@@ -226,6 +228,8 @@ public class AdvancedMemory : MonoBehaviour
     bool done = false;
     void FixedUpdate()
     {
+        if(forcedSolve) return;
+
         ticker++;
         if (ticker == 5)
         {
@@ -264,7 +268,7 @@ public class AdvancedMemory : MonoBehaviour
     private int litButton = -1;
     private bool Handle(int val)
     {
-        if (Solution == null || Position >= Solution.Length) return false;
+        if (forcedSolve || Solution == null || Position >= Solution.Length) return false;
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
         if (progress < Solution.Length) {
@@ -442,12 +446,11 @@ public class AdvancedMemory : MonoBehaviour
     //Twitch Plays support
 
     string TwitchHelpMessage = "Enter the Forget Me Not sequence with \"!{0} press 531820...\". The sequence length depends on how many modules were on the bomb. You may use spaces and commas in the digit sequence.";
-    //string TwitchManualCode = "Forget Me Not";
-
+    
     public void TwitchHandleForcedSolve() {
-        Position = Solution.Length;
-        UpdateDisplayMesh(-1);
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module forcibly solved.");
+        forcedSolve = true;
+        UpdateDisplayMesh(-1);
         GetComponent<KMBombModule>().HandlePass();
     }
 

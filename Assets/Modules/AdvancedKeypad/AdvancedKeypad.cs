@@ -176,4 +176,52 @@ public class AdvancedKeypad : MonoBehaviour
     protected bool Handle6() { Guess(5); return false; }
     protected bool Handle7() { Guess(6); return false; }
     protected bool Handle8() { Guess(7); return false; }
+
+    //Twitch Plays support
+
+    string TwitchHelpMessage = "Submit a solution using 'press 1 4 2...'. You can use either numbers starting with 1 at the top going clockwise (1 through 8), or compass directions (N, NE, E, etc.).";
+    
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Round Keypad #"+thisLoggingID+"] Module forcibly solved.");
+        for(int a = 0; a < ButtonStates.Length; a++) {
+            if(ButtonStates[a]) continue;
+            ButtonStates[a] = true;
+            if(Solution[a]) Buttons[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0);
+            else            Buttons[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
+        }
+        GetComponent<KMBombModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
+        else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else {
+            yield return "sendtochaterror Solutions must start with press or submit.";
+            yield break;
+        }
+
+        string[] list = cmd.Split(' ');
+        int[] positions = new int[list.Length];
+        for(int a = 0; a < list.Length; a++) {
+            string s = list[a];
+                 if(s.Equals("1") || s.Equals("N"))  positions[a] = 1;
+            else if(s.Equals("2") || s.Equals("NE")) positions[a] = 2;
+            else if(s.Equals("3") || s.Equals("E"))  positions[a] = 3;
+            else if(s.Equals("4") || s.Equals("SE")) positions[a] = 4;
+            else if(s.Equals("5") || s.Equals("S"))  positions[a] = 5;
+            else if(s.Equals("6") || s.Equals("SW")) positions[a] = 6;
+            else if(s.Equals("7") || s.Equals("W"))  positions[a] = 7;
+            else if(s.Equals("8") || s.Equals("NW")) positions[a] = 8;
+            else {
+                yield return "sendtochaterror Unknown button: '" + s + "'";
+                yield break;
+            }
+        }
+
+        yield return "Advanced Keypad";
+        foreach(int i in positions) {
+            yield return Buttons[i-1];
+        }
+        yield break;
+    }
 }

@@ -307,10 +307,11 @@ public class AdvancedButton : FixedTicker
 
     bool TwitchZenMode;
     string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.";
-    //string TwitchManualCode = "Forget Me Not";
     
     public void TwitchHandleForcedSolve() {
         buttonDown = false;
+        Button.transform.localPosition = new Vector3(-0.0125f, 0.01f, -0.0125f);
+        Debug.Log("[Square Button #"+thisLoggingID+"] Module forcibly solved.");
         GetComponent<KMBombModule>().HandlePass();
     }
 
@@ -352,14 +353,19 @@ public class AdvancedButton : FixedTicker
             string[] clist = cmd.Split(' ');
             List<int> times = new List<int>();
             bool secondsMode = false;
-            times.Add(TimeToSeconds(clist[0], out secondsMode));
-            for(int a = 1; a < clist.Length; a++) {
-                bool mode = false;
-                times.Add(TimeToSeconds(clist[a], out mode));
-                if(mode != secondsMode) {
-                    yield return "sendtochaterror Times can only be specified as seconds or full timer, not both.";
-                    yield break;
+            string ex = null;
+            try {
+                times.Add(TimeToSeconds(clist[0], out secondsMode));
+                for(int a = 1; a < clist.Length; a++) {
+                    bool mode = false;
+                    times.Add(TimeToSeconds(clist[a], out mode));
+                    if(mode != secondsMode) throw new System.Exception("Times can only be specified as seconds or full timer, not both.");
                 }
+            }
+            catch(System.Exception e) {ex = e.Message;}
+            if(ex != null) {
+                yield return "sendtochaterror " + ex;
+                yield break;
             }
 
             yield return "Advanced Button";

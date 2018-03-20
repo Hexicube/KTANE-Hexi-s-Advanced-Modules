@@ -927,4 +927,49 @@ public class AdvancedMorse : FixedTicker
             }
         }
     }
+
+    //Twitch Plays support
+
+    bool TwitchZenMode;
+    string TwitchHelpMessage = "Submit a solution using 'submit X'. Toggle the lights using 'toggle'.";
+    
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
+        GetComponent<KMBombModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(cmd.Equals("toggle")) {
+            yield return "Morsematics";
+            yield return ButtonSwitch;
+            yield break;
+        }
+        else if(cmd.StartsWith("submit ")) {
+            string val = cmd.Substring(7);
+            if(val.Length != 1) {
+                yield return "sendtochaterror Solutions must be a single capital letter.";
+                yield break;
+            }
+            int c = val[0] - 'A';
+            if(c < 0 || c > 25) {
+                yield return "sendtochaterror Solutions must be a single capital letter.";
+                yield break;
+            }
+
+            int[] input = Morsify(val);
+            yield return "Morsematics";
+            foreach(int i in input) {
+                yield return ButtonTransmit;
+                if(i == 1) yield return new WaitForSeconds(0.6f);
+                else yield return new WaitForSeconds(0.2f);
+                yield return ButtonTransmit;
+                yield return new WaitForSeconds(0.2f);
+            }
+            yield return new WaitForSeconds(2f); //Allow answer to pass through before returning so that it's credited properly
+            yield break;
+        }
+        else {
+            yield return "sendtochaterror Valid commands are submit and toggle.";
+        }
+    }
 }
