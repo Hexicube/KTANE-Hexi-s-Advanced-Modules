@@ -247,7 +247,7 @@ public class AdvancedVentingGas : MonoBehaviour
         }
 
         yield return "Answering Questions";
-        yield return btn;
+        btn.OnInteract();
         yield break;
     }
 }

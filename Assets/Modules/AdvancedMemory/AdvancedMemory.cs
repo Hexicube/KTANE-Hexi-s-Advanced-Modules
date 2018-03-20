@@ -456,8 +456,7 @@ public class AdvancedMemory : MonoBehaviour
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
         if(Solution == null || Position >= Solution.Length) yield break;
-
-        Debug.Log("[Forget Me Not #"+thisLoggingID+"] Handling twitch command: \"" + cmd + "\"");
+        cmd = cmd.ToLowerInvariant();
 
         int cut;
         if(cmd.StartsWith("submit ")) cut = 7;

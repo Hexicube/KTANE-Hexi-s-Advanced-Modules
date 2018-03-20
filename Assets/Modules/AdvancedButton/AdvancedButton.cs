@@ -316,6 +316,7 @@ public class AdvancedButton : FixedTicker
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
         if(cmd.StartsWith("hold")) {
             if(buttonDown) {
                 yield return "sendtochaterror Button is already held.";

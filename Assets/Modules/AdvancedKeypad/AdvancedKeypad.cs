@@ -193,8 +193,9 @@ public class AdvancedKeypad : MonoBehaviour
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
-        if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
-        else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        cmd = cmd.ToUpperInvariant();
+        if(cmd.StartsWith("PRESS ")) cmd = cmd.Substring(6);
+        else if(cmd.StartsWith("SUBMIT ")) cmd = cmd.Substring(7);
         else {
             yield return "sendtochaterror Solutions must start with press or submit.";
             yield break;
@@ -220,7 +221,8 @@ public class AdvancedKeypad : MonoBehaviour
 
         yield return "Advanced Keypad";
         foreach(int i in positions) {
-            yield return Buttons[i-1];
+            Buttons[i-1].OnInteract();
+            yield return new WaitForSeconds(0.25f);
         }
         yield break;
     }

@@ -939,24 +939,25 @@ public class AdvancedMorse : FixedTicker
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
         if(cmd.Equals("toggle")) {
             yield return "Morsematics";
-            yield return ButtonSwitch;
+            ButtonSwitch.OnInteract();
             yield break;
         }
         else if(cmd.StartsWith("submit ")) {
             string val = cmd.Substring(7);
             if(val.Length != 1) {
-                yield return "sendtochaterror Solutions must be a single capital letter.";
+                yield return "sendtochaterror Solutions must be a single letter.";
                 yield break;
             }
-            int c = val[0] - 'A';
+            int c = val[0] - 'a';
             if(c < 0 || c > 25) {
-                yield return "sendtochaterror Solutions must be a single capital letter.";
+                yield return "sendtochaterror Solutions must be a single letter.";
                 yield break;
             }
 
-            int[] input = Morsify(val);
+            int[] input = Morsify(val.ToUpperInvariant());
             yield return "Morsematics";
             foreach(int i in input) {
                 yield return ButtonTransmit;
