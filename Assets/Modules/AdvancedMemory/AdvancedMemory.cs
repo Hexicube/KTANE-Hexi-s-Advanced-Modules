@@ -498,13 +498,16 @@ public class AdvancedMemory : MonoBehaviour
                     yield return "sendtochat Kreygasm We did it reddit!";
                     yield return new WaitForSeconds(1);
                     yield return "sendtochat Kappa Nope, just kidding.";
+                    yield return "end multiple strikes";
                 }
                 else yield return "sendtochat DansGame This isn't correct...";
                 yield return "sendtochat Correct digits entered: " + Position;
+                yield return "end multiple strikes";
                 yield break;
             }
             if(Position >= Solution.Length) {
                 yield return "sendtochat Kreygasm We did it reddit!";
+                yield return "end multiple strikes";
                 yield break;
             }
 

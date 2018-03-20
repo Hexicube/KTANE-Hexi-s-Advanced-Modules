@@ -382,8 +382,10 @@ public class AdvancedButton : FixedTicker
             string[] clist = cmd.Split(' ');
             List<int> times = new List<int>();
             bool secondsMode = false;
+            //yield return "sendtochat DEBUG1: " + clist[0];
             times.Add(TimeToSeconds(clist[0], out secondsMode));
             for(int a = 1; a < clist.Length; a++) {
+                //yield return "sendtochat DEBUG1: " + clist[a];
                 bool mode = false;
                 times.Add(TimeToSeconds(clist[a], out mode));
                 if(mode != secondsMode) {
@@ -405,26 +407,13 @@ public class AdvancedButton : FixedTicker
     private IEnumerator ScheduleAction(bool buttonDown, List<int> times, bool secondsMode) {
         int curTime = (int)(Info.GetTime()+0.5f);
         int targetTime = -1;
-        if(!secondsMode) {
-            if(TwitchZenMode) {
-                foreach(int time in times) {
-                    if(time < curTime) continue;
-                    if(time < targetTime) targetTime = time;
-                }
-            }
-            else {
-                foreach(int time in times) {
-                    if(time > curTime) continue;
-                    if(time > targetTime) targetTime = time;
-                }
-            }
-        }
-        else {
+        if(secondsMode) {
             if(TwitchZenMode) {
                 foreach(int time in times) {
                     int t2 = time;
                     while(t2 < curTime) t2 += 60;
-                    if(t2 < targetTime) targetTime = t2;
+                    if(t2 < targetTime || targetTime == -1) targetTime = t2;
+                    //yield return "sendtochat DEBUG2: " + t2;
                 }
             }
             else {
@@ -433,6 +422,23 @@ public class AdvancedButton : FixedTicker
                     while(t2 <= curTime) t2 += 60;
                     t2 -= 60;
                     if(t2 > targetTime) targetTime = t2;
+                    //yield return "sendtochat DEBUG2: " + t2;
+                }
+            }
+        }
+        else {
+            if(TwitchZenMode) {
+                foreach(int time in times) {
+                    if(time < curTime) continue;
+                    if(time < targetTime || targetTime == -1) targetTime = time;
+                    //yield return "sendtochat DEBUG2: " + time;
+                }
+            }
+            else {
+                foreach(int time in times) {
+                    if(time > curTime) continue;
+                    if(time > targetTime) targetTime = time;
+                    //yield return "sendtochat DEBUG2: " + time;
                 }
             }
         }
