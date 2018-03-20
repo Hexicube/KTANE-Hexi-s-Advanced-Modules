@@ -374,6 +374,9 @@ public class AdvancedButton : FixedTicker
             while(releaseCoroutine.MoveNext()) {
                 yield return releaseCoroutine.Current;
             }
+            yield return new WaitForSeconds(0.25f);
+            yield return Button;
+            yield break;
         }
         else if(cmd.StartsWith("release")) {
             if(!cmd.StartsWith("release ")) {
@@ -413,7 +416,10 @@ public class AdvancedButton : FixedTicker
 
     private IEnumerator ScheduleAction(bool buttonDown, List<int> times, bool secondsMode) {
         int curTime = (int)(Info.GetTime()+0.5f);
+
         int targetTime = -1;
+        //yield return "sendtochat DEBUG | Seconds mode: " + secondsMode;
+        //yield return "sendtochat DEBUG | Curtime: " + curTime;
         if(secondsMode) {
             if(TwitchZenMode) {
                 foreach(int time in times) {
@@ -455,6 +461,7 @@ public class AdvancedButton : FixedTicker
             yield break;
         }
         yield return "sendtochat Target time: " + (targetTime / 60).ToString("D2") + ":" + (targetTime % 60).ToString("D2");
+        if(TwitchZenMode) targetTime++; //Zen mode is weird
         if(Mathf.Abs(curTime-targetTime) > 15) yield return "waiting music";
 
         while(true) {
