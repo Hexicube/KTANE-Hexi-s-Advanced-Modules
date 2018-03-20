@@ -930,11 +930,11 @@ public class AdvancedMorse : FixedTicker
 
     //Twitch Plays support
 
-    bool TwitchZenMode;
     string TwitchHelpMessage = "Submit a solution using 'submit X'. Toggle the lights using 'toggle'.";
     
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
+        solved = true;
         GetComponent<KMBombModule>().HandlePass();
     }
 
