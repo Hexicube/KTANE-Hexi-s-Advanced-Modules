@@ -213,7 +213,6 @@ public class AdvancedVentingGas : MonoBehaviour
 
     //Twitch Plays support
 
-    bool TwitchZenMode;
     string TwitchHelpMessage = "Submit answers using 'submit N' or 'submit Y'.";
     
     public void TwitchHandleForcedSolve() {

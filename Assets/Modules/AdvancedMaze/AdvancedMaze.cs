@@ -1529,4 +1529,85 @@ public class AdvancedMaze : MonoBehaviour
 
         return false;
     }
+
+    //Twitch Plays support
+
+    string TwitchHelpMessage = "Rotate pipes using 'rotate A3 B4 B2 ...'. Submit answer using 'submit'. Pipe positions use battleship notation, letters are A-F left to right and numbers are 1-6 top to bottom.";
+    
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
+
+        Solved = true;
+
+        SetMergedMode(false);
+        MergedMesh = null;
+
+        fadeState = .001f;
+        fadeList = new bool[6][];
+        for(int a = 0; a < 6; a++) fadeList[a] = new bool[6];
+
+        GetComponent<KMNeedyModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(cmd.Equals("submit")) {
+            yield return "Plumbing";
+            yield return ButtonCheck;
+            yield break;
+        }
+        else if(cmd.StartsWith("rotate ")) {
+            string[] list = cmd.Substring(7).Split(' ');
+            KMSelectable[] blist = new KMSelectable[list.Length];
+            for(int a = 0; a < list.Length; a++) {
+                string s = list[a];
+                if(s.Length != 2) {
+                    yield return "sendtochaterror Bad pipe position: '" + s + "'";
+                    yield break;
+                }
+
+                int horz = s[0] - 'A';
+                if(horz < 0 || horz > 5) {
+                    yield return "sendtochaterror Bad pipe position: '" + s + "'";
+                    yield break;
+                }
+                int vert = s[1] - '1';
+                if(horz < 0 || horz > 5) {
+                    yield return "sendtochaterror Bad pipe position: '" + s + "'";
+                    yield break;
+                }
+
+                blist[a] = Buttons[vert][horz];
+            }
+            
+            yield return "Plumbing";
+            foreach(KMSelectable btn in blist) {
+                yield return btn;
+                yield return new WaitForSeconds(0.25f);
+            }
+            yield break;
+        }
+        else if(cmd.Equals("spinme")) {
+            List<KMSelectable> allbtn = new List<KMSelectable>();
+            for(int a = 0; a < 4; a++) {
+                allbtn.AddRange(Buttons[0]);
+                allbtn.AddRange(Buttons[1]);
+                allbtn.AddRange(Buttons[2]);
+                allbtn.AddRange(Buttons[3]);
+                allbtn.AddRange(Buttons[4]);
+                allbtn.AddRange(Buttons[5]);
+            }
+
+            yield return "Plumbing";
+            while(allbtn.Count > 0) {
+                int p = Random.Range(0, allbtn.Count);
+                yield return allbtn[p];
+                allbtn.RemoveAt(p);
+                yield return new WaitForSeconds(0.1f);
+            }
+            yield break;
+        }
+        else {
+            yield return "sendtochaterror Valid commands are 'rotate' and 'submit'.";
+        }
+    }
 }
