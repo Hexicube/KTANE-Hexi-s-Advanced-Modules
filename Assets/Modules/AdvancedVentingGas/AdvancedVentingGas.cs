@@ -33,6 +33,9 @@ public class AdvancedVentingGas : MonoBehaviour
     protected bool DidHakuna = false;
     protected bool Exploded = false;
 
+    protected bool abortMode = false;
+    protected bool forceSolve = false;
+
     private List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>> QuestionList = new List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>>(){
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == Module.LastReply;return true;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was\nnot your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == !Module.LastReply;return true;})},
@@ -67,6 +70,7 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected bool HandleYes()
     {
+        if(abortMode) return false;
         if (DidHakuna || CurQ != null) YesButton.AddInteractionPunch();
         HandleResponse(true);
         return false;
@@ -74,6 +78,7 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected bool HandleNo()
     {
+        if(abortMode) return false;
         if (DidHakuna || CurQ != null) NoButton.AddInteractionPunch();
         HandleResponse(false);
         return false;
@@ -81,6 +86,10 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void OnNeedyActivation()
     {
+        if(forceSolve) {
+            GetComponent<KMNeedyModule>().HandlePass();
+            return;
+        }
         if (DidHakuna) Display.text = "Is \"Hakuna Matata\"\na passing craze?";
         else NewQuestion();
     }
@@ -126,7 +135,7 @@ public class AdvancedVentingGas : MonoBehaviour
                 if (Display.text.Equals("Abort?"))
                 {
                     Debug.Log("[Answering Questions #"+thisLoggingID+"] ABORT! ABORT!!! ABOOOOOOORT!!!!!");
-                    while (!Exploded) Service.CauseStrike("ABORT!");
+                    abortMode = true;
                 }
                 else
                 {
@@ -141,9 +150,29 @@ public class AdvancedVentingGas : MonoBehaviour
         Display.text = "";
     }
 
+    private float ticker = 0f;
+    void FixedUpdate() {
+        if(!forceSolve && abortMode && !Exploded) {
+            bool state = ticker >= 0.25f;
+            ticker += Time.fixedDeltaTime;
+            if(state) {
+                if(ticker >= 0.5f) {
+                    ticker -= 0.5f;
+                    Display.text = "";
+                }
+            }
+            else {
+                if(ticker >= 0.25f) {
+                    Service.CauseStrike("ABORT!");
+                    Display.text = "ABORT!";
+                }
+            }
+        }
+    }
+
     protected void OnTimerExpired()
     {
-        if (CurQ == null && !DidHakuna) return;
+        if (forceSolve || (CurQ == null && !DidHakuna)) return;
         DidHakuna = false;
         GetComponent<KMNeedyModule>().HandleStrike();
     }
@@ -180,5 +209,46 @@ public class AdvancedVentingGas : MonoBehaviour
         else val = Random.Range(2, 10);
         CurQ = QuestionList[val].Value;
         Display.text = QuestionList[val].Key;
+    }
+
+    //Twitch Plays support
+
+    bool TwitchZenMode;
+    string TwitchHelpMessage = "Submit answers using 'submit N' or 'submit Y'.";
+    
+    public void TwitchHandleForcedSolve() {
+        forceSolve = true;
+        Display.text = "";
+        Debug.Log("[Answering Questions #"+thisLoggingID+"] Module forcibly solved.");
+        GetComponent<KMNeedyModule>().HandlePass();
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
+        else {
+            yield return "sendtochaterror Commands must start with press or submit.";
+            yield break;
+        }
+
+        KMSelectable btn;
+        if(cmd.Equals("Y") || cmd.ToLower().Equals("yes")) btn = YesButton;
+        else if(cmd.Equals("N") || cmd.ToLower().Equals("no")) btn = NoButton;
+        else {
+            yield return "sendtochaterror Valid answers are 'Y', 'Yes', 'N', or 'No'.";
+            yield break;
+        }
+
+        if(btn == YesButton && Display.text.Equals("Abort?")) {
+            //Twitch Plays sometimes has extreme strike amounts, so we avoid the strike repeater and directly detonate the bomb.
+
+            yield return "Answering Questions";
+            yield return "detonate ABORT! ABORT!!! ABOOOOOOORT!!!!!";
+            yield break;
+        }
+
+        yield return "Answering Questions";
+        yield return btn;
+        yield break;
     }
 }
