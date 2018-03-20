@@ -930,7 +930,7 @@ public class AdvancedMorse : FixedTicker
 
     //Twitch Plays support
 
-    string TwitchHelpMessage = "Submit a solution using 'submit X'. Toggle the lights using 'toggle'.";
+    string TwitchHelpMessage = "Submit a solution using 'submit ..-.'. Toggle the lights using 'toggle'.";
     
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
@@ -945,32 +945,43 @@ public class AdvancedMorse : FixedTicker
             ButtonSwitch.OnInteract();
             yield break;
         }
-        else if(cmd.StartsWith("submit ")) {
-            string val = cmd.Substring(7);
-            if(val.Length != 1) {
-                yield return "sendtochaterror Solutions must be a single letter.";
-                yield break;
-            }
-            int c = val[0] - 'a';
-            if(c < 0 || c > 25) {
-                yield return "sendtochaterror Solutions must be a single letter.";
-                yield break;
-            }
-
-            int[] input = Morsify(val.ToUpperInvariant());
-            yield return "Morsematics";
-            foreach(int i in input) {
-                yield return ButtonTransmit;
-                if(i == 1) yield return new WaitForSeconds(0.6f);
-                else yield return new WaitForSeconds(0.2f);
-                yield return ButtonTransmit;
-                yield return new WaitForSeconds(0.2f);
-            }
-            yield return new WaitForSeconds(2f); //Allow answer to pass through before returning so that it's credited properly
-            yield break;
-        }
+        if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else if(cmd.StartsWith("transmit ")) cmd = cmd.Substring(9);
         else {
             yield return "sendtochaterror Valid commands are submit and toggle.";
+            yield break;
         }
+
+        int[] input = new int[cmd.Length];
+        for(int a = 0; a < cmd.Length; a++) {
+            if(cmd[a] == '.') input[a] = 0;
+            else if(cmd[a] == '-') input[a] = 1;
+            else {
+                yield return "sendtochaterror Invalid morse character: '" + cmd[a] + "'";
+                yield break;
+            }
+        }
+
+        /*if(val.Length != 1) {
+            yield return "sendtochaterror Solutions must be a single letter.";
+            yield break;
+        }
+        int c = val[0] - 'a';
+        if(c < 0 || c > 25) {
+            yield return "sendtochaterror Solutions must be a single letter.";
+            yield break;
+        }
+
+        int[] input = Morsify(val.ToUpperInvariant());*/
+        yield return "Morsematics";
+        foreach(int i in input) {
+            yield return ButtonTransmit;
+            if(i == 1) yield return new WaitForSeconds(0.6f);
+            else yield return new WaitForSeconds(0.2f);
+            yield return ButtonTransmit;
+            yield return new WaitForSeconds(0.2f);
+        }
+        yield return new WaitForSeconds(2f); //Allow answer to pass through before returning so that it's credited properly
+        yield break;
     }
 }
