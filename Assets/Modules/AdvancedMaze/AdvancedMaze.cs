@@ -1550,6 +1550,7 @@ public class AdvancedMaze : MonoBehaviour
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
         if(cmd.Equals("submit")) {
             yield return "Plumbing";
             ButtonCheck.OnInteract();
@@ -1565,7 +1566,7 @@ public class AdvancedMaze : MonoBehaviour
                     yield break;
                 }
 
-                int horz = s[0] - 'A';
+                int horz = s[0] - 'a';
                 if(horz < 0 || horz > 5) {
                     yield return "sendtochaterror Bad pipe position: '" + s + "'";
                     yield break;
@@ -1576,33 +1577,35 @@ public class AdvancedMaze : MonoBehaviour
                     yield break;
                 }
 
-                blist[a] = Buttons[vert][horz];
+                blist[a] = Buttons[horz][vert];
             }
             
             yield return "Plumbing";
             foreach(KMSelectable btn in blist) {
                 btn.OnInteract();
                 yield return new WaitForSeconds(0.1f);
+                yield return "trycancel";
             }
             yield break;
         }
         else if(cmd.Equals("spinme")) {
             List<KMSelectable> allbtn = new List<KMSelectable>();
-            for(int a = 0; a < 4; a++) {
-                allbtn.AddRange(Buttons[0]);
-                allbtn.AddRange(Buttons[1]);
-                allbtn.AddRange(Buttons[2]);
-                allbtn.AddRange(Buttons[3]);
-                allbtn.AddRange(Buttons[4]);
-                allbtn.AddRange(Buttons[5]);
-            }
+            allbtn.AddRange(Buttons[0]);
+            allbtn.AddRange(Buttons[1]);
+            allbtn.AddRange(Buttons[2]);
+            allbtn.AddRange(Buttons[3]);
+            allbtn.AddRange(Buttons[4]);
+            allbtn.AddRange(Buttons[5]);
 
             yield return "Plumbing";
             while(allbtn.Count > 0) {
                 int p = Random.Range(0, allbtn.Count);
-                allbtn[p].OnInteract();
+                for(int a = 0; a < 4; a++) {
+                    allbtn[p].OnInteract();
+                    yield return new WaitForSeconds(0.05f);
+                }
                 allbtn.RemoveAt(p);
-                yield return new WaitForSeconds(0.05f);
+                yield return "trycancel";
             }
             yield break;
         }
