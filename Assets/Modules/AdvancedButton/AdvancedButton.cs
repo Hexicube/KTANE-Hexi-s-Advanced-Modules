@@ -338,7 +338,7 @@ public class AdvancedButton : FixedTicker
 
                 yield return "Advanced Button";
                 yield return Button;
-                yield return new WaitForSeconds(0.25f);
+                yield return new WaitForSeconds(0.05f);
                 yield return Button;
                 yield break;
             }
@@ -374,7 +374,7 @@ public class AdvancedButton : FixedTicker
             while(releaseCoroutine.MoveNext()) {
                 yield return releaseCoroutine.Current;
             }
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.05f);
             yield return Button;
             yield break;
         }
