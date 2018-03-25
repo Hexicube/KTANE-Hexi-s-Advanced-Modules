@@ -280,7 +280,7 @@ public class AdvancedMemory : MonoBehaviour
         {
             if (litButton != -1)
             {
-                Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+                Buttons[litButton].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
                 litButton = -1;
             }
             Position++;
@@ -300,7 +300,7 @@ public class AdvancedMemory : MonoBehaviour
             if (litButton == -1)
             {
                 litButton = Display[Position];
-                Buttons[litButton].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.8f, 0.5f);
+                Buttons[litButton].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0);
             }
             return false;
         }
