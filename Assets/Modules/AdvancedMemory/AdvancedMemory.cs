@@ -541,7 +541,7 @@ public class AdvancedMemory : MonoBehaviour
     }
 
     public static bool getMusicToggle(SolveType type, int curpos, int dlen, int slen) {
-        if(type == SolveType.ACCELERATOR) return (curpos == 1) || (curpos == 8);
+        if(type == SolveType.SLOWSTART) return (curpos == 1) || (curpos == 8);
         return false;
     }
 }
