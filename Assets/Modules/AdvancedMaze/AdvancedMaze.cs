@@ -1572,7 +1572,7 @@ public class AdvancedMaze : MonoBehaviour
                     yield break;
                 }
                 int vert = s[1] - '1';
-                if(horz < 0 || horz > 5) {
+                if(vert < 0 || vert > 5) {
                     yield return "sendtochaterror Bad pipe position: '" + s + "'";
                     yield break;
                 }
