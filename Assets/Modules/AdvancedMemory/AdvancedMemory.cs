@@ -532,7 +532,7 @@ public class AdvancedMemory : MonoBehaviour
     public static float getDelay(SolveType type, int curpos, int dlen, int slen) {
         switch(type) {
             case SolveType.SLOWSTART: {
-                if(curpos < 7) return 0.5f + Random.value * 2.5f;
+                if(curpos < 8) return 0.5f + Random.value * 2.5f;
                 return 0.05f;
             }
             case SolveType.ACCELERATOR: return Mathf.Max(3f / (float)(curpos+1), 0.05f);
@@ -541,7 +541,7 @@ public class AdvancedMemory : MonoBehaviour
     }
 
     public static bool getMusicToggle(SolveType type, int curpos, int dlen, int slen) {
-        if(type == SolveType.ACCELERATOR) return (curpos == 0) || (curpos == 7);
+        if(type == SolveType.ACCELERATOR) return (curpos == 1) || (curpos == 8);
         return false;
     }
 }

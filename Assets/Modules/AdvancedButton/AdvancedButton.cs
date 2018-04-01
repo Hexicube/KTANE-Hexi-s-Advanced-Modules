@@ -123,6 +123,13 @@ public class AdvancedButton : FixedTicker
 
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
         flashing = Random.Range(0, 2) == 1;
+
+        System.DateTime curTime = System.DateTime.Now;
+        if(curTime.Month == 4 && curTime.Day == 1) {
+            //April Fools! Always flashing!
+            flashing = true;
+        }
+
         holdColour = Random.Range(0, colours.Length);
         ticker = -50;
         return false;
