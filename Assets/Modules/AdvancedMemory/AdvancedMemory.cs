@@ -484,7 +484,10 @@ public class AdvancedMemory : MonoBehaviour
             if(d != -1) digits.Add(d);
         }
         if(digits.Count == 0) yield break;
-        yield return "Forget Me Not";
+        if(digits.Count > (Solution.Length - Position)) {
+            yield return "sendtochaterror Too many digits submitted.";
+            yield break;
+        }
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
         if(progress < Solution.Length) {
@@ -492,6 +495,7 @@ public class AdvancedMemory : MonoBehaviour
             Handle(digits[0]);
             yield break;
         }
+        yield return "Forget Me Not";
         yield return "sendtochat PogChamp Here we go!";
         yield return "multiple strikes"; //Needed for fake solve.
 

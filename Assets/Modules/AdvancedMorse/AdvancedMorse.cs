@@ -934,8 +934,17 @@ public class AdvancedMorse : FixedTicker
     
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
-        solved = true;
-        GetComponent<KMBombModule>().HandlePass();
+        StartCoroutine(Solver());
+    }
+
+    private IEnumerator Solver() {
+        foreach(int i in Morsify(Answer)) {
+            yield return ButtonTransmit;
+            if(i == 1) yield return new WaitForSeconds(0.6f);
+            else yield return new WaitForSeconds(0.2f);
+            yield return ButtonTransmit;
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
