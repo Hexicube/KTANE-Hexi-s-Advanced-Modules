@@ -2860,6 +2860,7 @@ GameObject:
   - component: {fileID: 4073666422991424}
   - component: {fileID: 33156600673838700}
   - component: {fileID: 23351288792373134}
+  - component: {fileID: 114999714361784194}
   m_Layer: 0
   m_Name: Wiring
   m_TagString: Untagged
@@ -4335,7 +4336,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114083727555067596
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4348,7 +4349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114303883502809556
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4361,7 +4362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114320895083721286
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4374,7 +4375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114654108398204860
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4387,7 +4388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114740269939008160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4400,7 +4401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114743969649147722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4413,7 +4414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114751438547379466
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4426,7 +4427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114795077995909830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4439,7 +4440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
 --- !u!114 &114823878930443988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4452,4 +4453,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShaderNames:
-  - Unlit/Color
+  - Hexi/EmissiveTint
+--- !u!114 &114999714361784194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1520241941439494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1005838349, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShaderNames:
+  - KT/Mobile/DiffuseTint
+  - KT/Mobile/DiffuseTint
+  - KT/Mobile/DiffuseTint
