@@ -1596,7 +1596,7 @@ public class AdvancedMaze : MonoBehaviour
             yield return "Plumbing";
             foreach(KMSelectable btn in blist) {
                 btn.OnInteract();
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.05f);
                 yield return "trycancel";
             }
             yield break;
