@@ -98,17 +98,43 @@ public class AdvancedButton : FixedTicker
         buttonText = Random.Range(0, buttonLabels.Length);
         Button.gameObject.transform.Find("Label").GetComponent<TextMesh>().text = buttonLabels[buttonText];
         Button.OnInteractEnded += Release;
+
+        flashing = Random.Range(0, 2) == 1;
+
+        if(!flashing) {
+            System.DateTime curTime = System.DateTime.Now;
+            if(curTime.Month == 4 && curTime.Day == 1) {
+                //April Fools! Always flashing!
+                flashing = true;
+            }
+        }
     }
 
+    private int flickerTime = 0;
     public override void RealFixedTick()
     {
         if (buttonDown)
         {
-            ticker++;
-            if (ticker == 50) ticker = 0;
-            if (ticker == 0) Light.material.color = colours[holdColour];
-            if (flashing && ticker == 15) Light.material.color = BLACK;
+            if(ticker < 0) {
+                ticker++;
+                if(ticker == 0) {
+                    if(flashing) flickerTime = 1;
+                    else Light.material.color = colours[holdColour];
+                }
+            }
+            else if(flashing) {
+                flickerTime--;
+                if(flickerTime <= 0) {
+                    flickerTime = 5;
+                    Light.material.color = PickRandom(colours[holdColour]);
+                }
+            }
         }
+    }
+
+    private Color PickRandom(Color c) {
+        float scale = Random.value;
+        return new Color(c.r * scale, c.g * scale, c.b * scale);
     }
 
     protected bool Press()
@@ -122,13 +148,6 @@ public class AdvancedButton : FixedTicker
         Button.transform.localPosition = new Vector3(-0.0125f, -0.01f, -0.0125f);
 
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
-        flashing = Random.Range(0, 2) == 1;
-
-        System.DateTime curTime = System.DateTime.Now;
-        if(curTime.Month == 4 && curTime.Day == 1) {
-            //April Fools! Always flashing!
-            flashing = true;
-        }
 
         holdColour = Random.Range(0, colours.Length);
         ticker = -50;

@@ -141,6 +141,7 @@ public class AdvancedKeypad : MonoBehaviour
     {
         if (ButtonStates[pos]) return;
         Buttons[pos].AddInteractionPunch(0.5f);
+        Buttons[pos].transform.localPosition += new Vector3(0, -0.001f, 0);
         ButtonStates[pos] = true;
         if(Solution[pos])
         {
@@ -185,11 +186,8 @@ public class AdvancedKeypad : MonoBehaviour
         Debug.Log("[Round Keypad #"+thisLoggingID+"] Module forcibly solved.");
         for(int a = 0; a < ButtonStates.Length; a++) {
             if(ButtonStates[a]) continue;
-            ButtonStates[a] = true;
-            if(Solution[a]) Buttons[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 1, 0);
-            else            Buttons[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
+            if(Solution[a]) Guess(a);
         }
-        GetComponent<KMBombModule>().HandlePass();
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
