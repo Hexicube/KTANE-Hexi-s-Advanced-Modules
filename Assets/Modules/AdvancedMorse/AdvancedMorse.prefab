@@ -918,7 +918,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModuleType: MorseV2
   ModuleDisplayName: Morsematics
-  RequiresTimerVisibility: 1
+  RequiresTimerVisibility: 0
 --- !u!114 &114000012359958084
 MonoBehaviour:
   m_ObjectHideFlags: 1
