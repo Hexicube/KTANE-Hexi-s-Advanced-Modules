@@ -1540,12 +1540,11 @@ public class AdvancedMaze : MonoBehaviour
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
 
-        SetMergedMode(false);
         StartCoroutine(Solver());
-        SetMergedMode(true);
     }
 
     private IEnumerator Solver() {
+        SetMergedMode(false);
         for(int x = 0; x < 6; x++) {
             for(int y = 0; y < 6; y++) {
                 while(SolutionState[x][y] != PlayFieldState[x][y]) {
@@ -1555,6 +1554,7 @@ public class AdvancedMaze : MonoBehaviour
             }
         }
         ButtonCheck.OnInteract();
+        SetMergedMode(true);
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
