@@ -268,10 +268,10 @@ public class AdvancedMemory : MonoBehaviour
     private int litButton = -1;
     private bool Handle(int val)
     {
-        if (forcedSolve || Solution == null || Position >= Solution.Length) return false;
+        if (Solution == null || Position >= Solution.Length) return false;
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-        if (progress < Solution.Length) {
+        if (progress < Solution.Length && !forcedSolve) {
             Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
             GetComponent<KMBombModule>().HandleStrike();
             return false;
@@ -450,8 +450,14 @@ public class AdvancedMemory : MonoBehaviour
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module forcibly solved.");
         forcedSolve = true;
-        UpdateDisplayMesh(-1);
-        GetComponent<KMBombModule>().HandlePass();
+        StartCoroutine(Solver());
+    }
+
+    private IEnumerator Solver() {
+        while(Position < Solution.Length) {
+            yield return new WaitForSeconds(0.05f);
+            Handle(Solution[Position]);
+        }
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
