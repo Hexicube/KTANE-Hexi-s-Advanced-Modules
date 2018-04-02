@@ -106,7 +106,7 @@ public class AdvancedMaze : MonoBehaviour
                       EntryRight1, EntryRight2, EntryRight3, EntryRight4, EntryRight5, EntryRight6;
     private GameObject[] EntryLeftList, EntryRightList;
 
-    private int[][] PlayFieldType, PlayFieldState;
+    private int[][] PlayFieldType, PlayFieldState, SolutionState;
     private int[] EntryLocations, ExitLocations;
 
     public GameObject PipeStraight, PipeCorner, PipeT, PipeCross, PipeEnd;
@@ -941,6 +941,7 @@ public class AdvancedMaze : MonoBehaviour
 
         PlayFieldType = new int[6][];
         PlayFieldState = new int[6][];
+        SolutionState = new int[6][];
         for (int x = 0; x < 6; x++)
         {
             debugSolved[x] = new char[6];
@@ -948,6 +949,7 @@ public class AdvancedMaze : MonoBehaviour
 
             PlayFieldType[x] = new int[6];
             PlayFieldState[x] = new int[6];
+            SolutionState[x] = new int[6];
             for (int y = 0; y < 6; y++)
             {
                 bool addedSolved = false;
@@ -1145,6 +1147,7 @@ public class AdvancedMaze : MonoBehaviour
                 {
                     debugSolved[x][y] = GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
                 }
+                SolutionState[x][y] = PlayFieldState[x][y];
                 PlayFieldState[x][y] = Random.Range(0, 4);
                 debugShown[x][y] = GetPipeAscii(PlayFieldType[x][y], PlayFieldState[x][y]);
                 ApplyModel(Buttons[x][y].gameObject, PlayFieldType[x][y], PlayFieldState[x][y], (x + y) % 2 == 1);
@@ -1537,16 +1540,19 @@ public class AdvancedMaze : MonoBehaviour
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
 
-        Solved = true;
+        StartCoroutine(Solver());
+    }
 
-        SetMergedMode(false);
-        MergedMesh = null;
-
-        fadeState = .001f;
-        fadeList = new bool[6][];
-        for(int a = 0; a < 6; a++) fadeList[a] = new bool[6];
-
-        GetComponent<KMNeedyModule>().HandlePass();
+    private IEnumerator Solver() {
+        for(int x = 0; x < 6; x++) {
+            for(int y = 0; y < 6; y++) {
+                while(SolutionState[x][y] != PlayFieldState[x][y]) {
+                    HandleInteract(x, y);
+                    yield return new WaitForSeconds(0.05f);
+                }
+            }
+        }
+        ButtonCheck.OnInteract();
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
