@@ -1540,7 +1540,9 @@ public class AdvancedMaze : MonoBehaviour
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
 
+        SetMergedMode(false);
         StartCoroutine(Solver());
+        SetMergedMode(true);
     }
 
     private IEnumerator Solver() {

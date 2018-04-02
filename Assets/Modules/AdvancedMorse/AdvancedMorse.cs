@@ -939,10 +939,10 @@ public class AdvancedMorse : FixedTicker
 
     private IEnumerator Solver() {
         foreach(int i in Morsify(Answer)) {
-            yield return ButtonTransmit;
+            ButtonTransmit.OnInteract();
             if(i == 1) yield return new WaitForSeconds(0.6f);
             else yield return new WaitForSeconds(0.2f);
-            yield return ButtonTransmit;
+            ButtonTransmit.OnInteractEnded();
             yield return new WaitForSeconds(0.2f);
         }
     }
