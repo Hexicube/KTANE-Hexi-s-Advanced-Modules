@@ -1559,7 +1559,7 @@ public class AdvancedMaze : MonoBehaviour
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
         cmd = cmd.ToLowerInvariant();
-        if(cmd.Equals("submit")) {
+        if(cmd.Equals("submit") || cmd.Equals("check")) {
             yield return "Plumbing";
             ButtonCheck.OnInteract();
             yield break;
@@ -1587,6 +1587,11 @@ public class AdvancedMaze : MonoBehaviour
 
                 blist[a] = Buttons[horz][vert];
             }
+
+            if(blist.Length == 0) {
+                yield return "sendtochaterror No pipes specified.";
+                yield break;
+            }
             
             yield return "Plumbing";
             foreach(KMSelectable btn in blist) {
@@ -1606,6 +1611,7 @@ public class AdvancedMaze : MonoBehaviour
             allbtn.AddRange(Buttons[5]);
 
             yield return "Plumbing";
+            yield return "waiting music";
             while(allbtn.Count > 0) {
                 int p = Random.Range(0, allbtn.Count);
                 for(int a = 0; a < 4; a++) {

@@ -954,8 +954,23 @@ public class AdvancedMorse : FixedTicker
             ButtonSwitch.OnInteract();
             yield break;
         }
+        if(cmd.Equals("lights on")) {
+            if(!switchState) {
+                yield return "Morsematics";
+                ButtonSwitch.OnInteract();
+            }
+            yield break;
+        }
+        if(cmd.Equals("lights off")) {
+            if(switchState) {
+                yield return "Morsematics";
+                ButtonSwitch.OnInteract();
+            }
+            yield break;
+        }
         if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
         else if(cmd.StartsWith("transmit ")) cmd = cmd.Substring(9);
+        else if(cmd.StartsWith("tx ")) cmd = cmd.Substring(3);
         else {
             yield return "sendtochaterror Valid commands are submit and toggle.";
             yield break;
