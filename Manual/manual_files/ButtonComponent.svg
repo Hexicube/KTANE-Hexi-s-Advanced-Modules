@@ -1,13 +1,101 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="348" height="348" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
- <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
-
- <g>
-  <title>Layer 1</title>
-  <rect fill-opacity="0.3" id="svg_1" height="340" width="340" y="5" x="4" stroke-width="2" stroke="#000000" fill="#ff0000"/>
-  <circle id="svg_2" r="15" cy="38.666666" cx="296.666667" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
-  <rect id="svg_3" height="217" width="217" y="102" x="28" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
-  <text style="cursor: move;" transform="matrix(1.86688, 0, 0, 2.14993, -56.6555, -200.7)" xml:space="preserve" text-anchor="middle" font-family="Sans-serif" font-size="24" id="svg_4" y="198.790794" x="100.786082" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" stroke="#000000" fill="#000000">[TEXT]</text>
-  <rect id="svg_5" height="209" width="26" y="107" x="287" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#000000"/>
- </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="348"
+   height="348"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="ButtonComponent.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata17">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs15" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1018"
+     id="namedview13"
+     showgrid="false"
+     inkscape:zoom="0.67816092"
+     inkscape:cx="56.277422"
+     inkscape:cy="116.53982"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g9" />
+  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+  <g
+     id="g9">
+    <title
+       id="title2">Layer 1</title>
+    <rect
+       id="svg_1"
+       height="340"
+       width="340"
+       y="5"
+       x="4"
+       style="fill:#ff0000;fill-opacity:0.3;stroke:#000000;stroke-width:2" />
+    <circle
+       id="svg_2"
+       r="15"
+       cy="38.666664"
+       cx="296.66666"
+       stroke-linecap="null"
+       stroke-linejoin="null"
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-dasharray:none" />
+    <rect
+       id="svg_3"
+       height="216.69086"
+       width="289.68237"
+       y="102.15457"
+       x="28.154573"
+       stroke-linecap="null"
+       stroke-linejoin="null"
+       style="fill:#ffffff;stroke:#000000;stroke-width:2.30914712;stroke-dasharray:none" />
+    <text
+       style="font-size:48.08189774px;font-family:Sans-serif;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;stroke-dasharray:none"
+       transform="scale(0.93185007,1.073134)"
+       xml:space="preserve"
+       font-size="24"
+       id="svg_4"
+       y="211.92467"
+       x="193.33693"
+       stroke-linecap="null"
+       stroke-linejoin="null">[TEXT]</text>
+    <ellipse
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:10.02198601;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1.5;stroke-opacity:1"
+       id="path4495"
+       cx="293.44067"
+       cy="128.28813"
+       rx="17.694916"
+       ry="18.432203" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:9.39999962;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 178.42373,4.9491523 V 102.27119"
+       id="path4497"
+       inkscape:connector-curvature="0" />
+  </g>
 </svg>

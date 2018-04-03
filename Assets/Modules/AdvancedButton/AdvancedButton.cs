@@ -42,6 +42,7 @@ public class AdvancedButton : FixedTicker
     public KMAudio Sound;
     public KMBombInfo Info;
     public MeshRenderer Light;
+    public GameObject Guard;
 
     private int batAA = -1, batD = 0, highSerial = 0, litInd = 0, unlitInd = 0;
     private bool serialVowel = false, hold = false, catch22 = false;
@@ -89,6 +90,9 @@ public class AdvancedButton : FixedTicker
         thisLoggingID = loggingID++;
 
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
+        transform.Find("Casing")    .GetComponent<MeshRenderer>().material.color = new Color(0.1f, 0.1f, 0.1f);
+        transform.Find("Jack")      .GetComponent<MeshRenderer>().materials[0].color = new Color(0.1f, 0.1f, 0.1f);
+        transform.Find("Jack")      .GetComponent<MeshRenderer>().materials[1].color = new Color(0.8f, 0.8f, 0.8f);
 
         ticker = -1;
         Light.material.color = BLACK;
@@ -108,11 +112,34 @@ public class AdvancedButton : FixedTicker
                 flashing = true;
             }
         }
+        if(flashing) transform.Find("Jack").transform.localPosition = new Vector3(0, 0, .005f);
+
+        //Detecting module deselection sucks.
+        GetComponent<KMSelectable>().OnInteract += delegate(){Invoke("Open", 0.01f); return true;};
+
+        GetComponent<KMSelectable>().OnDeselect += delegate(){GuardState = false;};
+        Button.OnDeselect += delegate(){GuardState = false;};
+        Button.OnCancel += delegate(){GuardState = false; return true;};
     }
+
+    private void Open() { GuardState = true; }
+
+    private bool GuardState = false;
+    private float GuardRot = 0;
+    private const float GUARD_SPEED = 7.5f;
 
     private int flickerTime = 0;
     public override void RealFixedTick()
     {
+        float targetRot = GuardState ? 90 : 0;
+        float diff = targetRot - GuardRot;
+        if(diff != 0) {
+            if(Mathf.Abs(diff) < GUARD_SPEED) GuardRot = targetRot;
+            else if(diff < 0)       GuardRot -= GUARD_SPEED;
+            else                    GuardRot += GUARD_SPEED;
+            Guard.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, GuardRot));
+        }
+
         if (buttonDown)
         {
             if(ticker < 0) {
@@ -145,7 +172,7 @@ public class AdvancedButton : FixedTicker
 
         buttonDown = true;
 
-        Button.transform.localPosition = new Vector3(-0.0125f, -0.01f, -0.0125f);
+        Button.transform.localPosition = new Vector3(0, -0.002f, 0);
 
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
 
@@ -162,7 +189,7 @@ public class AdvancedButton : FixedTicker
 
         buttonDown = false;
 
-        Button.transform.localPosition = new Vector3(-0.0125f, 0.01f, -0.0125f);
+        Button.transform.localPosition = new Vector3(0, 0, 0);
 
         if (batAA == -1)
         {
@@ -338,7 +365,7 @@ public class AdvancedButton : FixedTicker
 
     public void TwitchHandleForcedSolve() {
         buttonDown = false;
-        Button.transform.localPosition = new Vector3(-0.0125f, 0.01f, -0.0125f);
+        Button.transform.localPosition = new Vector3(0, 0, 0);
         Debug.Log("[Square Button #"+thisLoggingID+"] Module forcibly solved.");
         GetComponent<KMBombModule>().HandlePass();
     }

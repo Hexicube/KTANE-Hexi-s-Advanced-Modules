@@ -326,7 +326,7 @@ public class AdvancedKnob : FixedTicker
     //Twitch Plays support
 
     #pragma warning disable 0414
-    string TwitchHelpMessage = "Submit answers with 'press 217'.";
+    string TwitchHelpMessage = "Submit answers with 'dial 217'.";
     #pragma warning restore 0414
 
     private bool forceSolve = false;
@@ -336,21 +336,33 @@ public class AdvancedKnob : FixedTicker
         GetComponent<KMNeedyModule>().HandlePass();
     }
 
-    public KMSelectable[] ProcessTwitchCommand(string cmd) {
+    public IEnumerator ProcessTwitchCommand(string cmd) {
         cmd = cmd.ToLowerInvariant();
         if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
         else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
-        else throw new System.FormatException("Commands must start with 'press'.");
+        else if(cmd.StartsWith("dial ")) cmd = cmd.Substring(5);
+        else {
+            yield return "sendtochaterror Commands must start with 'dial'.";
+            yield break;
+        }
 
         char[] vals = cmd.ToCharArray();
         List<KMSelectable> seq = new List<KMSelectable>();
         foreach(char c in vals) {
             if(c == ' ' || c == ',') continue;
             int val = c - '0';
-            if(val < 0 || val > 9) throw new System.FormatException("Bad character: " + c);
+            if(val < 0 || val > 9) {
+                yield return "sendtochaterror Bad character: " + c;
+                yield break;
+            }
             seq.Add(Buttons[val]);
         }
 
-        return seq.ToArray();
+        yield return "Rotary Phone";
+        foreach(KMSelectable s in seq) {
+            yield return s;
+            while(InSpin) yield return null;
+        }
+        yield break;
     }
 }
