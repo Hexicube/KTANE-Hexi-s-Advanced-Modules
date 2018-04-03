@@ -42,7 +42,7 @@ public class AdvancedKnob : FixedTicker
         int counter = 0;
         int val = DisplayNumber;
         while(counter < NUM_DIGITS) {
-            NumList[NUM_DIGITS - 1 - counter].SetValue(val % 10);
+            NumList[NumList.Length - 1 - counter].SetValue(val % 10);
             counter++;
             val /= 10;
         }
@@ -57,6 +57,7 @@ public class AdvancedKnob : FixedTicker
                 counter++;
                 MODULO *= 10;
             }
+            Debug.Log("[Rotary Phone] Digits: " + NUM_DIGITS + ", Modulo: " + MODULO);
         }
 
         thisLoggingID = loggingID++;

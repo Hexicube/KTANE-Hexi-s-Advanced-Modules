@@ -630,4 +630,43 @@ public class AdvancedSimon : FixedTicker
         Handle(3);
         return false;
     }
+
+    //Twitch Plays support
+
+    #pragma warning disable 0414
+    string TwitchHelpMessage = "Press buttons with 'press RYB'.";
+    #pragma warning restore 0414
+
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Simon States #"+thisLoggingID+"] Module forcibly solved.");
+        StartCoroutine(Solver());
+    }
+
+    private IEnumerator Solver() {
+        while(PuzzleDisplay != null) {
+            Handle(Answer[SubProgress]);
+            yield return new WaitForSeconds(0.2f);
+        }
+        yield break;
+    }
+
+    public KMSelectable[] ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
+        if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
+        else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else throw new System.FormatException("Commands must start with 'press'.");
+
+        char[] buttons = cmd.ToCharArray();
+        List<KMSelectable> seq = new List<KMSelectable>();
+        foreach(char c in buttons) {
+            if(c == ' ' || c == ',') continue;
+                 if(c == 'r') seq.Add(ButtonRed);
+            else if(c == 'y') seq.Add(ButtonYellow);
+            else if(c == 'g') seq.Add(ButtonGreen);
+            else if(c == 'b') seq.Add(ButtonBlue);
+            else throw new System.FormatException("Bad character: " + c);
+        }
+
+        return seq.ToArray();
+    }
 }

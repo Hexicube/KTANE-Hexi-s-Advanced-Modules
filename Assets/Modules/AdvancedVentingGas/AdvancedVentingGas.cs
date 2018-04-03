@@ -213,8 +213,10 @@ public class AdvancedVentingGas : MonoBehaviour
 
     //Twitch Plays support
 
+    #pragma warning disable 0414
     string TwitchHelpMessage = "Submit answers using 'submit N' or 'submit Y'.";
-    
+    #pragma warning restore 0414
+
     public void TwitchHandleForcedSolve() {
         forceSolve = true;
         Display.text = "";
@@ -223,6 +225,7 @@ public class AdvancedVentingGas : MonoBehaviour
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
         if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
         else if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
         else {
@@ -231,8 +234,8 @@ public class AdvancedVentingGas : MonoBehaviour
         }
 
         KMSelectable btn;
-        if(cmd.Equals("Y") || cmd.ToLower().Equals("yes")) btn = YesButton;
-        else if(cmd.Equals("N") || cmd.ToLower().Equals("no")) btn = NoButton;
+             if(cmd.Equals("y") || cmd.Equals("yes") || cmd.Equals("t") || cmd.Equals("true")) btn = YesButton;
+        else if(cmd.Equals("n") || cmd.Equals("no")  || cmd.Equals("f") || cmd.Equals("false")) btn = NoButton;
         else {
             yield return "sendtochaterror Valid answers are 'Y', 'Yes', 'N', or 'No'.";
             yield break;

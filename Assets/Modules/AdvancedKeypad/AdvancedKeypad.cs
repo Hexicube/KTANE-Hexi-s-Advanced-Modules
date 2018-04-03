@@ -180,8 +180,10 @@ public class AdvancedKeypad : MonoBehaviour
 
     //Twitch Plays support
 
+    #pragma warning disable 0414
     string TwitchHelpMessage = "Submit a solution using 'press 1 4 2...'. You can use either numbers starting with 1 at the top going clockwise (1 through 8), or compass directions (N, NE, E, etc.).";
-    
+    #pragma warning restore 0414
+
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Round Keypad #"+thisLoggingID+"] Module forcibly solved.");
         for(int a = 0; a < ButtonStates.Length; a++) {

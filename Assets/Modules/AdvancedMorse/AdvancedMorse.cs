@@ -930,8 +930,10 @@ public class AdvancedMorse : FixedTicker
 
     //Twitch Plays support
 
+    #pragma warning disable 0414
     string TwitchHelpMessage = "Submit a solution using 'submit ..-.'. Toggle the lights using 'toggle'.";
-    
+    #pragma warning restore 0414
+
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
         StartCoroutine(Solver());

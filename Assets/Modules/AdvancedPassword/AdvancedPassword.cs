@@ -304,4 +304,93 @@ public class AdvancedPassword : MonoBehaviour
             }
         }
     }
+
+    //Twitch Plays support
+
+    #pragma warning disable 0414
+    string TwitchHelpMessage = "Cycle a dial with 'cycle TL 6'. Cycle all dials with 'cycle 1 8 2 12 0 5'. Listen to dials with 'listen'. Submit an answer with 'submit'.\nDial positions can be specified with positions (TL, TM, TR, BL, BM, BR) or indexes (1, 2, 3, 4, 5, 6).";
+    #pragma warning restore 0414
+
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Safety Safe #"+thisLoggingID+"] Module forcibly solved.");
+        StartCoroutine(Solver());
+    }
+
+    private IEnumerator Solver() {
+        for(int a = 0; a < 6; a++) {
+            while(DialPos[a] != AnswerPos[a]) {
+                HandleInteract(a);
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        HandleLever();
+        yield break;
+    }
+
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
+        if(cmd.Equals("listen") || cmd.Equals("cycle")) {
+            yield return "Safety Safe";
+            for(int a = 0; a < 6; a++) {
+                for(int b = 0; b < 12; b++) {
+                    HandleInteract(a);
+                    yield return new WaitForSeconds(0.25f);
+                }
+                yield return new WaitForSeconds(0.75f);
+            }
+            yield break;
+        }
+        if(cmd.Equals("lever") || cmd.Equals("submit")) {
+            yield return "Safety Safe";
+            HandleLever();
+            yield break;
+        }
+        if(cmd.StartsWith("cycle ") || cmd.StartsWith("press ")) {
+            string[] parts = cmd.Substring(6).Split(' ');
+            if(parts.Length == 6) {
+                int[] amts = new int[6];
+                for(int a = 0; a < 6; a++) {
+                    amts[a] = int.Parse(parts[a]) % 12;
+                    if(amts[a] < 0) amts[a] += 12;
+                }
+
+                yield return "Safety Safe";
+                for(int a = 0; a < 6; a++) {
+                    for(int b = 0; b < amts[a]; b++) {
+                        HandleInteract(a);
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+                yield break;
+            }
+            if(parts.Length == 2) {
+                int dialPos, dialAmt;
+                     if(parts[0].Equals("1") || parts[0].Equals("TL")) dialPos = 0;
+                else if(parts[0].Equals("2") || parts[0].Equals("TM") || parts[0].Equals("TC")) dialPos = 1;
+                else if(parts[0].Equals("3") || parts[0].Equals("TR")) dialPos = 2;
+                else if(parts[0].Equals("4") || parts[0].Equals("BL")) dialPos = 3;
+                else if(parts[0].Equals("5") || parts[0].Equals("BM") || parts[0].Equals("BC")) dialPos = 4;
+                else if(parts[0].Equals("6") || parts[0].Equals("BR")) dialPos = 5;
+                else {
+                    yield return "sendtochaterror Unknown dial position: " + parts[0];
+                    yield break;
+                }
+                dialAmt = int.Parse(parts[1]) % 12;
+                if(dialAmt < 0) dialAmt += 12;
+                
+                yield return "Safety Safe";
+                for(int a = 0; a < dialAmt; a++) {
+                    HandleInteract(dialPos);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                yield break;
+            }
+            yield return "sendtochaterror Use either '<dialpos> <amount>' or '<amt1> <amt2> ... <amt6>' to cycle dials.";
+            yield break;
+        }
+        int idx = cmd.IndexOf(' ');
+        if(idx == -1) idx = cmd.Length;
+        yield return "sendtochaterror Unknown command: " + cmd.Substring(0, idx);
+        yield break;
+    }
 }

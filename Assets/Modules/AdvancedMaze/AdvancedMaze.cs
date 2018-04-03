@@ -1535,8 +1535,10 @@ public class AdvancedMaze : MonoBehaviour
 
     //Twitch Plays support
 
+    #pragma warning disable 0414
     string TwitchHelpMessage = "Rotate pipes using 'rotate A3 B4 B2 ...'. Submit answer using 'submit'. Pipe positions use battleship notation, letters are A-F left to right and numbers are 1-6 top to bottom.";
-    
+    #pragma warning restore 0414
+
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
 

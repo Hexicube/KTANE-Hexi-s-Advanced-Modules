@@ -450,8 +450,10 @@ public class AdvancedMemory : MonoBehaviour
 
     //Twitch Plays support
 
+    #pragma warning disable 0414
     string TwitchHelpMessage = "Enter the Forget Me Not sequence with \"!{0} press 531820...\". The sequence length depends on how many modules were on the bomb. You may use spaces and commas in the digit sequence.";
-    
+    #pragma warning restore 0414
+
     public void TwitchHandleForcedSolve() {
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module forcibly solved.");
         forcedSolve = true;
