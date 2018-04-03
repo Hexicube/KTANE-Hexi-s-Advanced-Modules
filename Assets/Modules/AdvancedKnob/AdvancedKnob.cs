@@ -9,6 +9,7 @@ Three numbers are displayed at all times. Whenever the numbers change, add them 
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AdvancedKnob : FixedTicker
 {
@@ -23,6 +24,7 @@ public class AdvancedKnob : FixedTicker
     public KMAudio Sound;
 
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
+    private KMSelectable[] Buttons;
     public Nixie[] NumList;
     public TimerDial Dial1, Dial2;
 
@@ -62,6 +64,8 @@ public class AdvancedKnob : FixedTicker
 
         thisLoggingID = loggingID++;
 
+        Buttons = new KMSelectable[] {Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};
+
         Button0.OnInteract += Handle0;
         Button1.OnInteract += Handle1;
         Button2.OnInteract += Handle2;
@@ -86,6 +90,11 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnActivate()
     {
+        if(forceSolve) {
+            GetComponent<KMNeedyModule>().HandlePass();
+            return;
+        }
+
         SetDisplay();
     }
 
@@ -112,6 +121,8 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnTimerExpired()
     {
+        if(forceSolve) return;
+
         GetComponent<KMNeedyModule>().HandleStrike();
         CurAnswer = Random.Range(0, MODULO);
         DisplayNumber = CurAnswer;
@@ -310,5 +321,36 @@ public class AdvancedKnob : FixedTicker
     {
         Handle(9);
         return false;
+    }
+
+    //Twitch Plays support
+
+    #pragma warning disable 0414
+    string TwitchHelpMessage = "Submit answers with 'press 217'.";
+    #pragma warning restore 0414
+
+    private bool forceSolve = false;
+    public void TwitchHandleForcedSolve() {
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Module forcibly solved.");
+        forceSolve = true;
+        GetComponent<KMNeedyModule>().HandlePass();
+    }
+
+    public KMSelectable[] ProcessTwitchCommand(string cmd) {
+        cmd = cmd.ToLowerInvariant();
+        if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
+        else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else throw new System.FormatException("Commands must start with 'press'.");
+
+        char[] vals = cmd.ToCharArray();
+        List<KMSelectable> seq = new List<KMSelectable>();
+        foreach(char c in vals) {
+            if(c == ' ' || c == ',') continue;
+            int val = c - '0';
+            if(val < 0 || val > 9) throw new System.FormatException("Bad character: " + c);
+            seq.Add(Buttons[val]);
+        }
+
+        return seq.ToArray();
     }
 }
