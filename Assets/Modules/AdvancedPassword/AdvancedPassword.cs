@@ -308,7 +308,7 @@ public class AdvancedPassword : MonoBehaviour
     //Twitch Plays support
 
     #pragma warning disable 0414
-    string TwitchHelpMessage = "Cycle a dial with 'cycle TL 6'. Cycle all dials with 'cycle 1 8 2 12 0 5'. Listen to dials with 'listen'. Submit an answer with 'submit'.\nDial positions can be specified with positions (TL, TM, TR, BL, BM, BR) or indexes (1, 2, 3, 4, 5, 6).";
+    string TwitchHelpMessage = "Cycle a dial with 'press TL 6'. Cycle all dials with 'press 1 8 2 12 0 5'. Listen to dials with 'listen' or 'listen BR'. Submit an answer with 'submit'.\nDial positions are specified with positions (TL, TM, TR, BL, BM, BR).";
     #pragma warning restore 0414
 
     public void TwitchHandleForcedSolve() {
@@ -327,70 +327,143 @@ public class AdvancedPassword : MonoBehaviour
         yield break;
     }
 
-    public IEnumerator ProcessTwitchCommand(string cmd) {
-        cmd = cmd.ToLowerInvariant();
-        if(cmd.Equals("listen") || cmd.Equals("cycle")) {
-            yield return "Safety Safe";
-            for(int a = 0; a < 6; a++) {
-                for(int b = 0; b < 12; b++) {
-                    HandleInteract(a);
-                    yield return new WaitForSeconds(0.25f);
-                }
-                yield return new WaitForSeconds(0.75f);
-            }
-            yield break;
-        }
-        if(cmd.Equals("lever") || cmd.Equals("submit")) {
-            yield return "Safety Safe";
-            HandleLever();
-            yield break;
-        }
-        if(cmd.StartsWith("cycle ") || cmd.StartsWith("press ")) {
-            string[] parts = cmd.Substring(6).Split(' ');
-            if(parts.Length == 6) {
-                int[] amts = new int[6];
-                for(int a = 0; a < 6; a++) {
-                    amts[a] = int.Parse(parts[a]) % 12;
-                    if(amts[a] < 0) amts[a] += 12;
-                }
+    private int ParseDial(string dial) {
+        if(dial.Equals("tl")) return 0;
+        if(dial.Equals("tm") || dial.Equals("tc")) return 1;
+        if(dial.Equals("tr")) return 2;
+        if(dial.Equals("bl")) return 3;
+        if(dial.Equals("bm") || dial.Equals("bc")) return 4;
+        if(dial.Equals("br")) return 5;
+        return -1;
+    }
 
-                yield return "Safety Safe";
-                for(int a = 0; a < 6; a++) {
-                    for(int b = 0; b < amts[a]; b++) {
-                        HandleInteract(a);
-                        yield return new WaitForSeconds(0.1f);
+    public IEnumerator ProcessTwitchCommand(string cmd) {
+        string[] command = cmd.ToLowerInvariant().Split(' ');
+        int temp;
+        if(!int.TryParse(command[0], out temp)) {
+            if(command.Length == 1) {
+                int dial = ParseDial(command[0]);
+                if(dial == -1) {
+                    if(command[0].Equals("listen") || command[0].Equals("cycle")) {
+                        yield return "Safety Safe";
+                        for(int a = 0; a < 6; a++) {
+                            for(int b = 0; b < 12; b++) {
+                                HandleInteract(a);
+                                yield return new WaitForSeconds(0.25f);
+                            }
+                            yield return new WaitForSeconds(0.75f);
+                        }
+                        yield break;
                     }
+
+                    if(command[0].Equals("submit") || command[0].Equals("guess") || command[0].Equals("lever")) {
+                        yield return "Safety Safe";
+                        HandleLever();
+                        yield break;
+                    }
+
+                    yield return "sendtochaterror Unknown dial or command: " + command[0];
+                    yield break;
+                }
+                
+                yield return "Safety Safe";
+                    for(int a = 0; a < 12; a++) {
+                    HandleInteract(dial);
+                    yield return new WaitForSeconds(0.25f);
                 }
                 yield break;
             }
-            if(parts.Length == 2) {
-                int dialPos, dialAmt;
-                     if(parts[0].Equals("1") || parts[0].Equals("TL")) dialPos = 0;
-                else if(parts[0].Equals("2") || parts[0].Equals("TM") || parts[0].Equals("TC")) dialPos = 1;
-                else if(parts[0].Equals("3") || parts[0].Equals("TR")) dialPos = 2;
-                else if(parts[0].Equals("4") || parts[0].Equals("BL")) dialPos = 3;
-                else if(parts[0].Equals("5") || parts[0].Equals("BM") || parts[0].Equals("BC")) dialPos = 4;
-                else if(parts[0].Equals("6") || parts[0].Equals("BR")) dialPos = 5;
-                else {
-                    yield return "sendtochaterror Unknown dial position: " + parts[0];
+            if(command.Length == 2) {
+                int dial = ParseDial(command[0]);
+                if(dial == -1) {
+                    if(command[0].Equals("listen") || command[0].Equals("cycle")) {
+                        dial = ParseDial(command[1]);
+                        if(dial == -1) {
+                            yield return "sendtochaterror Unknown dial: " + command[0];
+                            yield break;
+                        }
+
+                        yield return "Safety Safe";
+                            for(int a = 0; a < 12; a++) {
+                            HandleInteract(dial);
+                            yield return new WaitForSeconds(0.25f);
+                        }
+                        yield break;
+                    }
+
+                    yield return "sendtochaterror Unknown dial: " + command[0];
                     yield break;
                 }
-                dialAmt = int.Parse(parts[1]) % 12;
-                if(dialAmt < 0) dialAmt += 12;
+                int amt = int.Parse(command[1]) % 12;
+                if(amt < 0) amt += 12;
                 
                 yield return "Safety Safe";
-                for(int a = 0; a < dialAmt; a++) {
-                    HandleInteract(dialPos);
+                for(int a = 0; a < amt; a++) {
+                    HandleInteract(dial);
                     yield return new WaitForSeconds(0.1f);
                 }
                 yield break;
             }
-            yield return "sendtochaterror Use either '<dialpos> <amount>' or '<amt1> <amt2> ... <amt6>' to cycle dials.";
+            if(command.Length == 3) {
+                if(command[0].Equals("press") || command[0].Equals("cycle")) {
+                    int dial = ParseDial(command[1]);
+                    if(dial == -1) {
+                        yield return "sendtochaterror Unknown dial: " + command[0];
+                        yield break;
+                    }
+                    int amt = int.Parse(command[2]) % 12;
+                    if(amt < 0) amt += 12;
+                
+                    yield return "Safety Safe";
+                    for(int a = 0; a < amt; a++) {
+                        HandleInteract(dial);
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    yield break;
+                }
+            }
+            if(command.Length == 7) {
+                if(command[0].Equals("press") || command[0].Equals("cycle") || command[0].Equals("submit") || command[0].Equals("guess")) {
+                    int[] amt = new int[6];
+                    for(int a = 0; a < 6; a++) {
+                        amt[a] = int.Parse(command[a+1]) % 12;
+                        if(amt[a] < 0) amt[a] += 12;
+                    }
+
+                    yield return "Safety Safe";
+                    for(int a = 0; a < 6; a++) {
+                        for(int b = 0; b < amt[a]; b++) {
+                            HandleInteract(a);
+                            yield return new WaitForSeconds(0.1f);
+                        }
+                    }
+                    if(command[0].Equals("submit") || command[0].Equals("guess")) HandleLever();
+
+                    yield break;
+                }
+            }
+            yield return "sendtochaterror Unknown command: " + command[0];
             yield break;
         }
-        int idx = cmd.IndexOf(' ');
-        if(idx == -1) idx = cmd.Length;
-        yield return "sendtochaterror Unknown command: " + cmd.Substring(0, idx);
+        if(command.Length == 6) {
+            int[] amt = new int[6];
+            amt[0] = temp % 12;
+            if(amt[0] < 0) amt[0] += 12;
+            for(int a = 0; a < 6; a++) {
+                amt[a] = int.Parse(command[a]) % 12;
+                if(amt[a] < 0) amt[a] += 12;
+            }
+
+            yield return "Safety Safe";
+            for(int a = 0; a < 6; a++) {
+                for(int b = 0; b < amt[a]; b++) {
+                    HandleInteract(a);
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+            yield break;
+        }
+        yield return "sendtochaterror Unknown command. Refer to help for a list of valid commands.";
         yield break;
     }
 }

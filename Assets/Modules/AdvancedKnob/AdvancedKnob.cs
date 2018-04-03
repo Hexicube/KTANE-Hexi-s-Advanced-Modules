@@ -362,6 +362,7 @@ public class AdvancedKnob : FixedTicker
         foreach(KMSelectable s in seq) {
             yield return s;
             while(InSpin) yield return null;
+            yield return s;
         }
         yield break;
     }
