@@ -498,6 +498,7 @@ public class AdvancedMemory : MonoBehaviour
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
         if(progress < Solution.Length) {
+            yield return "Forget Me Not";
             yield return "sendtochat DansGame A little early, don't you think?";
             Handle(digits[0]);
             yield break;

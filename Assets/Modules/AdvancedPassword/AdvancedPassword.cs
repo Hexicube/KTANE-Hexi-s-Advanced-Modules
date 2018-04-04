@@ -349,9 +349,9 @@ public class AdvancedPassword : MonoBehaviour
                         for(int a = 0; a < 6; a++) {
                             for(int b = 0; b < 12; b++) {
                                 HandleInteract(a);
-                                yield return new WaitForSeconds(0.25f);
+                                yield return new WaitForSeconds(0.4f);
                             }
-                            yield return new WaitForSeconds(0.75f);
+                            yield return new WaitForSeconds(0.6f);
                         }
                         yield break;
                     }
@@ -379,6 +379,17 @@ public class AdvancedPassword : MonoBehaviour
                     if(command[0].Equals("listen") || command[0].Equals("cycle")) {
                         dial = ParseDial(command[1]);
                         if(dial == -1) {
+                            if(command[1].Equals("fast")) {
+                                yield return "Safety Safe";
+                                for(int a = 0; a < 6; a++) {
+                                    for(int b = 0; b < 12; b++) {
+                                        HandleInteract(a);
+                                        yield return new WaitForSeconds(0.2f);
+                                    }
+                                    yield return new WaitForSeconds(0.8f);
+                                }
+                                yield break;
+                            }
                             yield return "sendtochaterror Unknown dial: " + command[0];
                             yield break;
                         }
@@ -386,7 +397,7 @@ public class AdvancedPassword : MonoBehaviour
                         yield return "Safety Safe";
                             for(int a = 0; a < 12; a++) {
                             HandleInteract(dial);
-                            yield return new WaitForSeconds(0.25f);
+                            yield return new WaitForSeconds(0.4f);
                         }
                         yield break;
                     }
@@ -442,7 +453,7 @@ public class AdvancedPassword : MonoBehaviour
                     yield break;
                 }
             }
-            yield return "sendtochaterror Unknown command: " + command[0];
+            yield return "sendtochaterror Unknown command: " + command[0] + " (with " + (command.Length-1) + " arguments)";
             yield break;
         }
         if(command.Length == 6) {

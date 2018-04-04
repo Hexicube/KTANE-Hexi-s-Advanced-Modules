@@ -131,7 +131,7 @@ public class AdvancedButton : FixedTicker
     private int flickerTime = 0;
     public override void RealFixedTick()
     {
-        float targetRot = GuardState ? 90 : 0;
+        float targetRot = (GuardState || buttonDown) ? 90 : 0;
         float diff = targetRot - GuardRot;
         if(diff != 0) {
             if(Mathf.Abs(diff) < GUARD_SPEED) GuardRot = targetRot;
