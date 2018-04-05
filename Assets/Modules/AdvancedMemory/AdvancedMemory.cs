@@ -19,6 +19,7 @@ using System.Linq;
 public class AdvancedMemory : MonoBehaviour
 {
     private const int ADDED_STAGES = 0;
+    private const bool PERFORM_AUTO_SOLVE = false;
 
     public ToneGenerator Tone;
 
@@ -230,6 +231,10 @@ public class AdvancedMemory : MonoBehaviour
         }
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Display: " + displayText);
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Solution: " + solutionText);
+
+        if(PERFORM_AUTO_SOLVE) {
+            TwitchHandleForcedSolve();
+        }
     }
 
     int ticker = 0;
