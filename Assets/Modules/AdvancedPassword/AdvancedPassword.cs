@@ -384,9 +384,9 @@ public class AdvancedPassword : MonoBehaviour
                                 for(int a = 0; a < 6; a++) {
                                     for(int b = 0; b < 12; b++) {
                                         HandleInteract(a);
-                                        yield return new WaitForSeconds(0.2f);
+                                        yield return new WaitForSeconds(0.25f);
                                     }
-                                    yield return new WaitForSeconds(0.8f);
+                                    yield return new WaitForSeconds(0.75f);
                                 }
                                 yield break;
                             }
