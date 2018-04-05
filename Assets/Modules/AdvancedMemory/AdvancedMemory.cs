@@ -18,6 +18,8 @@ using System.Linq;
 
 public class AdvancedMemory : MonoBehaviour
 {
+    private const int ADDED_STAGES = 0;
+
     public ToneGenerator Tone;
 
     public static readonly string[] ignoredModules = {
@@ -86,7 +88,7 @@ public class AdvancedMemory : MonoBehaviour
 
     private void ActivateModule()
     {
-        int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        int count = BombInfo.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
         Display = new int[count];
         Solution = new int[count];
 
@@ -248,7 +250,7 @@ public class AdvancedMemory : MonoBehaviour
             }
             else
             {
-                int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+                int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
@@ -276,7 +278,7 @@ public class AdvancedMemory : MonoBehaviour
     {
         if (Solution == null || Position >= Solution.Length) return false;
 
-        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
         if (progress < Solution.Length && !forcedSolve) {
             Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
             GetComponent<KMBombModule>().HandleStrike();
@@ -315,7 +317,35 @@ public class AdvancedMemory : MonoBehaviour
     private void UpdateDisplayMesh(int solved)
     {
         if(solved == -1) {
-            if(Position > 24) {
+            //New method: Scroll small display as needed.
+            DisplayMeshBig.text = "";
+
+            string text = "";
+
+            int PositionModified = Position;
+            int Offset = 0;
+            while(PositionModified > 24) {
+                PositionModified -= 12;
+                Offset += 12;
+            }
+
+            for(int a = Offset; a < Mathf.Min(Offset + 24, Solution.Length); a++) {
+                string val = "-";
+                if (a < Position) val = "" + Solution[a];
+
+                if(a > Offset) {
+                    if (a % 3 == 0) {
+                        if (a % 12 == 0) text += "\n";
+                        else text += " ";
+                    }
+                }
+                text += val;
+            }
+
+            DisplayMesh.text = text;
+
+            //Old method: Use small for first 24, switch to XXX:YYY after.
+            /*if(Position > 24) {
                 DisplayMesh.text = "";
                 string sum = ""+Solution.Length;
                 string pos = ""+Position;
@@ -343,7 +373,7 @@ public class AdvancedMemory : MonoBehaviour
                 }
 
                 DisplayMesh.text = text;
-            }
+            }*/
         }
         else {
             DisplayMesh.text = "";
