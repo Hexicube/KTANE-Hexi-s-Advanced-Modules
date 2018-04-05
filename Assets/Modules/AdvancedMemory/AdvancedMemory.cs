@@ -248,6 +248,8 @@ public class AdvancedMemory : MonoBehaviour
     {
         if(forcedSolve) return;
 
+        if(displayTimer > 0) displayTimer -= Time.fixedDeltaTime;
+
         ticker++;
         if (ticker == 5)
         {
@@ -262,8 +264,7 @@ public class AdvancedMemory : MonoBehaviour
             {
                 int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
                 if(progress > displayCurStage) {
-                    if(displayTimer > 0) displayTimer -= Time.fixedDeltaTime*6;
-                    else {
+                    if(displayTimer <= 0) {
                         displayTimer = STAGE_DELAY;
                         displayCurStage++;
                     }
