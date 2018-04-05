@@ -73,16 +73,17 @@ public class AdvancedMemory : MonoBehaviour
         Button8.OnInteract += Handle8;
         Button9.OnInteract += Handle9;
 
-        Button0.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button1.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button2.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button3.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button4.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button5.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button6.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button7.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button8.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
-        Button9.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+        Color c = new Color(.71f, .70f, .68f); //new Color(0.91f, 0.88f, 0.86f);
+        Button0.GetComponent<MeshRenderer>().material.color = c;
+        Button1.GetComponent<MeshRenderer>().material.color = c;
+        Button2.GetComponent<MeshRenderer>().material.color = c;
+        Button3.GetComponent<MeshRenderer>().material.color = c;
+        Button4.GetComponent<MeshRenderer>().material.color = c;
+        Button5.GetComponent<MeshRenderer>().material.color = c;
+        Button6.GetComponent<MeshRenderer>().material.color = c;
+        Button7.GetComponent<MeshRenderer>().material.color = c;
+        Button8.GetComponent<MeshRenderer>().material.color = c;
+        Button9.GetComponent<MeshRenderer>().material.color = c;
 
         GetComponent<KMBombModule>().OnActivate += ActivateModule;
     }
