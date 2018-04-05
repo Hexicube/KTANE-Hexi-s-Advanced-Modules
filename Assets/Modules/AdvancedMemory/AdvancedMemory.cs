@@ -20,6 +20,7 @@ public class AdvancedMemory : MonoBehaviour
 {
     private const int ADDED_STAGES = 0;
     private const bool PERFORM_AUTO_SOLVE = false;
+    private const float STAGE_DELAY = 1.5f;
 
     public ToneGenerator Tone;
 
@@ -240,6 +241,9 @@ public class AdvancedMemory : MonoBehaviour
 
     int ticker = 0;
     bool done = false;
+
+    float displayTimer = 1;
+    int displayCurStage = 0;
     void FixedUpdate()
     {
         if(forcedSolve) return;
@@ -257,6 +261,14 @@ public class AdvancedMemory : MonoBehaviour
             else
             {
                 int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
+                if(progress > displayCurStage) {
+                    if(displayTimer > 0) displayTimer -= Time.fixedDeltaTime*6;
+                    else {
+                        displayTimer = STAGE_DELAY;
+                        displayCurStage++;
+                    }
+                    progress = displayCurStage;
+                }
                 if (progress >= Display.Length)
                 {
                     StageMesh.text = "--";
