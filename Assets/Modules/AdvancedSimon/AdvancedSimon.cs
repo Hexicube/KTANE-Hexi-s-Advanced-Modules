@@ -472,35 +472,31 @@ public class AdvancedSimon : FixedTicker
         if (PuzzleDisplay == null) return;
         if (ticker == 0)
         {
-            if (DisplayPos >= 0)
+            if(DisplayPos >= 0)
             {
                 string tone = "";
-                if (PuzzleDisplay[DisplayPos][0])
-                {
+                if(PuzzleDisplay[DisplayPos][0]) {
                     ButtonRed.GetComponent<MeshRenderer>().material.color = RED;
                     tone += "R";
                 }
-                if (PuzzleDisplay[DisplayPos][1])
-                {
+                if(PuzzleDisplay[DisplayPos][1]) {
                     ButtonYellow.GetComponent<MeshRenderer>().material.color = YELLOW;
                     tone += "Y";
                 }
-                if (PuzzleDisplay[DisplayPos][2])
-                {
+                if(PuzzleDisplay[DisplayPos][2]) {
                     ButtonGreen.GetComponent<MeshRenderer>().material.color = GREEN;
                     tone += "G";
                 }
-                if (PuzzleDisplay[DisplayPos][3])
-                {
+                if(PuzzleDisplay[DisplayPos][3]) {
                     ButtonBlue.GetComponent<MeshRenderer>().material.color = BLUE;
                     tone += "B";
                 }
-                if (soundActive) Sound.PlaySoundAtTransform(tone, transform);
+                if(soundActive) PlaySound(tone, false);
             }
         }
-        else if (ticker == 15)
+        else if(ticker == 15)
         {
-            if (DisplayPos >= 0)
+            if(DisplayPos >= 0)
             {
                 if (PuzzleDisplay[DisplayPos][0]) ButtonRed.GetComponent<MeshRenderer>().material.color = DARKRED;
                 if (PuzzleDisplay[DisplayPos][1]) ButtonYellow.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
@@ -517,6 +513,36 @@ public class AdvancedSimon : FixedTicker
         }
         ticker++;
     }
+
+    private void PlaySound(string name, bool wasAns) {
+        if(bop) {
+            if(name.Equals("R") || name.Equals("RY") || name.Equals("RGB")) {
+                if(wasAns) Sound.PlaySoundAtTransform("PULL2", transform);
+                else       Sound.PlaySoundAtTransform("PULL",  transform);
+            }
+            else if(name.Equals("Y") || name.Equals("YG") || name.Equals("RYB")) {
+                if(wasAns) Sound.PlaySoundAtTransform("TWIST2", transform);
+                else       Sound.PlaySoundAtTransform("TWIST",  transform);
+            }
+            else if(name.Equals("G") || name.Equals("GB") || name.Equals("RYG")) {
+                if(wasAns) Sound.PlaySoundAtTransform("FLICK2", transform);
+                else       Sound.PlaySoundAtTransform("FLICK",  transform);
+            }
+            else if(name.Equals("B") || name.Equals("RB") || name.Equals("YGB")) {
+                if(wasAns) Sound.PlaySoundAtTransform("SPIN2", transform);
+                else       Sound.PlaySoundAtTransform("SPIN",  transform);
+            }
+            else if(name.Equals("RYGB") || name.Equals("RG") || name.Equals("YB")) {
+                Sound.PlaySoundAtTransform("BOP", transform);
+            }
+            else  {
+                Debug.Log("Bop-it error with tone: " + name);
+            }
+        }
+        else Sound.PlaySoundAtTransform(name, transform);
+    }
+
+    private void bopsolve() { Sound.PlaySoundAtTransform("PASS", transform); }
 
     private void Handle(int val)
     {
@@ -545,6 +571,7 @@ public class AdvancedSimon : FixedTicker
                 {
                     Debug.Log("[Simon States #"+thisLoggingID+"] Module solved.");
                     GetComponent<KMBombModule>().HandlePass();
+                    if(bop) Invoke("bopsolve", 0.6f);
                     PuzzleDisplay = null;
                 }
                 else Debug.Log("[Simon States #"+thisLoggingID+"] Stage " + Progress + " complete.");
@@ -585,25 +612,21 @@ public class AdvancedSimon : FixedTicker
         }
 
         pressTicker = 15;
-        if (val == 0)
-        {
+        if (val == 0) {
             ButtonRed.GetComponent<MeshRenderer>().material.color = RED;
-            Sound.PlaySoundAtTransform("R", transform);
+            PlaySound("R", true);
         }
-        else if (val == 1)
-        {
+        else if(val == 1) {
             ButtonYellow.GetComponent<MeshRenderer>().material.color = YELLOW;
-            Sound.PlaySoundAtTransform("Y", transform);
+            PlaySound("Y", true);
         }
-        else if (val == 2)
-        {
+        else if(val == 2) {
             ButtonGreen.GetComponent<MeshRenderer>().material.color = GREEN;
-            Sound.PlaySoundAtTransform("G", transform);
+            PlaySound("G", true);
         }
-        else
-        {
+        else {
             ButtonBlue.GetComponent<MeshRenderer>().material.color = BLUE;
-            Sound.PlaySoundAtTransform("B", transform);
+            PlaySound("B", true);
         }
     }
 
@@ -645,15 +668,27 @@ public class AdvancedSimon : FixedTicker
     private IEnumerator Solver() {
         while(PuzzleDisplay != null) {
             Handle(Answer[SubProgress]);
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(bop?0.4f:0.29f);
         }
         yield break;
     }
-
-    public KMSelectable[] ProcessTwitchCommand(string cmd) {
+    
+    private bool bop = false;
+    public IEnumerator ProcessTwitchCommand(string cmd) {
         cmd = cmd.ToLowerInvariant();
         if(cmd.StartsWith("press ")) cmd = cmd.Substring(6);
         else if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
+        else if(cmd.Equals("soundpack")) {
+            if(bop) {
+                yield return "sendtochaterror That is already on.";
+                yield break;
+            }
+            yield return "Simon States";
+            Sound.PlaySoundAtTransform("BOP", transform);
+            yield return "sendtochat Pull-it! Twist-it! Bop-it!";
+            bop = true;
+            yield break;
+        }
         else throw new System.FormatException("Commands must start with 'press'.");
 
         char[] buttons = cmd.ToCharArray();
@@ -667,6 +702,12 @@ public class AdvancedSimon : FixedTicker
             else throw new System.FormatException("Bad character: " + c);
         }
 
-        return seq.ToArray();
+        yield return "Simon States";
+        foreach(KMSelectable s in seq) {
+            yield return s;
+            yield return new WaitForSeconds(bop?0.4f:0.29f);
+            yield return s;
+        }
+        yield break;
     }
 }
