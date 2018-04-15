@@ -360,7 +360,7 @@ public class AdvancedButton : FixedTicker
 
     #pragma warning disable 0414
     bool TwitchZenMode = false;
-    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.";
+    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.\nRaise the molly guard and examine the button with 'view'.";
     #pragma warning restore 0414
 
     public void TwitchHandleForcedSolve() {
