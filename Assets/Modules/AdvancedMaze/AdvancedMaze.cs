@@ -67,10 +67,11 @@ Against: No Parallel port
 
  */
 
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
+using UnityEngine;
 
 public class AdvancedMaze : MonoBehaviour
 {
@@ -1624,6 +1625,24 @@ public class AdvancedMaze : MonoBehaviour
                 yield return "trycancel";
             }
             yield break;
+        }
+        else if(cmd.Equals("shuffle")) {
+            var buttonIndexes = new List<int>();
+            for (int i = 0; i < 36; i++)
+                buttonIndexes.AddRange(Enumerable.Repeat(i, Random.Range(0, 4)));
+            buttonIndexes.Sort((a, b) => ((a / 6) + (a % 6)).CompareTo((b / 6) + (b % 6)));
+            for (int i = 0; i < buttonIndexes.Count; i++)
+            {
+                var offset = Random.Range(-2, 3);
+                if (offset != 0 && i + offset >= 0 && i + offset < buttonIndexes.Count)
+                {
+                    var t = buttonIndexes[i];
+                    buttonIndexes[i] = buttonIndexes[i + offset];
+                    buttonIndexes[i + offset] = t;
+                }
+            }
+            yield return "Plumbing";
+            yield return buttonIndexes.Select(ix => Buttons[ix % 6][ix / 6]).ToArray();
         }
         else {
             yield return "sendtochaterror Valid commands are 'rotate' and 'submit'.";
