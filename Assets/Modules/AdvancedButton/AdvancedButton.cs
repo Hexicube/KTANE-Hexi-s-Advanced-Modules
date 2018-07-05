@@ -470,7 +470,9 @@ public class AdvancedButton : FixedTicker
     }
 
     private IEnumerator ScheduleAction(bool buttonDown, List<int> times, bool secondsMode) {
-        int curTime = (int)(Info.GetTime()+0.5f);
+        int curTime = (int)Info.GetTime();
+
+        yield return null; //Start camera movement.
 
         int targetTime = -1;
         //yield return "sendtochat DEBUG | Seconds mode: " + secondsMode;
@@ -516,11 +518,11 @@ public class AdvancedButton : FixedTicker
             yield break;
         }
         yield return "sendtochat Target time: " + (targetTime / 60).ToString("D2") + ":" + (targetTime % 60).ToString("D2");
-        if(TwitchZenMode) targetTime++; //Zen mode is weird
+        //if(TwitchZenMode) targetTime++; //Zen mode is weird
         if(Mathf.Abs(curTime-targetTime) > 15) yield return "waiting music";
 
         while(true) {
-            curTime = (int)(Info.GetTime()+0.5f);
+            curTime = (int)Info.GetTime();
             if(curTime != targetTime) yield return "trycancel";
             else {
                 yield return Button;
