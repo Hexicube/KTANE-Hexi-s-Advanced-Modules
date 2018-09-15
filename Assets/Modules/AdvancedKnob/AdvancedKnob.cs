@@ -361,8 +361,9 @@ public class AdvancedKnob : FixedTicker
         yield return "Rotary Phone";
         foreach(KMSelectable s in seq) {
             yield return s;
-            while(InSpin) yield return null;
             yield return s;
+            while(InSpin) yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
         yield break;
     }
