@@ -29,8 +29,10 @@ public class AdvancedMemory : MonoBehaviour
         "Forget Everything", //Cruel FMN.
         "Turn The Key",      //TTK is timer based, and stalls the bomb if only it and FMN are left.
         "Souvenir",          //Similar situation to TTK, stalls the bomb.
-        "The Time Keeper",   //Again, timilar to TTK.
-        "Simon's Stages",    //Not sure, told to add it.
+        "The Time Keeper",   //Again, similar to TTK.
+        "Simon's Stages",    //Behaves like FMN.
+        "Forget This",       //Behaves like FMN.
+        "Purgatory",         //Quote from manual "If the LED is YELLOW, do not click anything on the module until every other module is disarmed, and then go to the last list in the manual."
     };
 
     public static int loggingID = 1;
