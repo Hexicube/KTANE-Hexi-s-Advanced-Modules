@@ -23,15 +23,7 @@ public class AdvancedMemory : MonoBehaviour
     private const float STAGE_DELAY = 1.5f;
 
     public ToneGenerator Tone;
-
-    public static readonly string[] ignoredModules = {
-        "Forget Me Not",     //Mandatory to prevent unsolvable bombs.
-        "Forget Everything", //Cruel FMN.
-        "Turn The Key",      //TTK is timer based, and stalls the bomb if only it and FMN are left.
-        "Souvenir",          //Similar situation to TTK, stalls the bomb.
-        "The Time Keeper",   //Again, timilar to TTK.
-        "Simon's Stages",    //Not sure, told to add it.
-    };
+    public static string[] ignoredModules = null;
 
     public static int loggingID = 1;
     public int thisLoggingID;
@@ -51,6 +43,20 @@ public class AdvancedMemory : MonoBehaviour
 
     void Awake()
     {
+        if (ignoredModules == null)
+            ignoredModules = GetComponent<KMBossModule>().GetIgnoredModules("Forget Me Not", new string[]{
+                "Forget Me Not",     //Mandatory to prevent unsolvable bombs.
+                "Forget Everything", //Cruel FMN.
+                "Turn The Key",      //TTK is timer based, and stalls the bomb if only it and FMN are left.
+                "Souvenir",          //Similar situation to TTK, stalls the bomb.
+                "The Time Keeper",   //Again, timilar to TTK.
+                "Simon's Stages",    //Not sure, told to add it.
+                "Alchemy",
+                "Forget This",
+                "Simon's Stages",
+                "Timing is Everything",
+            });
+
         thisLoggingID = loggingID++;
 
         Buttons = new KMSelectable[]{Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};

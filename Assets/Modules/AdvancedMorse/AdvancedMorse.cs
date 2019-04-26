@@ -29,6 +29,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class AdvancedMorse : FixedTicker
 {
@@ -187,7 +188,7 @@ public class AdvancedMorse : FixedTicker
         int root = (int)Mathf.Sqrt(sum);
         if (root * root == sum)
         {
-            Debug.Log("[Morsematics #"+thisLoggingID+"] Character sum is square");
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Character sum ("+(sum)+") is square");
             firstChar += (char)4;
             if (firstChar > 'Z') firstChar -= (char)26;
         }
@@ -302,20 +303,20 @@ public class AdvancedMorse : FixedTicker
         if (firstChar == secondChar)
         {
             Answer = "" + firstChar;
-            Debug.Log("[Morsematics #"+thisLoggingID+"] Characters match, answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Characters match, answer: " + Answer + " (" + Morsify(Answer).Aggregate("", (acc, elem) => acc += new string[]{".","-"}[elem]) + ")");
         }
         else if (firstChar > secondChar)
         {
             char finalVal = (char)(firstChar - secondChar + 'A' - 1);
             Answer = "" + finalVal;
-            Debug.Log("[Morsematics #"+thisLoggingID+"] First character is larger (diff), answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] First character is larger (diff), answer: " + Answer + " (" + Morsify(Answer).Aggregate("", (acc, elem) => acc += new string[]{".","-"}[elem]) + ")");
         }
         else
         {
             char finalVal = (char)(firstChar + secondChar - 'A' + 1);
             if (finalVal > 'Z') finalVal -= (char)26;
             Answer = "" + finalVal;
-            Debug.Log("[Morsematics #"+thisLoggingID+"] Second character is larger (sum), answer: " + Answer);
+            Debug.Log("[Morsematics #"+thisLoggingID+"] Second character is larger (sum), answer: " + Answer + " (" + Morsify(Answer).Aggregate("", (acc, elem) => acc += new string[]{".","-"}[elem]) + ")");
         }
     }
 
