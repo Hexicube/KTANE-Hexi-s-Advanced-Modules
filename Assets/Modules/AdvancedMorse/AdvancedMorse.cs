@@ -932,7 +932,7 @@ public class AdvancedMorse : FixedTicker
     //Twitch Plays support
 
     #pragma warning disable 0414
-    string TwitchHelpMessage = "Submit a solution using 'submit ..-.'. Toggle the lights using 'toggle'.";
+    string TwitchHelpMessage = "Submit a solution using 'submit ..-.'. Toggle the lights using 'toggle'. If there is considerable lag, use 'submitlag ..-.' instead.";
     #pragma warning restore 0414
 
     public void TwitchHandleForcedSolve() {
@@ -951,6 +951,7 @@ public class AdvancedMorse : FixedTicker
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
+        bool submitLag = false;
         cmd = cmd.ToLowerInvariant();
         if(cmd.Equals("toggle")) {
             yield return "Morsematics";
@@ -974,9 +975,25 @@ public class AdvancedMorse : FixedTicker
         if(cmd.StartsWith("submit ")) cmd = cmd.Substring(7);
         else if(cmd.StartsWith("transmit ")) cmd = cmd.Substring(9);
         else if(cmd.StartsWith("tx ")) cmd = cmd.Substring(3);
+        else if(cmd.StartsWith("submitlag ")) {
+            submitLag = true;
+            cmd = cmd.Substring(10);
+        }
+        else if(cmd.StartsWith("transmitlag ")) {
+            submitLag = true;
+            cmd = cmd.Substring(12);
+        }
+        else if(cmd.StartsWith("txlag ")) {
+            submitLag = true;
+            cmd = cmd.Substring(6);
+        }
         else {
             yield return "sendtochaterror Valid commands are submit and toggle.";
             yield break;
+        }
+        if (cmd.StartsWith("lag ") && !submitLag) {
+            submitLag = true;
+            cmd = cmd.Substring(4);
         }
 
         int[] input = new int[cmd.Length];
@@ -1003,10 +1020,10 @@ public class AdvancedMorse : FixedTicker
         yield return "Morsematics";
         foreach(int i in input) {
             yield return ButtonTransmit;
-            if(i == 1) yield return new WaitForSeconds(0.6f);
-            else yield return new WaitForSeconds(0.2f);
+            if(i == 1) yield return new WaitForSeconds(submitLag ? 1.2f : 0.6f);
+            else yield return new WaitForSeconds(submitLag ? 0.4f : 0.2f);
             yield return ButtonTransmit;
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(submitLag ? 0.4f : 0.2f);
         }
         yield return new WaitForSeconds(2f); //Allow answer to pass through before returning so that it's credited properly
         yield break;
