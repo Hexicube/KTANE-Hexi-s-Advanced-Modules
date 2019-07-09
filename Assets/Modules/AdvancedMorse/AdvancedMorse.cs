@@ -1025,7 +1025,9 @@ public class AdvancedMorse : FixedTicker
             yield return ButtonTransmit;
             yield return new WaitForSeconds(submitLag ? 0.4f : 0.2f);
         }
-        yield return new WaitForSeconds(2f); //Allow answer to pass through before returning so that it's credited properly
-        yield break;
+
+        //Allow strikes and solves to be credited properly
+        yield return "strike";
+        yield return "solve";
     }
 }
