@@ -689,7 +689,10 @@ public class AdvancedSimon : FixedTicker
             bop = true;
             yield break;
         }
-        else throw new System.FormatException("Commands must start with 'press'.");
+        else {
+            yield return "sendtochaterror Commands must start with 'press'.";
+            yield break;
+        }
 
         char[] buttons = cmd.ToCharArray();
         List<KMSelectable> seq = new List<KMSelectable>();
@@ -699,7 +702,10 @@ public class AdvancedSimon : FixedTicker
             else if(c == 'y') seq.Add(ButtonYellow);
             else if(c == 'g') seq.Add(ButtonGreen);
             else if(c == 'b') seq.Add(ButtonBlue);
-            else throw new System.FormatException("Bad character: " + c);
+            else {
+                yield return "sendtochaterror Bad character: " + c;
+                yield break;
+            }
         }
 
         yield return "Simon States";
