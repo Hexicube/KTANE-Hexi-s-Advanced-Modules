@@ -554,7 +554,7 @@ public class AdvancedMemory : MonoBehaviour
             yield break;
         }
 
-        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+        int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
         if(progress < Solution.Length) {
             yield return "Forget Me Not";
             yield return "sendtochat DansGame A little early, don't you think?";
@@ -568,9 +568,8 @@ public class AdvancedMemory : MonoBehaviour
         SolveType solve = pickSolveType(digits.Count, Solution.Length - Position);
 
         foreach(int d in digits) {
-            Button5.AddInteractionPunch(0.2f);
-            bool valid = Handle(d);
-            if(!valid) {
+            Buttons[d].OnInteract();
+            if (litButton != -1) {
                 if(solve == SolveType.REGULAR && BombInfo.GetTime() >= 45 && Random.value > 0.95) {
                     yield return new WaitForSeconds(2);
                     yield return "sendtochat Kreygasm We did it reddit!";
