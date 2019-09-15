@@ -566,6 +566,7 @@ public class AdvancedMemory : MonoBehaviour
         yield return "multiple strikes"; //Needed for fake solve.
 
         SolveType solve = pickSolveType(digits.Count, Solution.Length - Position);
+        if (BombInfo.GetTime() / (Solution.Length - Position) < 0.1f) solve = SolveType.REGULAR;
 
         foreach(int d in digits) {
             Buttons[d].OnInteract();
@@ -586,7 +587,7 @@ public class AdvancedMemory : MonoBehaviour
             }
 
             if(getMusicToggle(solve, Position, digits.Count, Solution.Length - Position)) yield return "toggle waiting music";
-            yield return new WaitForSeconds(getDelay(solve, Position, digits.Count, Solution.Length - Position));
+            yield return new WaitForSeconds(getDelay(solve, Position, digits.Count, Solution.Length - Position, BombInfo.GetTime()));
         }
         yield return "end multiple strikes";
         yield break;
@@ -604,7 +605,10 @@ public class AdvancedMemory : MonoBehaviour
         return SolveType.REGULAR;
     }
 
-    public static float getDelay(SolveType type, int curpos, int dlen, int slen) {
+    public static float getDelay(SolveType type, int curpos, int dlen, int slen, float time) {
+        float allowance = (time - 0.05f) / slen;
+        if (allowance < 0.05f) return allowance;
+
         switch(type) {
             case SolveType.SLOWSTART: {
                 if(curpos < 8) return 0.5f + Random.value * 2.5f;
