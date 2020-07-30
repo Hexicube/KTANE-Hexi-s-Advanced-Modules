@@ -125,6 +125,9 @@ public class AdvancedMaze : MonoBehaviour
 
     private static Material whiteMat, lightGreyMat, redMat, yellowMat, greenMat, blueMat, lightBlueMat, darkBlueMat;
 
+    // for VR workaround
+    private static float SecsUntilMerge = 0;
+
     public void SetMergedMode(bool on) {
         if(on && !PipesAreMerged) {
             if(MergedMesh == null) {
@@ -216,6 +219,14 @@ public class AdvancedMaze : MonoBehaviour
 
     void Update()
     {
+        // VR workaround
+        if (SecsUntilMerge > 0) {
+            SecsUntilMerge -= Time.deltaTime;
+            if (SecsUntilMerge <= 0) {
+                if (fadeState == 0) SetMergedMode(true);
+            }
+        }
+
         if(fadeState > 0 && fadeState < 3)
         {
             float start = fadeState - 2;
@@ -299,8 +310,18 @@ public class AdvancedMaze : MonoBehaviour
         
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, gameObject.transform);
 
-        if(MergedMesh != null) DestroyImmediate(MergedMesh);
-        MergedMesh = null;
+        if (PipesAreMerged) {
+            /*
+            VR workaround: Pipe was interacted with but module was not, almost certainly VR-controller exclusive.
+            When this happens the pipes are unmerged before the mesh is destroyed, and a 10s timer is started to merge them again for performance reasons.
+            */
+            SetMergedMode(false);
+            SecsUntilMerge = 10;
+        }
+        if(MergedMesh != null) {
+            DestroyImmediate(MergedMesh);
+            MergedMesh = null;
+        }
     }
 
     void Init()
