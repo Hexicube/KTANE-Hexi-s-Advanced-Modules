@@ -13,8 +13,8 @@ using System.Collections.Generic;
 
 public class AdvancedKnob : FixedTicker
 {
-    private const int NUM_DIGITS = 3;
-    private static int MODULO = -1;
+    private int NUM_DIGITS;
+    private int MODULO = -1;
 
     public static int loggingID = 1;
     public int thisLoggingID;
@@ -27,6 +27,7 @@ public class AdvancedKnob : FixedTicker
     private KMSelectable[] Buttons;
     public Nixie[] NumList;
     public TimerDial Dial1, Dial2;
+    public KMModSettings Settings;
 
     public Transform PhoneRing;
 
@@ -50,18 +51,22 @@ public class AdvancedKnob : FixedTicker
         }
     }
 
+    public class KnobSettings {
+        public bool rotaryTwoDigits;
+    }
+
+    void DoSettings() {
+        KnobSettings set = JsonUtility.FromJson<KnobSettings>(Settings.Settings);
+        if (set == null) {
+            set = new KnobSettings();
+            set.rotaryTwoDigits = false;
+            Settings.Settings = JsonUtility.ToJson(set, true);
+        }
+        NUM_DIGITS = set.rotaryTwoDigits ? 2 : 3;
+    }
+
     void Awake()
     {
-        if(MODULO == -1) {
-            MODULO = 1;
-            int counter = 0;
-            while(counter < NUM_DIGITS) {
-                counter++;
-                MODULO *= 10;
-            }
-            Debug.Log("[Rotary Phone] Digits: " + NUM_DIGITS + ", Modulo: " + MODULO);
-        }
-
         thisLoggingID = loggingID++;
 
         Buttons = new KMSelectable[] {Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9};
@@ -83,9 +88,6 @@ public class AdvancedKnob : FixedTicker
         GetComponent<KMNeedyModule>().OnNeedyActivation += OnNeedyActivation;
         GetComponent<KMNeedyModule>().OnNeedyDeactivation += OnNeedyDeactivation;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
-        CurAnswer = Random.Range(0, MODULO);
-        DisplayNumber = CurAnswer;
-        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone initial display: " + CurAnswer);
     }
 
     protected void OnActivate()
@@ -94,6 +96,19 @@ public class AdvancedKnob : FixedTicker
             GetComponent<KMNeedyModule>().HandlePass();
             return;
         }
+
+        DoSettings();
+        if(MODULO == -1) {
+            MODULO = 1;
+            int counter = 0;
+            while(counter < NUM_DIGITS) {
+                counter++;
+                MODULO *= 10;
+            }
+        }
+        CurAnswer = Random.Range(0, MODULO);
+        DisplayNumber = CurAnswer;
+        Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone initial display: " + CurAnswer + " (mod " + MODULO + ")");
 
         SetDisplay();
     }
