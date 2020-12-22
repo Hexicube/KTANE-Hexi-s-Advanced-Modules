@@ -16,6 +16,9 @@ public class AdvancedKnob : FixedTicker
     private int NUM_DIGITS;
     private int MODULO = -1;
 
+    private int SPARSENESS = -1;
+    private int SparseCounter = -1;
+
     public static int loggingID = 1;
     public int thisLoggingID;
 
@@ -53,6 +56,7 @@ public class AdvancedKnob : FixedTicker
 
     public class KnobSettings {
         public bool rotaryTwoDigits;
+        public int rotarySparseness;
     }
 
     void DoSettings() {
@@ -60,9 +64,11 @@ public class AdvancedKnob : FixedTicker
         if (set == null) {
             set = new KnobSettings();
             set.rotaryTwoDigits = false;
+            set.rotarySparseness = 2;
             Settings.Settings = JsonUtility.ToJson(set, true);
         }
         NUM_DIGITS = set.rotaryTwoDigits ? 2 : 3;
+        SPARSENESS = System.Math.Max(1, set.rotarySparseness);
     }
 
     void Awake()
@@ -115,6 +121,13 @@ public class AdvancedKnob : FixedTicker
 
     protected void OnNeedyActivation()
     {
+        SparseCounter = (SparseCounter + 1) % SPARSENESS;
+        if (SparseCounter != 0) {
+            Debug.Log("[Rotary Phone #"+thisLoggingID+"] Skipping activation due to sparseness setting.");
+            GetComponent<KMNeedyModule>().HandlePass();
+            return;
+        }
+
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] Rotary Phone old value: " + CurAnswer);
         DisplayNumber = Random.Range(0, MODULO);
         Debug.Log("[Rotary Phone #"+thisLoggingID+"] New display: " + DisplayNumber);
