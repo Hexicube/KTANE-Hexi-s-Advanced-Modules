@@ -563,6 +563,14 @@ public class AdvancedMemory : MonoBehaviour
         }
     }
 
+    private bool FirstTry = true;
+    private static string[] PlaceNames = { // yes I duplicated entries to make them likelier
+        "reddit", "reddit", "reddit",
+        "imgur", "imgur", "imgur",
+        "discord", "discord", "discord", "discord", "discord",
+        "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat", "twitch chat",
+        "mom", "dad"
+    };
     public IEnumerator ProcessTwitchCommand(string cmd) {
         if(Solution == null || Position >= Solution.Length) yield break;
         cmd = cmd.ToLowerInvariant();
@@ -587,10 +595,6 @@ public class AdvancedMemory : MonoBehaviour
             if(d != -1) digits.Add(d);
         }
         if(digits.Count == 0) yield break;
-        if(digits.Count > (Solution.Length - Position)) {
-            yield return "sendtochaterror Too many digits submitted.";
-            yield break;
-        }
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
         if(progress < Solution.Length) {
@@ -599,8 +603,16 @@ public class AdvancedMemory : MonoBehaviour
             Handle(digits[0]);
             yield break;
         }
+        // moved to be after early-attempt since that should always be punished
+        if(digits.Count > (Solution.Length - Position)) {
+            yield return "sendtochaterror NotLikeThis Too many digits submitted.";
+            yield break;
+        }
+
         yield return "Forget Me Not";
-        yield return "sendtochat PogChamp Here we go!";
+        if (FirstTry) yield return "sendtochat OhMyDog Here we go!";
+        else yield return "sendtochat Maybe this time?";
+        FirstTry = false;
         yield return "multiple strikes"; //Needed for fake solve.
 
         SolveType solve = pickSolveType(digits.Count, Solution.Length - Position);
@@ -611,7 +623,7 @@ public class AdvancedMemory : MonoBehaviour
             if (litButton != -1) {
                 if(solve == SolveType.REGULAR && BombInfo.GetTime() >= 45 && Random.value > 0.95) {
                     yield return new WaitForSeconds(2);
-                    yield return "sendtochat Kreygasm We did it reddit!";
+                    yield return "sendtochat Kreygasm We did it " + PlaceNames.PickRandom() + "!";
                     yield return new WaitForSeconds(1);
                     yield return "sendtochat Kappa Nope, just kidding.";
                 }
@@ -620,7 +632,7 @@ public class AdvancedMemory : MonoBehaviour
                 break;
             }
             if(Position >= Solution.Length) {
-                yield return "sendtochat Kreygasm We did it reddit!";
+                yield return "sendtochat Kreygasm We did it " + PlaceNames.PickRandom() + "!";
                 break;
             }
 
@@ -632,7 +644,7 @@ public class AdvancedMemory : MonoBehaviour
     }
 
     public enum SolveType {
-        REGULAR, ACCELERATOR, SLOWSTART
+        REGULAR, ACCELERATOR, SLOWSTART, TRIPLETS
     }
 
     public static SolveType pickSolveType(int dlen, int slen) {
@@ -640,6 +652,7 @@ public class AdvancedMemory : MonoBehaviour
 
         if(dlen > 12 && Random.value > 0.9) return SolveType.SLOWSTART;
         if(dlen > 4 && Random.value > 0.75) return SolveType.ACCELERATOR;
+        if(Random.value > 0.75) return SolveType.TRIPLETS;
         return SolveType.REGULAR;
     }
 
@@ -653,12 +666,16 @@ public class AdvancedMemory : MonoBehaviour
                 return 0.05f;
             }
             case SolveType.ACCELERATOR: return Mathf.Max(3f / (float)(curpos+1), 0.05f);
+            case SolveType.TRIPLETS: {
+                if(curpos % 3 == 0) return 0.25f;
+                return 0.05f;
+            }
             default: return 0.05f;
         }
     }
 
     public static bool getMusicToggle(SolveType type, int curpos, int dlen, int slen) {
-        if(type == SolveType.SLOWSTART) return (curpos == 1) || (curpos == 8);
+        if(type == SolveType.SLOWSTART) return (curpos == 1) || (curpos == 12);
         return false;
     }
 }
