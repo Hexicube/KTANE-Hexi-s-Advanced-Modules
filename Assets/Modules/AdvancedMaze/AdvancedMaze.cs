@@ -1560,18 +1560,17 @@ public class AdvancedMaze : MonoBehaviour
     string TwitchHelpMessage = "Rotate pipes using 'rotate A3 B4 B2 ...'. Submit answer using 'submit'. Pipe positions use battleship notation, letters are A-F left to right and numbers are 1-6 top to bottom.";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Plumbing #"+thisLoggingID+"] Module forcibly solved.");
 
-        StartCoroutine(Solver());
-    }
-
-    private IEnumerator Solver() {
         SetMergedMode(false);
-        for(int x = 0; x < 6; x++) {
-            for(int y = 0; y < 6; y++) {
-                while(SolutionState[x][y] != PlayFieldState[x][y]) {
-                    HandleInteract(x, y);
+        for (int x = 0; x < 6; x++)
+        {
+            for (int y = 0; y < 6; y++)
+            {
+                while (SolutionState[x][y] != PlayFieldState[x][y])
+                {
+                    Buttons[x][y].OnInteract();
                     yield return new WaitForSeconds(0.05f);
                 }
             }

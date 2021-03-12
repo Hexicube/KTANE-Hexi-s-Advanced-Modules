@@ -39,8 +39,6 @@ public class AdvancedMemory : MonoBehaviour
     private int[] Solution;
     private int Position;
 
-    private bool forcedSolve = false;
-
     void Awake()
     {
         if (ignoredModules == null)
@@ -281,7 +279,7 @@ public class AdvancedMemory : MonoBehaviour
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Solution: " + solutionText);
 
         if(PERFORM_AUTO_SOLVE) {
-            TwitchHandleForcedSolve();
+            StartCoroutine(TwitchHandleForcedSolve());
         }
     }
 
@@ -292,8 +290,6 @@ public class AdvancedMemory : MonoBehaviour
     int displayCurStage = 0;
     void FixedUpdate()
     {
-        if(forcedSolve) return;
-
         if(displayTimer > 0) displayTimer -= Time.fixedDeltaTime;
 
         ticker++;
@@ -344,7 +340,7 @@ public class AdvancedMemory : MonoBehaviour
         if (Solution == null || Position >= Solution.Length) return false;
 
         int progress = BombInfo.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count() + ADDED_STAGES;
-        if (progress < Solution.Length && !forcedSolve) {
+        if (progress < Solution.Length) {
             Debug.Log("[Forget Me Not #"+thisLoggingID+"] Tried to enter a value before solving all other modules.");
             GetComponent<KMBombModule>().HandleStrike();
             return false;
@@ -550,16 +546,13 @@ public class AdvancedMemory : MonoBehaviour
     string TwitchHelpMessage = "Enter the Forget Me Not sequence with \"!{0} press 531820...\". The sequence length depends on how many modules were on the bomb. You may use spaces and commas in the digit sequence.";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Forget Me Not #"+thisLoggingID+"] Module forcibly solved.");
-        forcedSolve = true;
-        StartCoroutine(Solver());
-    }
-
-    private IEnumerator Solver() {
-        while(Position < Solution.Length) {
+        while (!done) yield return true; //Waits for all other mods on the bomb to be solved, if FMN needs to be solved right away, executing the solve command again will do this
+        while (Position < Solution.Length)
+        {
+            Buttons[Solution[Position]].OnInteract();
             yield return new WaitForSeconds(0.05f);
-            Handle(Solution[Position]);
         }
     }
 

@@ -184,11 +184,14 @@ public class AdvancedKeypad : MonoBehaviour
     string TwitchHelpMessage = "Submit a solution using 'press 1 4 2...'. You can use either numbers starting with 1 at the top going clockwise (1 through 8), or compass directions (N, NE, E, etc.).";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Round Keypad #"+thisLoggingID+"] Module forcibly solved.");
         for(int a = 0; a < ButtonStates.Length; a++) {
             if(ButtonStates[a]) continue;
-            if(Solution[a]) Guess(a);
+            if(Solution[a]) { 
+                Buttons[a].OnInteract();
+                yield return new WaitForSeconds(0.25f);
+            }
         }
     }
 

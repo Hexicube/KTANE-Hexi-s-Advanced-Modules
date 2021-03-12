@@ -193,59 +193,13 @@ public class AdvancedButton : FixedTicker
 
         if (batAA == -1)
         {
-            batAA = 0;
-
-            List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
-            foreach (string response in data) {
-                Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
-                if (responseDict["numbatteries"] == 1) batD++;
-                else batAA += responseDict["numbatteries"];
-            }
-            data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
-            foreach (string response in data)
-            {
-                Dictionary<string, bool> responseDict = JsonConvert.DeserializeObject<Dictionary<string, bool>>(response, new JsonSerializerSettings
-                {
-                    Error = HandleError
-                });
-                if (responseDict["on"]) litInd++;
-                else unlitInd++;
-            }
-            data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
-            foreach (string response in data)
-            {
-                Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
-                string serial = responseDict["serial"];
-                if (serial.Contains("A") || serial.Contains("E") || serial.Contains("I") || serial.Contains("O") || serial.Contains("U")) serialVowel = true;
-
-                if (serial.Contains("9")) highSerial = 9;
-                else if (serial.Contains("8")) highSerial = 8;
-                else if (serial.Contains("7")) highSerial = 7;
-                else if (serial.Contains("6")) highSerial = 6;
-                else if (serial.Contains("5")) highSerial = 5;
-                else if (serial.Contains("4")) highSerial = 4;
-                else if (serial.Contains("3")) highSerial = 3;
-                else if (serial.Contains("2")) highSerial = 2;
-                else if (serial.Contains("1")) highSerial = 1;
-            }
+            GetEdgeworkAndRule();
 
             Debug.Log("[Square Button #"+thisLoggingID+"] Batteries: " + batAA + "AA, " + batD + "D");
             Debug.Log("[Square Button #"+thisLoggingID+"] Highest serial number: " + highSerial);
             Debug.Log("[Square Button #"+thisLoggingID+"] Serial contains a vowel: " + serialVowel);
             Debug.Log("[Square Button #"+thisLoggingID+"] Button colour: " + colourNames[buttonCol]);
             Debug.Log("[Square Button #"+thisLoggingID+"] Button text: " + "\"" + buttonLabels[buttonText] + "\" " + buttonText);
-
-            if (buttonCol == 1 && batAA > batD) hold = true;
-            else if ((buttonCol < 2) && buttonLabels[buttonText].Length >= highSerial) hold = false;
-            else if (buttonCol < 2 && buttonText < 4) hold = true;
-            else if (buttonLabels[buttonText].Length == 0)
-            {
-                hold = false;
-                catch22 = true;
-            }
-            else if (buttonCol != 3 && buttonLabels[buttonText].Length > litInd) hold = false;
-            else if (unlitInd >= 2 && serialVowel) hold = false;
-            else hold = true;
 
             Debug.Log("[Square Button #"+thisLoggingID+"] Hold: " + hold);
             if (!hold) Debug.Log("[Square Button #"+thisLoggingID+"] Release and Match: " + catch22);
@@ -356,18 +310,159 @@ public class AdvancedButton : FixedTicker
         return;
     }
 
+    protected void GetEdgeworkAndRule()
+    {
+        batAA = 0;
+
+        List<string> data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, int> responseDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(response);
+            if (responseDict["numbatteries"] == 1) batD++;
+            else batAA += responseDict["numbatteries"];
+        }
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_INDICATOR, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, bool> responseDict = JsonConvert.DeserializeObject<Dictionary<string, bool>>(response, new JsonSerializerSettings
+            {
+                Error = HandleError
+            });
+            if (responseDict["on"]) litInd++;
+            else unlitInd++;
+        }
+        data = Info.QueryWidgets(KMBombInfo.QUERYKEY_GET_SERIAL_NUMBER, null);
+        foreach (string response in data)
+        {
+            Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response);
+            string serial = responseDict["serial"];
+            if (serial.Contains("A") || serial.Contains("E") || serial.Contains("I") || serial.Contains("O") || serial.Contains("U")) serialVowel = true;
+
+            if (serial.Contains("9")) highSerial = 9;
+            else if (serial.Contains("8")) highSerial = 8;
+            else if (serial.Contains("7")) highSerial = 7;
+            else if (serial.Contains("6")) highSerial = 6;
+            else if (serial.Contains("5")) highSerial = 5;
+            else if (serial.Contains("4")) highSerial = 4;
+            else if (serial.Contains("3")) highSerial = 3;
+            else if (serial.Contains("2")) highSerial = 2;
+            else if (serial.Contains("1")) highSerial = 1;
+        }
+
+        if (buttonCol == 1 && batAA > batD) hold = true;
+        else if ((buttonCol < 2) && buttonLabels[buttonText].Length >= highSerial) hold = false;
+        else if (buttonCol < 2 && buttonText < 4) hold = true;
+        else if (buttonLabels[buttonText].Length == 0)
+        {
+            hold = false;
+            catch22 = true;
+        }
+        else if (buttonCol != 3 && buttonLabels[buttonText].Length > litInd) hold = false;
+        else if (unlitInd >= 2 && serialVowel) hold = false;
+        else hold = true;
+    }
+
     //Twitch Plays support
 
     #pragma warning disable 0414
     bool TwitchZenMode = false;
-    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.\nRaise the molly guard and examine the button with 'view'.";
+    string TwitchHelpMessage = "Hold the button down with 'hold', or press and release with 'press' or 'tap'.\nIf you want to press and release at a specific time, use 'press <time>'.\nRelease the button with 'release <time> <time> ...'.\nTimes are specified as either '23, 35, 40' (seconds only), or '1:40 1:47 1:54' (full timer), but cannot be mixed.\nRaise the molly guard and examine the button with 'show'.";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
-        buttonDown = false;
-        Button.transform.localPosition = new Vector3(0, 0, 0);
-        Debug.Log("[Square Button #"+thisLoggingID+"] Module forcibly solved.");
-        GetComponent<KMBombModule>().HandlePass();
+    public IEnumerator TwitchHandleForcedSolve() {
+        Debug.Log("[Square Button #" + thisLoggingID + "] Module forcibly solved.");
+        if (batAA == -1)
+            GetEdgeworkAndRule();
+        if ((!hold && buttonDown && ticker >= 0) || (buttonDown && ticker < 0 && catch22 && (int)(Info.GetTime() % 60 % 11) != 0))
+        {
+            //Force the solve since the module would strike otherwise
+            buttonDown = false;
+            Light.material.color = BLACK;
+            Button.transform.localPosition = new Vector3(0, 0, 0);
+            GetComponent<KMBombModule>().HandlePass();
+            yield break;
+        }
+        else if (!hold)
+        {
+            if (catch22)
+            {
+                while ((int)(Info.GetTime() % 60 % 11) != 0) yield return true;
+                if (!buttonDown)
+                {
+                    Button.OnInteract();
+                    if ((!TwitchZenMode && (int)(Info.GetTime() - 0.05f) == (int)Info.GetTime()) || (TwitchZenMode && (int)(Info.GetTime() + 0.05f) == (int)Info.GetTime()))
+                        yield return new WaitForSeconds(0.05f);
+                }
+                Button.OnInteractEnded();
+            }
+            else
+            {
+                if (!buttonDown)
+                {
+                    Button.OnInteract();
+                    yield return new WaitForSeconds(0.05f);
+                }
+                Button.OnInteractEnded();
+            }
+        }
+        else
+        {
+            if (!buttonDown)
+                Button.OnInteract();
+            while (ticker < 0) yield return true;
+            if (!flashing)
+            {
+                while (true)
+                {
+                    int time = (int)Info.GetTime();
+                    time %= 60;
+                    time = (time / 10) + (time % 10);
+                    if (time > 10) time -= 10;
+                    if (holdColour == 0)
+                    {
+                        if (time == 7) break;
+                    }
+                    else if (holdColour == 1)
+                    {
+                        if (time == 3) break;
+                    }
+                    else
+                    {
+                        if (time == 5) break;
+                    }
+                    yield return true;
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    int time = (int)Info.GetTime();
+                    if (holdColour == 0)
+                    {
+                        if (time % 7 == 0) break;
+                    }
+                    else if (holdColour == 1)
+                    {
+                        time %= 60;
+                        if (time == 0 || time == 2 || time == 3 || time == 5 ||
+                            time == 7 || time == 11 || time == 13 || time == 17 ||
+                            time == 19 || time == 23 || time == 29 || time == 31 ||
+                            time == 37 || time == 41 || time == 43 || time == 47 ||
+                            time == 53 || time == 59) break;
+                    }
+                    else
+                    {
+                        time++;
+                        time %= 60;
+                        time = (time / 10) + (time % 10);
+                        if (time % 4 == 0) break;
+                    }
+                    yield return true;
+                }
+            }
+            Button.OnInteractEnded();
+        }
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {
@@ -429,7 +524,8 @@ public class AdvancedButton : FixedTicker
             while(releaseCoroutine.MoveNext()) {
                 yield return releaseCoroutine.Current;
             }
-            yield return new WaitForSeconds(0.05f);
+            if ((!TwitchZenMode && (int)(Info.GetTime() - 0.05f) == (int)Info.GetTime()) || (TwitchZenMode && (int)(Info.GetTime() + 0.05f) == (int)Info.GetTime()))
+                yield return new WaitForSeconds(0.05f);
             yield return Button;
             yield break;
         }

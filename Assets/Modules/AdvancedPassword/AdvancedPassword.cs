@@ -311,20 +311,17 @@ public class AdvancedPassword : MonoBehaviour
     string TwitchHelpMessage = "Cycle a dial with 'press TL 6'. Cycle all dials with 'press 1 8 2 12 0 5'. Listen to dials with 'listen' or 'listen BR'. Submit an answer with 'submit'.\nDial positions are specified with positions (TL, TM, TR, BL, BM, BR).";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Safety Safe #"+thisLoggingID+"] Module forcibly solved.");
-        StartCoroutine(Solver());
-    }
-
-    private IEnumerator Solver() {
-        for(int a = 0; a < 6; a++) {
-            while(DialPos[a] != AnswerPos[a]) {
-                HandleInteract(a);
+        for (int a = 0; a < 6; a++)
+        {
+            while (DialPos[a] != AnswerPos[a])
+            {
+                Dials[a].OnInteract();
                 yield return new WaitForSeconds(0.05f);
             }
         }
-        HandleLever();
-        yield break;
+        Lever.OnInteract();
     }
 
     private int ParseDial(string dial) {

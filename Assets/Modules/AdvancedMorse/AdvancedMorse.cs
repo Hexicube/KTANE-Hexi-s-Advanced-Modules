@@ -935,19 +935,28 @@ public class AdvancedMorse : FixedTicker
     string TwitchHelpMessage = "Submit a solution using 'submit ..-.'. Toggle the lights using 'toggle'. If there is considerable lag, use 'submitlag ..-.' instead.";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Morsematics #"+thisLoggingID+"] Module forcibly solved.");
-        StartCoroutine(Solver());
-    }
-
-    private IEnumerator Solver() {
-        foreach(int i in Morsify(Answer)) {
+        if (transmitTicker >= 0)
+        {
+            //Force the solve since the module could strike otherwise
+            StopAllCoroutines();
+            solved = true;
+            Draw.Clear();
+            LED.materials[1].color = LED_OFF;
+            LED.materials[2].color = LED_OFF;
+            LED.materials[3].color = LED_OFF;
+            GetComponent<KMBombModule>().HandlePass();
+        }
+        foreach (int i in Morsify(Answer))
+        {
             ButtonTransmit.OnInteract();
-            if(i == 1) yield return new WaitForSeconds(0.6f);
+            if (i == 1) yield return new WaitForSeconds(0.6f);
             else yield return new WaitForSeconds(0.2f);
             ButtonTransmit.OnInteractEnded();
             yield return new WaitForSeconds(0.2f);
         }
+        while (!solved) yield return true;
     }
 
     public IEnumerator ProcessTwitchCommand(string cmd) {

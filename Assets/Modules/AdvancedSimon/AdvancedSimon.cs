@@ -660,17 +660,14 @@ public class AdvancedSimon : FixedTicker
     string TwitchHelpMessage = "Press buttons with 'press RYB'.";
     #pragma warning restore 0414
 
-    public void TwitchHandleForcedSolve() {
+    public IEnumerator TwitchHandleForcedSolve() {
         Debug.Log("[Simon States #"+thisLoggingID+"] Module forcibly solved.");
-        StartCoroutine(Solver());
-    }
-
-    private IEnumerator Solver() {
-        while(PuzzleDisplay != null) {
-            Handle(Answer[SubProgress]);
-            yield return new WaitForSeconds(bop?0.4f:0.29f);
+        List<KMSelectable> buttons = new List<KMSelectable>() { ButtonRed, ButtonYellow, ButtonGreen, ButtonBlue };
+        while (PuzzleDisplay != null)
+        {
+            buttons[Answer[SubProgress]].OnInteract();
+            yield return new WaitForSeconds(bop ? 0.4f : 0.29f);
         }
-        yield break;
     }
     
     private bool bop = false;
