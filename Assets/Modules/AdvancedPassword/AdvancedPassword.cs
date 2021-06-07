@@ -405,7 +405,13 @@ public class AdvancedPassword : MonoBehaviour
                     yield return "sendtochaterror Unknown dial: " + command[0];
                     yield break;
                 }
-                int amt = int.Parse(command[1]) % 12;
+                int amt;
+                if (!int.TryParse(command[1], out amt)) {
+                    yield return "Safety Safe";
+                    yield return "sendtochaterror Bad number: " + command[1];
+                    yield break;
+                }
+                amt %= 12;
                 if(amt < 0) amt += 12;
                 
                 yield return "Safety Safe";
@@ -422,7 +428,13 @@ public class AdvancedPassword : MonoBehaviour
                         yield return "sendtochaterror Unknown dial: " + command[0];
                         yield break;
                     }
-                    int amt = int.Parse(command[2]) % 12;
+                    int amt;
+                    if (!int.TryParse(command[1], out amt)) {
+                        yield return "Safety Safe";
+                        yield return "sendtochaterror Bad number: " + command[1];
+                        yield break;
+                    }
+                    amt %= 12;
                     if(amt < 0) amt += 12;
                 
                     yield return "Safety Safe";
@@ -437,7 +449,12 @@ public class AdvancedPassword : MonoBehaviour
                 if(command[0].Equals("press") || command[0].Equals("cycle") || command[0].Equals("submit") || command[0].Equals("guess")) {
                     int[] amt = new int[6];
                     for(int a = 0; a < 6; a++) {
-                        amt[a] = int.Parse(command[a+1]) % 12;
+                        if (!int.TryParse(command[1], out amt[a])) {
+                            yield return "Safety Safe";
+                            yield return "sendtochaterror Bad number: " + command[1];
+                            yield break;
+                        }
+                        amt[a] %= 12;
                         if(amt[a] < 0) amt[a] += 12;
                     }
 
@@ -461,7 +478,12 @@ public class AdvancedPassword : MonoBehaviour
             amt[0] = temp % 12;
             if(amt[0] < 0) amt[0] += 12;
             for(int a = 0; a < 6; a++) {
-                amt[a] = int.Parse(command[a]) % 12;
+                if (!int.TryParse(command[1], out amt[a])) {
+                    yield return "Safety Safe";
+                    yield return "sendtochaterror Bad number: " + command[1];
+                    yield break;
+                }
+                amt[a] %= 12;
                 if(amt[a] < 0) amt[a] += 12;
             }
 
