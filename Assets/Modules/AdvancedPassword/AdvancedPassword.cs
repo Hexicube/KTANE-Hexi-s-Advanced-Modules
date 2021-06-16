@@ -429,7 +429,7 @@ public class AdvancedPassword : MonoBehaviour
                         yield break;
                     }
                     int amt;
-                    if (!int.TryParse(command[1], out amt)) {
+                    if (!int.TryParse(command[2], out amt)) {
                         yield return "Safety Safe";
                         yield return "sendtochaterror Bad number: " + command[1];
                         yield break;
@@ -449,7 +449,7 @@ public class AdvancedPassword : MonoBehaviour
                 if(command[0].Equals("press") || command[0].Equals("cycle") || command[0].Equals("submit") || command[0].Equals("guess")) {
                     int[] amt = new int[6];
                     for(int a = 0; a < 6; a++) {
-                        if (!int.TryParse(command[1], out amt[a])) {
+                        if (!int.TryParse(command[a+1], out amt[a])) {
                             yield return "Safety Safe";
                             yield return "sendtochaterror Bad number: " + command[1];
                             yield break;
@@ -478,7 +478,7 @@ public class AdvancedPassword : MonoBehaviour
             amt[0] = temp % 12;
             if(amt[0] < 0) amt[0] += 12;
             for(int a = 0; a < 6; a++) {
-                if (!int.TryParse(command[1], out amt[a])) {
+                if (!int.TryParse(command[a], out amt[a])) {
                     yield return "Safety Safe";
                     yield return "sendtochaterror Bad number: " + command[1];
                     yield break;
