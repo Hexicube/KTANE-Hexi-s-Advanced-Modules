@@ -136,7 +136,7 @@ public class AdvancedVentingGas : MonoBehaviour
         else
         {
             if (CurQ == null) return;
-            Debug.Log("[Answering Questions #"+thisLoggingID+"] Quiz: " + Display.text.Replace("\n", ""));
+            Debug.Log("[Answering Questions #"+thisLoggingID+"] Quiz: " + Display.text.Replace("\n", " "));
             Debug.Log("[Answering Questions #"+thisLoggingID+"] Given answer: " + (R ? "Y" : "N"));
             if (CurQ(this, R))
             {
