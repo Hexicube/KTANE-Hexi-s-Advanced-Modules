@@ -31,22 +31,29 @@ public class AdvancedVentingGas : MonoBehaviour
     protected System.Func<AdvancedVentingGas, bool, bool> CurQ;
 
     protected bool DidHakuna = false;
+    protected bool LastWasSelfReference = false;
     protected bool Exploded = false;
 
     protected bool abortMode = false;
     protected bool forceSolve = false;
 
+    private int NumHasReply = 3;
+    private int NumTriesForAbort = 2;
     private List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>> QuestionList = new List<KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>>(){
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == Module.LastReply;return true;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was\nnot your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){if (Module.HasReply) return Response == !Module.LastReply;return true;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What was your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = true;if (Module.HasReply) return Response == Module.LastReply;return true;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What wasn't your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = true;if (Module.HasReply) return Response == !Module.LastReply;return true;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Was the last\nanswered question\nabout the last\ngiven answer?", delegate(AdvancedVentingGas Module, bool Response){bool Correct = Response == Module.LastWasSelfReference;Module.LastWasSelfReference = true;if (Module.HasReply) return Correct;return true;})},
+        
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n3 lines?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n6 lines?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 0) == Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Many strikes?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 1) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("At least\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 0) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("More than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 1) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Up to\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() < 2) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Less than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() < 1) == Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){Module.DidHakuna = true;return Response;})},
+        //{new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){Module.DidHakuna = true;return Response;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Response == Module.SerialDuplicate();})}
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Response == Module.SerialDuplicate();})},
     };
 
     void Awake()
@@ -63,6 +70,11 @@ public class AdvancedVentingGas : MonoBehaviour
         NoButton.OnInteract += HandleNo;
         GetComponent<KMNeedyModule>().OnTimerExpired += OnTimerExpired;
         BombInfo.OnBombExploded += delegate() { Exploded = true; };
+
+        MeshRenderer mr = transform.Find("Wiring").GetComponent<MeshRenderer>();
+        mr.materials[2].color = new Color(0.1f, 0.1f, 0.1f);
+        mr.materials[1].color = new Color(0.3f, 0.3f, 0.3f);
+        mr.materials[0].color = new Color(0.1f, 0.4f, 0.8f);
 
         YesButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         NoButton.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
@@ -90,12 +102,14 @@ public class AdvancedVentingGas : MonoBehaviour
             GetComponent<KMNeedyModule>().HandlePass();
             return;
         }
+        if (abortMode) return;
         if (DidHakuna) Display.text = "Is \"Hakuna Matata\"\na passing craze?";
         else NewQuestion();
     }
 
     protected void OnNeedyDeactivation()
     {
+        if (abortMode) return;
         CurQ = null;
         Display.text = "";
     }
@@ -122,7 +136,6 @@ public class AdvancedVentingGas : MonoBehaviour
         else
         {
             if (CurQ == null) return;
-            GetComponent<KMNeedyModule>().HandlePass();
             Debug.Log("[Answering Questions #"+thisLoggingID+"] Quiz: " + Display.text.Replace("\n", ""));
             Debug.Log("[Answering Questions #"+thisLoggingID+"] Given answer: " + (R ? "Y" : "N"));
             if (CurQ(this, R))
@@ -143,6 +156,7 @@ public class AdvancedVentingGas : MonoBehaviour
                     GetComponent<KMNeedyModule>().HandleStrike();
                 }
             }
+            GetComponent<KMNeedyModule>().HandlePass();
         }
         HasReply = true;
         LastReply = R;
@@ -153,18 +167,19 @@ public class AdvancedVentingGas : MonoBehaviour
     private float ticker = 0f;
     void FixedUpdate() {
         if(!forceSolve && abortMode && !Exploded) {
-            bool state = ticker >= 0.25f;
+            bool state = ticker >= 1f;
             ticker += Time.fixedDeltaTime;
             if(state) {
-                if(ticker >= 0.5f) {
-                    ticker -= 0.5f;
+                if(ticker >= 2f) {
+                    ticker -= 2f;
                     Display.text = "";
                 }
             }
             else {
-                if(ticker >= 0.25f) {
+                if(ticker >= 1f) {
                     Service.CauseStrike("ABORT!");
                     Display.text = "ABORT!";
+                    Display.fontSize = 380;
                 }
             }
         }
@@ -204,9 +219,12 @@ public class AdvancedVentingGas : MonoBehaviour
 
     protected void NewQuestion()
     {
-        int val;
-        if(HasReply) val = Random.Range(0, 10);
-        else val = Random.Range(2, 10);
+        int val = 0;
+        for (int i = 0; i < NumTriesForAbort; i++) {
+            if(HasReply) val = Random.Range(0, QuestionList.Count);
+            else val = Random.Range(NumHasReply, QuestionList.Count);
+            if (QuestionList[val].Key == "Abort?") break;
+        }
         CurQ = QuestionList[val].Value;
         Display.text = QuestionList[val].Key;
     }
