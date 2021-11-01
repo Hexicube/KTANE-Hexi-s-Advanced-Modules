@@ -102,9 +102,9 @@ public class AdvancedMemory : MonoBehaviour
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
 
         MeshRenderer mr = transform.Find("Wiring").GetComponent<MeshRenderer>();
-        mr.materials[0].color = new Color(0.1f, 0.1f, 0.1f);
+        mr.materials[2].color = new Color(0.1f, 0.1f, 0.1f);
         mr.materials[1].color = new Color(0.3f, 0.3f, 0.3f);
-        mr.materials[2].color = new Color(0.1f, 0.4f, 0.8f);
+        mr.materials[0].color = new Color(0.1f, 0.4f, 0.8f);
 
         transform.Find("Main Display").Find("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         transform.Find("Stage Display").Find("Edge").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
@@ -389,7 +389,7 @@ public class AdvancedMemory : MonoBehaviour
 
             int PositionModified = Position;
             int Offset = 0;
-            while(PositionModified > 24) {
+            while(PositionModified >= 24) {
                 PositionModified -= 12;
                 Offset += 12;
             }
