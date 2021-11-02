@@ -66,11 +66,13 @@ public class AdvancedSimon : FixedTicker
     public int thisLoggingID;
 
     public KMSelectable ButtonTL, ButtonTR, ButtonBL, ButtonBR;
+    public Mesh MeshRed, MeshYellow, MeshGreen, MeshBlue;
     public KMAudio Sound;
     public KMBombInfo Info;
 
-    private static Color     RED = new Color(1f,    0, 0, 0.4f),  YELLOW = new Color(0.8f,  0.8f,  0, 0.4f),  GREEN = new Color(0, 0.7f,  0, 0.4f),  BLUE = new Color(0, 0.3f, 1f,    0.4f),
-                         DARKRED = new Color(0.25f, 0, 0, 0), DARKYELLOW = new Color(0.27f, 0.27f, 0, 0), DARKGREEN = new Color(0, 0.23f, 0, 0), DARKBLUE = new Color(0, 0.1f, 0.33f, 0);
+    private static Color     RED = new Color(1f,    0, 0, 0.4f),  YELLOW = new Color(0.6f,  0.6f,  0, 0.4f),  GREEN = new Color(0, 0.65f,  0, 0.4f),  BLUE = new Color(0, 0.3f, 1f,    0.4f),
+                         DARKRED = new Color(0.25f, 0, 0, 0), DARKYELLOW = new Color(0.27f, 0.27f, 0, 0), DARKGREEN = new Color(0, 0.23f, 0, 0), DARKBLUE = new Color(0, 0.1f, 0.33f, 0),
+                           WHITE = new Color(1f, 1f, 1f, 0.4f), DARKWHITE = new Color(.2f, .2f, .2f, 0);
     private KMSelectable ButtonRed, ButtonYellow, ButtonGreen, ButtonBlue;
 
     private static int[][] PRIORITY = new int[][]{
@@ -102,6 +104,10 @@ public class AdvancedSimon : FixedTicker
         ButtonTR.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonBL.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonBR.GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        ButtonTL.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        ButtonTR.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        ButtonBL.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        ButtonBR.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
 
         GetComponent<KMBombModule>().OnActivate += Init;
     }
@@ -130,24 +136,28 @@ public class AdvancedSimon : FixedTicker
                 ButtonRed = b;
                 b.GetComponent<MeshRenderer>().material.color = DARKRED;
                 b.OnInteract += HandleRed;
+                b.transform.Find("Marker").GetComponent<MeshFilter>().mesh = MeshRed;
             }
             else if (i == 1)
             {
                 ButtonYellow = b;
                 b.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
                 b.OnInteract += HandleYellow;
+                b.transform.Find("Marker").GetComponent<MeshFilter>().mesh = MeshYellow;
             }
             else if (i == 2)
             {
                 ButtonGreen = b;
                 b.GetComponent<MeshRenderer>().material.color = DARKGREEN;
                 b.OnInteract += HandleGreen;
+                b.transform.Find("Marker").GetComponent<MeshFilter>().mesh = MeshGreen;
             }
             else
             {
                 ButtonBlue = b;
                 b.GetComponent<MeshRenderer>().material.color = DARKBLUE;
                 b.OnInteract += HandleBlue;
+                b.transform.Find("Marker").GetComponent<MeshFilter>().mesh = MeshBlue;
             }
             i++;
             buttons.RemoveAt(pos);
@@ -453,6 +463,26 @@ public class AdvancedSimon : FixedTicker
         }
     }
 
+    private void SetDisplay(bool all) {
+        SetDisplay(all, all, all, all);
+    }
+    private void SetDisplay(bool[] list) {
+        SetDisplay(list[0], list[1], list[2], list[3]);
+    }
+    private void SetDisplay(bool r, bool y, bool g, bool b) {
+        ButtonRed.GetComponent<MeshRenderer>().material.color = r ? RED : DARKRED;
+        ButtonRed.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = r ? WHITE : DARKWHITE;
+
+        ButtonYellow.GetComponent<MeshRenderer>().material.color = y ? YELLOW : DARKYELLOW;
+        ButtonYellow.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = y ? WHITE : DARKWHITE;
+
+        ButtonGreen.GetComponent<MeshRenderer>().material.color = g ? GREEN : DARKGREEN;
+        ButtonGreen.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = g ? WHITE : DARKWHITE;
+
+        ButtonBlue.GetComponent<MeshRenderer>().material.color = b ? BLUE : DARKBLUE;
+        ButtonBlue.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = b ? WHITE : DARKWHITE;
+    }
+
     private int ticker = 0;
     private int pressTicker = 0;
     public override void RealFixedTick()
@@ -460,13 +490,7 @@ public class AdvancedSimon : FixedTicker
         if (pressTicker > 0)
         {
             pressTicker--;
-            if (pressTicker == 0)
-            {
-                ButtonRed.GetComponent<MeshRenderer>().material.color = DARKRED;
-                ButtonYellow.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
-                ButtonGreen.GetComponent<MeshRenderer>().material.color = DARKGREEN;
-                ButtonBlue.GetComponent<MeshRenderer>().material.color = DARKBLUE;
-            }
+            if (pressTicker == 0) SetDisplay(false);
         }
 
         if (PuzzleDisplay == null) return;
@@ -475,34 +499,17 @@ public class AdvancedSimon : FixedTicker
             if(DisplayPos >= 0)
             {
                 string tone = "";
-                if(PuzzleDisplay[DisplayPos][0]) {
-                    ButtonRed.GetComponent<MeshRenderer>().material.color = RED;
-                    tone += "R";
-                }
-                if(PuzzleDisplay[DisplayPos][1]) {
-                    ButtonYellow.GetComponent<MeshRenderer>().material.color = YELLOW;
-                    tone += "Y";
-                }
-                if(PuzzleDisplay[DisplayPos][2]) {
-                    ButtonGreen.GetComponent<MeshRenderer>().material.color = GREEN;
-                    tone += "G";
-                }
-                if(PuzzleDisplay[DisplayPos][3]) {
-                    ButtonBlue.GetComponent<MeshRenderer>().material.color = BLUE;
-                    tone += "B";
-                }
+                if(PuzzleDisplay[DisplayPos][0]) tone += "R";
+                if(PuzzleDisplay[DisplayPos][1]) tone += "Y";
+                if(PuzzleDisplay[DisplayPos][2]) tone += "G";
+                if(PuzzleDisplay[DisplayPos][3]) tone += "B";
+                SetDisplay(PuzzleDisplay[DisplayPos]);
                 if(soundActive) PlaySound(tone, false);
             }
         }
         else if(ticker == 15)
         {
-            if(DisplayPos >= 0)
-            {
-                if (PuzzleDisplay[DisplayPos][0]) ButtonRed.GetComponent<MeshRenderer>().material.color = DARKRED;
-                if (PuzzleDisplay[DisplayPos][1]) ButtonYellow.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
-                if (PuzzleDisplay[DisplayPos][2]) ButtonGreen.GetComponent<MeshRenderer>().material.color = DARKGREEN;
-                if (PuzzleDisplay[DisplayPos][3]) ButtonBlue.GetComponent<MeshRenderer>().material.color = DARKBLUE;
-            }
+            if(DisplayPos >= 0) SetDisplay(false);
             ticker = -20;
             if (DisplayPos == Progress)
             {
@@ -550,13 +557,7 @@ public class AdvancedSimon : FixedTicker
 
         soundActive = true;
 
-        if (ticker >= 0 || pressTicker > 0)
-        {
-            ButtonRed.GetComponent<MeshRenderer>().material.color = DARKRED;
-            ButtonYellow.GetComponent<MeshRenderer>().material.color = DARKYELLOW;
-            ButtonGreen.GetComponent<MeshRenderer>().material.color = DARKGREEN;
-            ButtonBlue.GetComponent<MeshRenderer>().material.color = DARKBLUE;
-        }
+        if (ticker >= 0 || pressTicker > 0) SetDisplay(false);
         ticker = -100;
         DisplayPos = 0;
 
@@ -613,19 +614,19 @@ public class AdvancedSimon : FixedTicker
 
         pressTicker = 15;
         if (val == 0) {
-            ButtonRed.GetComponent<MeshRenderer>().material.color = RED;
+            SetDisplay(true, false, false, false);
             PlaySound("R", true);
         }
         else if(val == 1) {
-            ButtonYellow.GetComponent<MeshRenderer>().material.color = YELLOW;
+            SetDisplay(false, true, false, false);
             PlaySound("Y", true);
         }
         else if(val == 2) {
-            ButtonGreen.GetComponent<MeshRenderer>().material.color = GREEN;
+            SetDisplay(false, false, true, false);
             PlaySound("G", true);
         }
         else {
-            ButtonBlue.GetComponent<MeshRenderer>().material.color = BLUE;
+            SetDisplay(false, false, false, true);
             PlaySound("B", true);
         }
     }

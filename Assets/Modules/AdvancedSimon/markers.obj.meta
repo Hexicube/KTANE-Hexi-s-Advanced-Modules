@@ -1,0 +1,137 @@
+fileFormatVersion: 2
+guid: ba8bcee50a471bf4c8ad3e01109f0745
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: default
+    100002: //RootNode
+    100004: Blue_Cylinder.001
+    100006: Green_Cylinder
+    100008: Red_Cube.001
+    100010: Yellow_Cube.002
+    100012: Blue_Cylinder.001_None
+    100014: Green_Cylinder_None
+    100016: Red_Cube.001_None
+    100018: Yellow_Cube.002_None
+    400000: default
+    400002: //RootNode
+    400004: Blue_Cylinder.001
+    400006: Green_Cylinder
+    400008: Red_Cube.001
+    400010: Yellow_Cube.002
+    400012: Blue_Cylinder.001_None
+    400014: Green_Cylinder_None
+    400016: Red_Cube.001_None
+    400018: Yellow_Cube.002_None
+    2100000: defaultMat
+    2100002: Blue_Cylinder.001Mat
+    2100004: Green_CylinderMat
+    2100006: Red_Cube.001Mat
+    2100008: Yellow_Cube.002Mat
+    2300000: default
+    2300002: Blue_Cylinder.001
+    2300004: Green_Cylinder
+    2300006: Red_Cube.001
+    2300008: Yellow_Cube.002
+    2300010: Blue_Cylinder.001_None
+    2300012: Green_Cylinder_None
+    2300014: Red_Cube.001_None
+    2300016: Yellow_Cube.002_None
+    3300000: default
+    3300002: Blue_Cylinder.001
+    3300004: Green_Cylinder
+    3300006: Red_Cube.001
+    3300008: Yellow_Cube.002
+    3300010: Blue_Cylinder.001_None
+    3300012: Green_Cylinder_None
+    3300014: Red_Cube.001_None
+    3300016: Yellow_Cube.002_None
+    4300000: default
+    4300002: Blue_Cylinder.001
+    4300004: Green_Cylinder
+    4300006: Red_Cube.001
+    4300008: Yellow_Cube.002
+    4300010: Blue_Cylinder.001_None
+    4300012: Green_Cylinder_None
+    4300014: Red_Cube.001_None
+    4300016: Yellow_Cube.002_None
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.05
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
