@@ -44,16 +44,16 @@ public class AdvancedVentingGas : MonoBehaviour
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("What wasn't your\nprevious answer?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = true;if (Module.HasReply) return Response == !Module.LastReply;return true;})},
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Was the last\nanswered question\nabout the last\ngiven answer?", delegate(AdvancedVentingGas Module, bool Response){bool Correct = Response == Module.LastWasSelfReference;Module.LastWasSelfReference = true;if (Module.HasReply) return Correct;return true;})},
         
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n3 lines?", delegate(AdvancedVentingGas Module, bool Response){return Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n6 lines?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("At least\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 0) == Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("More than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() > 1) == Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Up to\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() < 2) == Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Less than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){return (Module.BombInfo.GetStrikes() < 1) == Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        //{new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){Module.DidHakuna = true;return Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){return !Response;})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){return Response == Module.SerialDuplicate();})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n3 lines?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does this\nquestion contain\n6 lines?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return !Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("At least\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return (Module.BombInfo.GetStrikes() > 0) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("More than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return (Module.BombInfo.GetStrikes() > 1) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Up to\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return (Module.BombInfo.GetStrikes() < 2) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Less than\n1 strike?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return (Module.BombInfo.GetStrikes() < 1) == Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Abort?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return !Response;})},
+        //{new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Is \"Hakuna Matata\"\na wonderful phrase?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;Module.DidHakuna = true;return Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return !Response;})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return Response == Module.SerialDuplicate();})},
     };
 
     void Awake()
