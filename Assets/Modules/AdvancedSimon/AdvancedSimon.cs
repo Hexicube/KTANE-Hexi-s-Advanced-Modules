@@ -489,20 +489,10 @@ public class AdvancedSimon : FixedTicker
 
     private void SetColourblindMode()
     {
-        if (!colourblindActive)
-        {
-            ButtonTL.transform.Find("Marker").gameObject.SetActive(false);
-            ButtonTR.transform.Find("Marker").gameObject.SetActive(false);
-            ButtonBL.transform.Find("Marker").gameObject.SetActive(false);
-            ButtonBR.transform.Find("Marker").gameObject.SetActive(false);
-        }
-        else
-        {
-            ButtonTL.transform.Find("Marker").gameObject.SetActive(true);
-            ButtonTR.transform.Find("Marker").gameObject.SetActive(true);
-            ButtonBL.transform.Find("Marker").gameObject.SetActive(true);
-            ButtonBR.transform.Find("Marker").gameObject.SetActive(true);
-        }
+        ButtonTL.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonTR.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonBL.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonBR.transform.Find("Marker").gameObject.SetActive(colourblindActive);
     }
 
     private int ticker = 0;
