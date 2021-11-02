@@ -69,6 +69,7 @@ public class AdvancedSimon : FixedTicker
     public Mesh MeshRed, MeshYellow, MeshGreen, MeshBlue;
     public KMAudio Sound;
     public KMBombInfo Info;
+    public KMColorblindMode Colourblind;
 
     private static Color     RED = new Color(1f,    0, 0, 0.4f),  YELLOW = new Color(0.6f,  0.6f,  0, 0.4f),  GREEN = new Color(0, 0.65f,  0, 0.4f),  BLUE = new Color(0, 0.3f, 1f,    0.4f),
                          DARKRED = new Color(0.25f, 0, 0, 0), DARKYELLOW = new Color(0.27f, 0.27f, 0, 0), DARKGREEN = new Color(0, 0.23f, 0, 0), DARKBLUE = new Color(0, 0.1f, 0.33f, 0),
@@ -93,6 +94,7 @@ public class AdvancedSimon : FixedTicker
     private int Progress, SubProgress;
 
     private bool soundActive = false;
+    private bool colourblindActive = false;
 
     void Awake()
     {
@@ -108,6 +110,8 @@ public class AdvancedSimon : FixedTicker
         ButtonTR.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonBL.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
         ButtonBR.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
+        colourblindActive = Colourblind.ColorblindModeActive;
+        SetColourblindMode();
 
         GetComponent<KMBombModule>().OnActivate += Init;
     }
@@ -483,6 +487,14 @@ public class AdvancedSimon : FixedTicker
         ButtonBlue.transform.Find("Marker").GetComponent<MeshRenderer>().material.color = b ? WHITE : DARKWHITE;
     }
 
+    private void SetColourblindMode()
+    {
+        ButtonTL.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonTR.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonBL.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+        ButtonBR.transform.Find("Marker").gameObject.SetActive(colourblindActive);
+    }
+
     private int ticker = 0;
     private int pressTicker = 0;
     public override void RealFixedTick()
@@ -658,7 +670,7 @@ public class AdvancedSimon : FixedTicker
     //Twitch Plays support
 
     #pragma warning disable 0414
-    string TwitchHelpMessage = "Press buttons with 'press RYB'.";
+    string TwitchHelpMessage = "Press buttons with 'press RYB'. Toggle colourblind mode with 'colourblind'.";
     #pragma warning restore 0414
 
     public void TwitchHandleForcedSolve() {
@@ -688,6 +700,13 @@ public class AdvancedSimon : FixedTicker
             Sound.PlaySoundAtTransform("BOP", transform);
             yield return "sendtochat Pull-it! Twist-it! Bop-it!";
             bop = true;
+            yield break;
+        }
+        else if (cmd.Equals("colourblind"))
+        {
+            yield return "Simon States";
+            colourblindActive = !colourblindActive;
+            SetColourblindMode();
             yield break;
         }
         else {
