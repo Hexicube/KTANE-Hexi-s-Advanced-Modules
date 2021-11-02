@@ -65,6 +65,7 @@ GameObject:
   - component: {fileID: 11404640}
   - component: {fileID: 11457362}
   - component: {fileID: 114000012137918116}
+  - component: {fileID: 114790592447214252}
   m_Layer: 0
   m_Name: AdvancedSimon
   m_TagString: Untagged
@@ -790,6 +791,7 @@ MonoBehaviour:
   MeshBlue: {fileID: 4300002, guid: ba8bcee50a471bf4c8ad3e01109f0745, type: 3}
   Sound: {fileID: 11425198}
   Info: {fileID: 11404640}
+  Colourblind: {fileID: 114790592447214252}
 --- !u!114 &11462720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1321,3 +1323,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Hexi/EmissiveTint
+--- !u!114 &114790592447214252
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 112884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1cfb889a07d5fd4e9baed7960bb397f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _colorblindMode: 0
