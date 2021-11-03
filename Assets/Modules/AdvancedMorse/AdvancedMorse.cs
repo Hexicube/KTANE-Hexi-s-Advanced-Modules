@@ -71,6 +71,8 @@ public class AdvancedMorse : FixedTicker
 
     private string Answer;
 
+    private Transform ButtonTransmitSubTransform;
+
     void Awake()
     {
         thisLoggingID = loggingID++;
@@ -89,8 +91,16 @@ public class AdvancedMorse : FixedTicker
         LED.materials[2].color = LED_OFF;
         LED.materials[3].color = LED_OFF;
 
+        MeshRenderer mr = transform.Find("Wiring").GetComponent<MeshRenderer>();
+        mr.materials[2].color = new Color(0.1f, 0.1f, 0.1f);
+        mr.materials[1].color = new Color(0.3f, 0.3f, 0.3f);
+        mr.materials[0].color = new Color(0.1f, 0.4f, 0.8f);
+
         transform.Find("ReceiveBox").GetComponent<MeshRenderer>().material.color = new Color(0.3f, 0.3f, 0.3f);
         transform.Find("ReceiveSwitch").GetComponent<MeshRenderer>().material.color = new Color(0.6f, 0.6f, 0.6f);
+        ButtonTransmitSubTransform = ButtonTransmit.transform.Find("TransmitButton");
+
+        foreach (MeshRenderer cmr in ButtonTransmitSubTransform.GetComponentsInChildren<MeshRenderer>()) cmr.material.color = new Color(.9f, .9f, .9f);
 
         ButtonTransmit.GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
 
@@ -326,6 +336,7 @@ public class AdvancedMorse : FixedTicker
     {
         if (Answer == null || transDown) return false;
 
+        ButtonTransmitSubTransform.localPosition = new Vector3(0, -.2f, 0);
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
         transDown = true;
         if (transmitTicker >= 0) transmitTimings.Add(transmitTicker);
@@ -336,7 +347,8 @@ public class AdvancedMorse : FixedTicker
     public void HandleTransUp()
     {
         if (Answer == null || !transDown) return;
-
+        
+        ButtonTransmitSubTransform.localPosition = new Vector3(0, .1f, 0);
         transDown = false;
         transmitTimings.Add(transmitTicker);
         transmitTicker = 0;
