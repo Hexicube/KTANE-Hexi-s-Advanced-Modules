@@ -336,7 +336,7 @@ public class AdvancedMorse : FixedTicker
     {
         if (Answer == null || transDown) return false;
 
-        ButtonTransmitSubTransform.localPosition = new Vector3(0, -.2f, 0);
+        ButtonTransmitSubTransform.localPosition = new Vector3(0, -.75f, -.045f);
         Sound.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, ButtonTransmit.transform);
         transDown = true;
         if (transmitTicker >= 0) transmitTimings.Add(transmitTicker);
@@ -348,7 +348,7 @@ public class AdvancedMorse : FixedTicker
     {
         if (Answer == null || !transDown) return;
         
-        ButtonTransmitSubTransform.localPosition = new Vector3(0, .1f, 0);
+        ButtonTransmitSubTransform.localPosition = new Vector3(0, -.5f, -.045f);
         transDown = false;
         transmitTimings.Add(transmitTicker);
         transmitTicker = 0;
