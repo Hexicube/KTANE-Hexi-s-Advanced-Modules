@@ -428,6 +428,8 @@ GameObject:
   - component: {fileID: 11486916}
   - component: {fileID: 82000013175647412}
   - component: {fileID: 114000011400985746}
+  - component: {fileID: 114357988943740040}
+  - component: {fileID: 114250096359658250}
   m_Layer: 0
   m_Name: AdvancedMemory
   m_TagString: Untagged
@@ -2329,6 +2331,7 @@ MonoBehaviour:
   DisplayMesh: {fileID: 102000013069253864}
   DisplayMeshBig: {fileID: 102000012873297308}
   StageMesh: {fileID: 102000013782795338}
+  Settings: {fileID: 114357988943740040}
 --- !u!114 &11431838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4425,6 +4428,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Hexi/EmissiveTint
+--- !u!114 &114250096359658250
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -289456416, guid: 45b809be76fd7a3468b6f517bced6f28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Settings: 
+  SettingsPath: 
 --- !u!114 &114303883502809556
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4451,6 +4467,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Hexi/EmissiveTint
+--- !u!114 &114357988943740040
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 164962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 464e0f55796a96a42be926cec9dfb4a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Settings: {fileID: 114250096359658250}
 --- !u!114 &114654108398204860
 MonoBehaviour:
   m_ObjectHideFlags: 1

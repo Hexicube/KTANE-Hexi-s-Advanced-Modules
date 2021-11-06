@@ -34,6 +34,7 @@ public class AdvancedMemory : MonoBehaviour
     public KMSelectable Button0, Button1, Button2, Button3, Button4, Button5, Button6, Button7, Button8, Button9;
     private KMSelectable[] Buttons;
     public TextMesh DisplayMesh, DisplayMeshBig, StageMesh;
+    public ConfigHandler Settings;
 
     private int[] Display;
     private int[] Solution;
@@ -133,6 +134,11 @@ public class AdvancedMemory : MonoBehaviour
         Button9.GetComponent<MeshRenderer>().material.color = c;
 
         GetComponent<KMBombModule>().OnActivate += ActivateModule;
+        
+        if (Settings.LoadSettings().fmnNumpad) {
+            GetComponent<KMSelectable>().OnFocus += delegate(){IsSelected=true;};
+            GetComponent<KMSelectable>().OnDefocus += delegate(){IsSelected=false;};
+        }
     }
 
     private void ActivateModule()
@@ -336,6 +342,22 @@ public class AdvancedMemory : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool IsSelected = false;
+    private void Update() {
+        if (!IsSelected) return;
+        // numpad handler
+        if (Input.GetKeyDown(KeyCode.Keypad0)) Handle(0);
+        if (Input.GetKeyDown(KeyCode.Keypad1)) Handle(1);
+        if (Input.GetKeyDown(KeyCode.Keypad2)) Handle(2);
+        if (Input.GetKeyDown(KeyCode.Keypad3)) Handle(3);
+        if (Input.GetKeyDown(KeyCode.Keypad4)) Handle(4);
+        if (Input.GetKeyDown(KeyCode.Keypad5)) Handle(5);
+        if (Input.GetKeyDown(KeyCode.Keypad6)) Handle(6);
+        if (Input.GetKeyDown(KeyCode.Keypad7)) Handle(7);
+        if (Input.GetKeyDown(KeyCode.Keypad8)) Handle(8);
+        if (Input.GetKeyDown(KeyCode.Keypad9)) Handle(9);
     }
 
     private int litButton = -1;

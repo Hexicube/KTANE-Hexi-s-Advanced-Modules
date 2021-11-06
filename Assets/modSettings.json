@@ -1,3 +1,5 @@
 {
-    "rotaryTwoDigits": false
+    "rotaryTwoDigits": false,
+    "rotarySparseness": 2,
+    "fmnNumpad": true
 }

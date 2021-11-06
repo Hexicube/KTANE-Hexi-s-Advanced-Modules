@@ -30,7 +30,7 @@ public class AdvancedKnob : FixedTicker
     private KMSelectable[] Buttons;
     public Nixie[] NumList;
     public TimerDial Dial1, Dial2;
-    public KMModSettings Settings;
+    public ConfigHandler Settings;
 
     public Transform PhoneRing;
 
@@ -60,13 +60,7 @@ public class AdvancedKnob : FixedTicker
     }
 
     void DoSettings() {
-        KnobSettings set = JsonUtility.FromJson<KnobSettings>(Settings.Settings);
-        if (set == null) {
-            set = new KnobSettings();
-            set.rotaryTwoDigits = false;
-            set.rotarySparseness = 2;
-            Settings.Settings = JsonUtility.ToJson(set, true);
-        }
+        ConfigHandler.AllSettings set = Settings.LoadSettings();
         NUM_DIGITS = set.rotaryTwoDigits ? 2 : 3;
         SPARSENESS = System.Math.Max(1, set.rotarySparseness);
     }

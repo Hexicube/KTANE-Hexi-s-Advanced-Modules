@@ -90,7 +90,8 @@ GameObject:
   - component: {fileID: 11495474}
   - component: {fileID: 11469190}
   - component: {fileID: 114000012250407020}
-  - component: {fileID: 114143072409330780}
+  - component: {fileID: 114121975573297962}
+  - component: {fileID: 114051000297592690}
   m_Layer: 0
   m_Name: AdvancedKnob
   m_TagString: Untagged
@@ -1360,7 +1361,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 104298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.225, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 411736}
@@ -4274,7 +4275,7 @@ MonoBehaviour:
   - {fileID: 114000010411259550}
   Dial1: {fileID: 114000013535390508}
   Dial2: {fileID: 114000012385339610}
-  Settings: {fileID: 114143072409330780}
+  Settings: {fileID: 114121975573297962}
   PhoneRing: {fileID: 432840}
 --- !u!114 &11469190
 MonoBehaviour:
@@ -11765,7 +11766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - KT/Mobile/Diffuse
---- !u!114 &114143072409330780
+--- !u!114 &114051000297592690
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -11778,3 +11779,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Settings: 
   SettingsPath: 
+--- !u!114 &114121975573297962
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 104298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 464e0f55796a96a42be926cec9dfb4a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Settings: {fileID: 114051000297592690}
