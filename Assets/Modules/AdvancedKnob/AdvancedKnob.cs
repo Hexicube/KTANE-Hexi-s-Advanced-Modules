@@ -54,11 +54,6 @@ public class AdvancedKnob : FixedTicker
         }
     }
 
-    public class KnobSettings {
-        public bool rotaryTwoDigits;
-        public int rotarySparseness;
-    }
-
     void DoSettings() {
         ConfigHandler.AllSettings set = Settings.LoadSettings();
         NUM_DIGITS = set.rotaryTwoDigits ? 2 : 3;

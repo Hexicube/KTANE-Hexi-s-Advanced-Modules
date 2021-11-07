@@ -93,7 +93,7 @@ public class AdvancedPassword : MonoBehaviour
         for (int a = 0; a < 6; a++)
         {
             Dials[a].transform.Find("LED").GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0);
-            Dials[a].transform.Find("default").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
+            Dials[a].transform.Find("Base").GetComponent<MeshRenderer>().material.color = new Color(0.91f, 0.88f, 0.86f);
         }
 
         for (int a = 0; a < 6; a++)

@@ -1,15 +1,31 @@
 fileFormatVersion: 2
-guid: 23f621a0abd80814b866f029300e7c66
+guid: cafd0517e4a57434fa2845f8efad172a
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: Button_Case
-    2100002: Jack_Metal
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: jack
+    100000: Blue
+    100002: Green
+    100004: //RootNode
+    100006: Red
+    100008: Yellow
+    400000: Blue
+    400002: Green
+    400004: //RootNode
+    400006: Red
+    400008: Yellow
+    2100000: No Name
+    2300000: Blue
+    2300002: Green
+    2300004: Red
+    2300006: Yellow
+    3300000: Blue
+    3300002: Green
+    3300004: Red
+    3300006: Yellow
+    4300000: Yellow
+    4300002: Blue
+    4300004: Red
+    4300006: Green
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -40,7 +56,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 5
     meshCompression: 0
     addColliders: 0
     importVisibility: 1

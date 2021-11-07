@@ -1,15 +1,36 @@
 fileFormatVersion: 2
-guid: 23f621a0abd80814b866f029300e7c66
+guid: 9f225b20ac37fef4ca6adebcd2b0e3e4
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: Button_Case
-    2100002: Jack_Metal
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: jack
+    100000: Pipe Bend
+    100002: Pipe Cross
+    100004: Pipe End
+    100006: Pipe Straight
+    100008: Pipe T
+    100010: //RootNode
+    400000: Pipe Bend
+    400002: Pipe Cross
+    400004: Pipe End
+    400006: Pipe Straight
+    400008: Pipe T
+    400010: //RootNode
+    2100000: No Name
+    2300000: Pipe Bend
+    2300002: Pipe Cross
+    2300004: Pipe End
+    2300006: Pipe Straight
+    2300008: Pipe T
+    3300000: Pipe Bend
+    3300002: Pipe Cross
+    3300004: Pipe End
+    3300006: Pipe Straight
+    3300008: Pipe T
+    4300000: Pipe Straight
+    4300002: Pipe T
+    4300004: Pipe End
+    4300006: Pipe Cross
+    4300008: Pipe Bend
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -40,7 +61,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 50
     meshCompression: 0
     addColliders: 0
     importVisibility: 1

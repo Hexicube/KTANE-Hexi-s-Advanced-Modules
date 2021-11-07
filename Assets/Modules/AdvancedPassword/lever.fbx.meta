@@ -1,15 +1,26 @@
 fileFormatVersion: 2
-guid: 23f621a0abd80814b866f029300e7c66
+guid: 2bc1fdc1d222c5c44ad0b862542fce5e
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: Button_Case
-    2100002: Jack_Metal
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: jack
+    100000: Lever
+    100002: //RootNode
+    100004: Lever Base
+    100006: Highlight
+    400000: Lever
+    400002: //RootNode
+    400004: Lever Base
+    400006: Highlight
+    2100000: No Name
+    2300000: Lever
+    2300002: Lever Base
+    2300004: Highlight
+    3300000: Lever
+    3300002: Lever Base
+    3300004: Highlight
+    4300000: Lever Base
+    4300002: Lever
+    4300004: Highlight
   externalObjects: {}
   materials:
     importMaterials: 0
@@ -40,7 +51,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 100
     meshCompression: 0
     addColliders: 0
     importVisibility: 1

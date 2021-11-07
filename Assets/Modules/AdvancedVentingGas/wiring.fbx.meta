@@ -1,15 +1,16 @@
 fileFormatVersion: 2
-guid: 23f621a0abd80814b866f029300e7c66
+guid: e3115078a1fceab40bb2ab02051c529c
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: Button_Case
-    2100002: Jack_Metal
+    2100000: Wire_Red.001
+    2100002: Wire.001
+    2100004: Diffuse_Material.001
     2300000: //RootNode
     3300000: //RootNode
-    4300000: jack
+    4300000: wiring.001
   externalObjects: {}
   materials:
     importMaterials: 0
