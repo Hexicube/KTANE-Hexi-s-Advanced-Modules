@@ -61,7 +61,7 @@ public class AdvancedButton : FixedTicker
 
     private static Color[] colours = new Color[]{
         new Color(0.25f, 0.75f, 1), //Cyan
-        new Color(1, 0.25f, 0),      //Orange
+        new Color(1, 0.25f, 0),     //Orange
         new Color(0, 1, 0)          //Green
     };
 
@@ -78,6 +78,17 @@ public class AdvancedButton : FixedTicker
         "Black"
     };
 
+    private static Color[] decorationColoursWire = new Color[]{
+        new Color(0.2f, 0.2f, 0.2f),    //Black
+        new Color(0.2f, 0.2f, 0.2f),    //Black
+        new Color(0.2f, 0.2f, 0.2f),    //Black
+        new Color(0.2f, 0.2f, 0.2f),    //Black
+        new Color(.6f, 0, .8f),         //Purple
+        new Color(.6f, .6f, 0),         //Yellow
+        new Color(0, .2f, .6f),         //Blue
+        new Color(0.91f, 0.88f, 0.86f), //White
+    };
+
     private static string[] buttonLabels = new string[]{
         "purple", "jade", "maroon", "indigo",
         "elevate", "run", "detonate", ""
@@ -90,9 +101,11 @@ public class AdvancedButton : FixedTicker
         thisLoggingID = loggingID++;
 
         transform.Find("Background").GetComponent<MeshRenderer>().material.color = new Color(1, 0.1f, 0.1f);
-        transform.Find("Casing")    .GetComponent<MeshRenderer>().material.color = new Color(0.1f, 0.1f, 0.1f);
         transform.Find("Jack")      .GetComponent<MeshRenderer>().materials[0].color = new Color(0.1f, 0.1f, 0.1f);
         transform.Find("Jack")      .GetComponent<MeshRenderer>().materials[1].color = new Color(0.8f, 0.8f, 0.8f);
+
+        transform.Find("Casing")    .GetComponent<MeshRenderer>().materials[0].color = new Color(0.1f, 0.1f, 0.1f);
+        transform.Find("Casing")    .GetComponent<MeshRenderer>().materials[1].color = decorationColoursWire.PickRandom();
 
         ticker = -1;
         Light.material.color = BLACK;
