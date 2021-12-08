@@ -28,7 +28,13 @@ public class ConfigHandler : MonoBehaviour {
 
     public AllSettings LoadSettings() {
         AllSettings set = new AllSettings();
-        JsonUtility.FromJsonOverwrite(Settings.Settings, set);
+        if (Settings.SettingsPath.Trim() != "") {
+            string path = Settings.SettingsPath;
+            System.IO.StreamReader fIn = new System.IO.StreamReader(path);
+            JsonUtility.FromJsonOverwrite(fIn.ReadToEnd(), set);
+            fIn.Close();
+        }
+        else JsonUtility.FromJsonOverwrite(Settings.Settings, set);
         return set;
     }
 }
