@@ -259,6 +259,7 @@ public class AdvancedVentingGas : MonoBehaviour
 
     private int GetBatteries() {
         if (Batteries == -1) {
+            Batteries = 0;
             List<string> data = BombInfo.QueryWidgets(KMBombInfo.QUERYKEY_GET_BATTERIES, null);
             foreach (string response in data)
             {
