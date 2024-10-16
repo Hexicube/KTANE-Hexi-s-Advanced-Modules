@@ -75,7 +75,7 @@ public class AdvancedVentingGas : MonoBehaviour
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Are you a\ndirty cheater?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return !Response;})},
         
         {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the\nserial contain\nduplicate\ncharacters?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return Response == Module.SerialDuplicate();})},
-        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the number of\nbatteries and the\nsum of serial number\ndigits parities match?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return Response == Module.CheckParity();})},
+        {new KeyValuePair<string, System.Func<AdvancedVentingGas, bool, bool>>("Does the parity of\nbatteries\nmatch the parity of\nserial number digits?", delegate(AdvancedVentingGas Module, bool Response){Module.LastWasSelfReference = false;return Response == Module.CheckParity();})},
     };
 
     void Awake()
@@ -306,7 +306,7 @@ public class AdvancedVentingGas : MonoBehaviour
         for (int i = 0; i < NumTriesForAbort; i++) {
             if(HasReply) val = Random.Range(0, QuestionList.Count);
             else val = Random.Range(NumHasReply, QuestionList.Count);
-            if (QuestionList[val].Key == "Abort?") break;
+            if (QuestionList[val].Key == "Abort?" || QuestionList[val].Key == "SEGFAULT") break;
         }
         CurQ = QuestionList[val].Value;
         Display.text = QuestionList[val].Key;
